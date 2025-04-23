@@ -3,8 +3,8 @@ import { defineStore } from "pinia";
 import { staticRouter } from "@/routers/modules/staticRouter";
 import authMenu from "@/assets/json/authMenu.json";
 import authUser from "@/assets/json/authUser.json";
-import { generateRoutes, generateFlattenRoutes } from "@/utils/filterRoute.ts";
-import { getShowStaticAndDynamicMenuList, getAllBreadcrumbList } from "@/utils/index.ts";
+import { generateRoutes, generateFlattenRoutes } from "@/utils/filterRoute";
+import { getShowStaticAndDynamicMenuList, getAllBreadcrumbList } from "@/utils/index";
 
 // 权限数据，不进行持久化。否则刷新浏览器无法获取新的数据。
 const authStore = defineStore("auth", {

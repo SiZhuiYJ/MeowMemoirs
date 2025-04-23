@@ -1,7 +1,7 @@
-import useUserStore from "@/stores/modules/user.ts";
-import useAuthStore from "@/stores/modules/auth.ts";
+import useUserStore from "@/stores/modules/user";
+import useAuthStore from "@/stores/modules/auth";
 
-import { LOGIN_URL } from "@/config/index.ts";
+import { LOGIN_URL } from "@/config/index";
 // TS OR JS 中不能直接导入 import { useRouter } from "vue-router";
 import router from "@/routers/index";
 
