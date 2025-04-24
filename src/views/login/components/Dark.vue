@@ -2,15 +2,15 @@
   <div>
     <!-- 明亮模式 -->
     <el-tooltip :content="'明亮模式'" v-if="!globalStore.isDark">
-      <KoiSvgIcon name="menu-sun" width="20" height="20"
+      <SvgIcon name="menu-sun" width="20" height="20"
         class="rounded-full p-6px bg-[rgba(50,50,50,0.06)] dark:bg-[rgba(255,255,255,0.06)] m-r-10px border-none outline-none"
-        @click="handleSwitchDark"></KoiSvgIcon>
+        @click="handleSwitchDark"></SvgIcon>
     </el-tooltip>
     <!-- 暗黑模式 -->
     <el-tooltip :content="'暗黑模式'" v-if="globalStore.isDark">
-      <KoiSvgIcon name="menu-moon" width="20" height="20"
+      <SvgIcon name="menu-moon" width="20" height="20"
         class="rounded-full p-6px bg-[rgba(50,50,50,0.06)] dark:bg-[rgba(255,255,255,0.06)] m-r-10px border-none outline-none"
-        @click="handleSwitchDark"></KoiSvgIcon>
+        @click="handleSwitchDark"></SvgIcon>
     </el-tooltip>
   </div>
 </template>

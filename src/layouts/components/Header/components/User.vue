@@ -12,8 +12,8 @@
     </div>
     <template #dropdown>
       <el-dropdown-menu>
-        <el-dropdown-item command="koiMine">{{ $t("header.personalCenter") }}</el-dropdown-item>
-        <el-dropdown-item command="logout">{{ $t("header.logout") }}</el-dropdown-item>
+        <el-dropdown-item command="koiMine">个人中心</el-dropdown-item>
+        <el-dropdown-item command="logout">退出登录</el-dropdown-item>
       </el-dropdown-menu>
     </template>
   </el-dropdown>
@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { koiSessionStorage, koiLocalStorage } from "@/utils/storage.ts";
+import { koiSessionStorage, koiLocalStorage } from "@/utils/storage";
 import { LOGIN_URL } from "@/config";
 import { useRouter } from "vue-router";
 
@@ -60,7 +60,8 @@ const handleCommand = (command: string | number) => {
 // dropdown字体颜色
 .koi-dropdown {
   color: var(--el-color-primary);
-  white-space: nowrap; /* 不换行 */
+  white-space: nowrap;
+  /* 不换行 */
   cursor: pointer;
   outline: none; // 去除伪元素
   display: flex;

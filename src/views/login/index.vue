@@ -2,7 +2,7 @@
   <div class="h-full">
     <el-row class="h-100%">
       <div class="absolute top-10px right-10px flex flex-items-center">
-        <KoiDark></KoiDark>
+        <Dark></Dark>
       </div>
       <el-col :lg="16" :md="12" :sm="15" :xs="0" class="flex flex-items-center flex-justify-center">
         <div class="login-background w-85% h-100%"></div>
@@ -22,7 +22,7 @@
         class="dark:bg-#161616 bg-gray-100 flex flex-items-center flex-justify-center flex-col">
         <div class="flex flex-items-center">
           <el-image class="rounded-full w-36px h-36px" :src="logo" />
-          <div class="ml-6px font-bold text-xl">{{ loginTitle || "KOI-ADMIN 管理平台" }}</div>
+          <div class="ml-6px font-bold text-xl">{{ loginTitle || "MeowMemoirs 管理平台" }}</div>
         </div>
         <div class="flex flex-items-center space-x-3 text-gray-400 mt-16px mb-16px">
           <span class="h-1px w-16 bg-gray-300 inline-block"></span>
@@ -71,7 +71,7 @@ import { User, Lock, Open } from "@element-plus/icons-vue";
 import { ref, reactive, onMounted, onUnmounted, computed } from "vue";
 
 import type { FormInstance, FormRules } from "element-plus";
-import { koiMsgWarning, koiMsgError } from "@/utils/koi";
+import { koiMsgWarning, koiMsgError } from "@/utils/message";
 import { useRouter } from "vue-router";
 // import { koiLogin, getCaptcha } from "@/api/system/login/index.ts";
 import authLogin from "@/assets/json/authLogin.json";
@@ -83,7 +83,7 @@ import useTabsStore from "@/stores/modules/tabs";
 import logo from "@/assets/images/logo/logo.svg";
 import bg from "@/assets/images/login/bg.webp";
 import settings from "@/settings";
-import KoiDark from "./components/KoiDark.vue";
+import Dark from "./components/Dark.vue";
 import { getLanguage } from "@/utils/index";
 import useGlobalStore from "@/stores/modules/global";
 
@@ -174,6 +174,7 @@ onMounted(() => {
 
 /** 登录 */
 const handleKoiLogin = () => {
+  console.log('loginForm', loginForm);
   if (!loginFormRef.value) return;
   (loginFormRef.value as any).validate(async (valid: any, fields: any) => {
     // @ts-ignore

@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 import { CACHE_PREFIX, HOME_URL } from "@/config/index.ts";
 import router from "@/routers/index.ts";
 import { getUrlWithParams } from "@/utils/index.ts";
-import { koiMsgWarning } from "@/utils/koi.ts";
+import { koiMsgWarning } from "@/utils/message";
 // 导入keepAliveStore仓库，必须使用下方这种导入方法，不然会报错。但是使用下方方法有一个问题就是使用keepAliveStore.addKeepAliveName(tab.name);等方法不能进行持久化缓存。
 // 想进行缓存，只能将const keepAliveStore = useKeepAliveStore(); 放到方法里面，不能放置全局变量。
 import useKeepAliveStore from "@/stores/modules/keepAlive.ts";

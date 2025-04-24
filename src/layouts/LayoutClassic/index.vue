@@ -32,15 +32,15 @@
 </template>
 
 <script setup lang="ts">
-import settings from "@/settings.ts";
+import settings from "@/settings";
 import Logo from "@/layouts/components/Logo/index.vue";
 import Header from "@/layouts/components/Header/index.vue";
 import AsideSubMenu from "@/layouts/components/Menu/AsideSubMenu.vue";
 import Main from "@/layouts/components/Main/index.vue";
 import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
-import useAuthStore from "@/stores/modules/auth.ts";
-import useGlobalStore from "@/stores/modules/global.ts";
+import useAuthStore from "@/stores/modules/auth";
+import useGlobalStore from "@/stores/modules/global";
 
 const route = useRoute();
 const authStore = useAuthStore();

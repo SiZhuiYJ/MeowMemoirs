@@ -243,7 +243,7 @@
 <script setup lang="ts" name="rolePage">
 import { nextTick, ref, reactive, onMounted } from "vue";
 // @ts-ignore
-import { koiNoticeSuccess, koiNoticeError, koiMsgError, koiMsgWarning, koiMsgBox, koiMsgInfo } from "@/utils/koi.ts";
+import { koiNoticeSuccess, koiNoticeError, koiMsgError, koiMsgWarning, koiMsgBox, koiMsgInfo } from "@/utils/message";
 // @ts-ignore
 import { listPage, getById, add, update, deleteById, batchDelete, updateStatus } from "@/api/system/role/index.ts";
 import { listMenuNormal, listMenuIdsByRoleId, saveRoleMenu } from "@/api/system/menu/index.ts";

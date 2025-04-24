@@ -21,7 +21,7 @@
 import TabMenu from "@/layouts/components/Tabs/components/TabMenu.vue";
 // @ts-ignore
 import Sortable from "sortablejs";
-import { koiMsgWarning } from "@/utils/koi";
+import { koiMsgWarning } from "@/utils/message";
 import { TabsPaneContext } from "element-plus";
 import { ref, watch, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";

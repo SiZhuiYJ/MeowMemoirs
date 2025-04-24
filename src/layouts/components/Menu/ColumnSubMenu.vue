@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 import ColumnSubMenu from "@/layouts/components/Menu/ColumnSubMenu.vue";
-import { koiMsgWarning } from "@/utils/koi.ts";
+import { koiMsgWarning } from "@/utils/message";
 import { useRouter } from "vue-router";
 import { getLanguage } from "@/utils/index.ts";
 import useGlobalStore from "@/stores/modules/global.ts";

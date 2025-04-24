@@ -35,7 +35,7 @@ import { ref, computed, nextTick } from "vue";
 import { Search } from "@element-plus/icons-vue";
 
 import { useRouter } from "vue-router";
-import useAuthStore from "@/stores/modules/auth.ts";
+import useAuthStore from "@/stores/modules/auth";
 
 const router = useRouter();
 const authStore = useAuthStore();

@@ -18,8 +18,8 @@ import Maximize from "@/layouts/components/Main/components/Maximize.vue";
 import { useDebounceFn } from "@vueuse/core";
 import Tabs from "@/layouts/components/Tabs/index.vue";
 import { storeToRefs } from "pinia";
-import useKeepAliveStore from "@/stores/modules/keepAlive.ts";
-import useGlobalStore from "@/stores/modules/global.ts";
+import useKeepAliveStore from "@/stores/modules/keepAlive";
+import useGlobalStore from "@/stores/modules/global";
 
 const globalStore = useGlobalStore();
 

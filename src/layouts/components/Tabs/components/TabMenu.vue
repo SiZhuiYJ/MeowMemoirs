@@ -1,25 +1,39 @@
 <template>
   <div class="tabs-card">
     <div @click="handleRefresh()" class="tab-menu-item">
-      <el-icon size="16" class="m-r-5px"><Refresh class="icon-scale" /></el-icon>{{ $t("tabs.refresh") }}
+      <el-icon size="16" class="m-r-5px">
+        <Refresh class="icon-scale" />
+      </el-icon>重新刷新
     </div>
     <div @click="handleMaximize()" class="tab-menu-item">
-      <el-icon size="16" class="m-r-5px"><FullScreen class="icon-scale" /></el-icon>{{ $t("tabs.maximize") }}
+      <el-icon size="16" class="m-r-5px">
+        <FullScreen class="icon-scale" />
+      </el-icon>全屏切换
     </div>
     <div @click="handleCloseCurrentTab()" class="tab-menu-item">
-      <el-icon size="16" class="m-r-5px"><Close class="icon-scale" /></el-icon>{{ $t("tabs.closeCurrent") }}
+      <el-icon size="16" class="m-r-5px">
+        <Close class="icon-scale" />
+      </el-icon>关闭当前
     </div>
     <div @click="handleCloseOtherTabs()" class="tab-menu-item">
-      <el-icon size="16" class="m-r-5px"><Star class="icon-scale" /></el-icon>{{ $t("tabs.closeOther") }}
+      <el-icon size="16" class="m-r-5px">
+        <Star class="icon-scale" />
+      </el-icon>关闭其它
     </div>
     <div @click="handleCloseSideTabs('left')" class="tab-menu-item">
-      <el-icon size="16" class="m-r-5px"><DArrowLeft class="icon-scale" /></el-icon>{{ $t("tabs.closeLeft") }}
+      <el-icon size="16" class="m-r-5px">
+        <DArrowLeft class="icon-scale" />
+      </el-icon>关闭左侧
     </div>
     <div @click="handleCloseSideTabs('right')" class="tab-menu-item">
-      <el-icon size="16" class="m-r-5px"><DArrowRight class="icon-scale" /></el-icon>{{ $t("tabs.closeRight") }}
+      <el-icon size="16" class="m-r-5px">
+        <DArrowRight class="icon-scale" />
+      </el-icon>关闭右侧
     </div>
     <div icon="Remove" @click="handleCloseAllTabs()" class="tab-menu-item">
-      <el-icon size="16" class="m-r-5px"><Remove class="icon-scale" /></el-icon>{{ $t("tabs.closeAll") }}
+      <el-icon size="16" class="m-r-5px">
+        <Remove class="icon-scale" />
+      </el-icon>关闭所有
     </div>
   </div>
 </template>
@@ -28,10 +42,10 @@
 import { inject, nextTick, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
-import useTabsStore from "@/stores/modules/tabs.ts";
-import useKeepAliveStore from "@/stores/modules/keepAlive.ts";
-import useGlobalStore from "@/stores/modules/global.ts";
-import { HOME_URL } from "@/config/index.ts";
+import useTabsStore from "@/stores/modules/tabs";
+import useKeepAliveStore from "@/stores/modules/keepAlive";
+import useGlobalStore from "@/stores/modules/global";
+import { HOME_URL } from "@/config/index";
 
 const route = useRoute();
 const router = useRouter();
@@ -42,7 +56,7 @@ const globalStore = useGlobalStore();
 // 点击鼠标右键点击出现菜单
 const choosePath = ref();
 const handleKoiMenuParent = (e: any) => {
-  if(e.srcElement?.id) {
+  if (e.srcElement?.id) {
     choosePath.value = e.srcElement.id.split("-")[1];
   } else {
     return;
@@ -186,6 +200,7 @@ defineExpose({
   user-select: none;
   background-color: var(--el-bg-color);
   border-radius: var(--el-border-radius-base);
+
   &:hover {
     color: var(--el-color-primary);
     background-color: var(--el-color-primary-light-9);
@@ -199,19 +214,25 @@ defineExpose({
 
 @keyframes koi-scale {
   0% {
-      transform: scale(1); /* 初始状态为原始大小 */
-      -webkit-transform: scale(1);
-      transform-origin: center;
-      -webkit-transform-origin: center;
+    transform: scale(1);
+    /* 初始状态为原始大小 */
+    -webkit-transform: scale(1);
+    transform-origin: center;
+    -webkit-transform-origin: center;
   }
+
   50% {
-      transform: scale(1.16); /* 中间放大到1.16倍 */
-      -webkit-transform: scale(1.16);
+    transform: scale(1.16);
+    /* 中间放大到1.16倍 */
+    -webkit-transform: scale(1.16);
   }
+
   100% {
-      transform: scale(1); /* 最终状态恢复到原始大小 */
-      -webkit-transform: scale(1);
+    transform: scale(1);
+    /* 最终状态恢复到原始大小 */
+    -webkit-transform: scale(1);
   }
 }
+
 /** 右键点击选项结束 */
 </style>

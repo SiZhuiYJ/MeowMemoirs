@@ -1,20 +1,12 @@
 <template>
   <el-container class="layout-container">
-    <el-aside
-      class="layout-aside transition-all"
-      :style="{ width: !globalStore.isCollapse ? globalStore.menuWidth + 'px' : settings.asideMenuCollapseWidth }"
-    >
+    <el-aside class="layout-aside transition-all"
+      :style="{ width: !globalStore.isCollapse ? globalStore.menuWidth + 'px' : settings.asideMenuCollapseWidth }">
       <Logo :isCollapse="globalStore.isCollapse" :layout="globalStore.layout"></Logo>
       <el-scrollbar class="layout-scrollbar">
         <!-- :unique-opened="true" 子菜单不能同时展开 -->
-        <el-menu
-          :default-active="activeMenu"
-          :collapse="globalStore.isCollapse"
-          :collapse-transition="false"
-          :uniqueOpened="globalStore.uniqueOpened"
-          :router="false"
-          :class="menuAnimate"
-        >
+        <el-menu :default-active="activeMenu" :collapse="globalStore.isCollapse" :collapse-transition="false"
+          :uniqueOpened="globalStore.uniqueOpened" :router="false" :class="menuAnimate">
           <AsideSubMenu :menuList="menuList"></AsideSubMenu>
         </el-menu>
       </el-scrollbar>
@@ -30,15 +22,15 @@
 </template>
 
 <script setup lang="ts">
-import settings from "@/settings.ts";
+import settings from "@/settings";
 import Logo from "@/layouts/components/Logo/index.vue";
 import Header from "@/layouts/components/Header/index.vue";
 import AsideSubMenu from "@/layouts/components/Menu/AsideSubMenu.vue";
 import Main from "@/layouts/components/Main/index.vue";
 import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
-import useAuthStore from "@/stores/modules/auth.ts";
-import useGlobalStore from "@/stores/modules/global.ts";
+import useAuthStore from "@/stores/modules/auth";
+import useGlobalStore from "@/stores/modules/global";
 
 const route = useRoute();
 const authStore = useAuthStore();
@@ -57,6 +49,7 @@ const activeMenu = computed(() => (route.meta.activeMenu ? route.meta.activeMenu
 .layout-container {
   width: 100vw;
   height: 100vh;
+
   .layout-aside {
     z-index: $layout-aside-z-index; // 左侧菜单层级
     padding-right: $aside-menu-padding-right; // 左侧布局右边距[用于悬浮和选择更明显]
@@ -65,6 +58,7 @@ const activeMenu = computed(() => (route.meta.activeMenu ? route.meta.activeMenu
     border-right: none;
     box-shadow: $aside-menu-box-shadow; // 左侧布局右边框阴影
   }
+
   .layout-header {
     height: $aside-header-height;
     background-color: var(--el-header-bg-color);
@@ -75,6 +69,7 @@ const activeMenu = computed(() => (route.meta.activeMenu ? route.meta.activeMenu
 .el-menu {
   border-right: none;
 }
+
 .layout-scrollbar {
   width: 100%;
   height: calc(100vh - $aside-header-height);

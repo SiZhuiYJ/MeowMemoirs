@@ -21,11 +21,11 @@
 
 <script setup lang="ts">
 import HorizontalSubMenu from "@/layouts/components/Menu/HorizontalSubMenu.vue";
-import { koiMsgWarning } from "@/utils/koi.ts";
+import { koiMsgWarning } from "@/utils/message";
 import { useRouter } from "vue-router";
 const router = useRouter();
-import { getLanguage } from "@/utils/index.ts";
-import useGlobalStore from "@/stores/modules/global.ts";
+import { getLanguage } from "@/utils/index";
+import useGlobalStore from "@/stores/modules/global";
 
 const globalStore = useGlobalStore();
 

@@ -25,10 +25,10 @@
 
 <script setup lang="ts">
 import AsideSubMenu from "@/layouts/components/Menu/AsideSubMenu.vue";
-import { koiMsgWarning } from "@/utils/koi.ts";
+import { koiMsgWarning } from "@/utils/message";
 import { useRouter } from "vue-router";
-import { getLanguage } from "@/utils/index.ts";
-import useGlobalStore from "@/stores/modules/global.ts";
+import { getLanguage } from "@/utils/index";
+import useGlobalStore from "@/stores/modules/global";
 
 const globalStore = useGlobalStore();
 const router = useRouter();

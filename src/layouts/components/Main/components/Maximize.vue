@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import useGlobalStore from "@/stores/modules/global.ts";
+import useGlobalStore from "@/stores/modules/global";
 
 const globalStore = useGlobalStore();
 

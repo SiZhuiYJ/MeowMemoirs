@@ -141,7 +141,7 @@
 
 <script setup lang="ts" name="personagePage">
 import { nextTick, ref, reactive } from "vue";
-import { koiMsgError, koiMsgSuccess } from "@/utils/koi.ts";
+import { koiMsgError, koiMsgSuccess } from "@/utils/message";
 
 // 个人信息
 const mine = ref({

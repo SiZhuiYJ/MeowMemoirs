@@ -14,7 +14,11 @@ import * as ElementPlusIconsVue from "@element-plus/icons-vue";
 // 引入ElementPlus的暗黑模式css
 import "element-plus/theme-chalk/dark/css-vars.css";
 // 引入仓库pinia
-import pinia from "./stores/index.ts";
+import pinia from "./stores/index";
+// 引入全局组件配置
+import Components from "@/components/index";
+// 引入全局自定义指令
+import Directives from "@/directives/index";
 // 引入styles
 import "@/styles/index.scss";
 
@@ -29,5 +33,9 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 app.use(router);
 // 注册pinia
 app.use(pinia);
+// 全局组件
+app.use(Components);
+// 注册全局自定义指令
+app.use(Directives);
 // 挂载
 app.mount("#app");

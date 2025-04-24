@@ -198,7 +198,7 @@ import {
   koiMsgWarning,
   koiMsgBox,
   koiMsgInfo
-} from "@/utils/koi.ts";
+} from "@/utils/message";
 // @ts-ignore
 import { listPage, getById, add, update, deleteById, batchDelete, updateStatus } from "@/api/system/dict/type/index.ts";
 

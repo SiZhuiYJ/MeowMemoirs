@@ -55,7 +55,7 @@
 
 <script setup lang="ts" name="homePage">
 import { getDayText } from "@/utils/random";
-import { koiNoticeSuccess } from "@/utils/koi";
+import { koiNoticeSuccess } from "@/utils/message";
 import { onMounted } from "vue";
 onMounted(() => {
   // 时间问候语

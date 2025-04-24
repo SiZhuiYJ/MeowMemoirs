@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 
-import { koiMsgError } from "@/utils/koi.ts";
+import { koiMsgError } from "@/utils/message";
 import { LOGIN_URL } from "@/config/index.ts";
 import useUserStore from "@/stores/modules/user.ts";
 import { getToken } from "@/utils/storage.ts";

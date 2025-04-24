@@ -28,7 +28,7 @@ defineProps({
     </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .loading {
     position: relative;
     box-sizing: border-box;
@@ -82,8 +82,6 @@ defineProps({
             margin: 0 3px;
         }
     }
-
-
 }
 
 @keyframes power-eff {

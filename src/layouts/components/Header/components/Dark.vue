@@ -1,13 +1,14 @@
 <template>
-  <div class="hover:bg-[rgba(0,0,0,0.06)] w-32px h-100% flex flex-justify-center flex-items-center" @click="handleSwitchDark">
+  <div class="hover:bg-[rgba(0,0,0,0.06)] w-32px h-100% flex flex-justify-center flex-items-center"
+    @click="handleSwitchDark">
     <!-- 明亮模式 -->
-    <el-tooltip :content="$t('header.lightMode')" v-if="!globalStore.isDark">
+    <el-tooltip :content="'明亮模式'" v-if="!globalStore.isDark">
       <el-icon class="koi-icon" :size="size">
         <Sunny />
       </el-icon>
     </el-tooltip>
     <!-- 暗黑模式 -->
-    <el-tooltip :content="$t('header.darkMode')" v-if="globalStore.isDark">
+    <el-tooltip :content="'暗黑模式'" v-if="globalStore.isDark">
       <el-icon class="koi-icon" :size="size">
         <Moon />
       </el-icon>
@@ -16,8 +17,8 @@
 </template>
 
 <script setup lang="ts">
-import { useTheme } from "@/utils/theme.ts";
-import useGlobalStore from "@/stores/modules/global.ts";
+import { useTheme } from "@/utils/theme";
+import useGlobalStore from "@/stores/modules/global";
 
 const globalStore = useGlobalStore();
 const { switchDark } = useTheme();
@@ -74,15 +75,19 @@ const handleSwitchDark = async (event: MouseEvent) => {
   mix-blend-mode: normal;
   animation: none;
 }
+
 ::view-transition-old(root) {
   z-index: 9999;
 }
+
 ::view-transition-new(root) {
   z-index: 1;
 }
+
 .dark::view-transition-old(root) {
   z-index: 1;
 }
+
 .dark::view-transition-new(root) {
   z-index: 9999;
 }

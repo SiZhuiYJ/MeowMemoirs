@@ -243,7 +243,7 @@
 <script setup lang="ts" name="deptPage">
 import { nextTick, ref, reactive, onMounted } from "vue";
 // @ts-ignore
-import { koiNoticeSuccess, koiNoticeError, koiMsgError, koiMsgWarning, koiMsgBox, koiMsgInfo } from "@/utils/koi.ts";
+import { koiNoticeSuccess, koiNoticeError, koiMsgError, koiMsgWarning, koiMsgBox, koiMsgInfo } from "@/utils/message";
 import { handleTree } from "@/utils/index.ts";
 // @ts-ignore
 import {

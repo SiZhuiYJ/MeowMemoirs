@@ -1,10 +1,8 @@
 <template>
   <!-- 刷新 -->
-  <div
-    class="hover:bg-[rgba(0,0,0,0.06)] w-32px h-100% flex flex-justify-center flex-items-center"
-    @click="handleRefresh"
-  >
-    <el-tooltip :content="$t('header.refreshCache')">
+  <div class="hover:bg-[rgba(0,0,0,0.06)] w-32px h-100% flex flex-justify-center flex-items-center"
+    @click="handleRefresh">
+    <el-tooltip :content="'刷新缓存'">
       <el-icon class="koi-icon" :size="20">
         <RefreshRight />
       </el-icon>
@@ -13,9 +11,9 @@
 </template>
 
 <script setup lang="ts">
-import { koiMsgSuccess } from "@/utils/koi.ts";
+import { koiMsgSuccess } from "@/utils/message";
 import { LOGIN_URL } from "@/config";
-import { koiSessionStorage, koiLocalStorage } from "@/utils/storage.ts";
+import { koiSessionStorage, koiLocalStorage } from "@/utils/storage";
 
 /** 刷新路由 */
 const handleRefresh = () => {

@@ -212,7 +212,7 @@
 <script setup lang="ts" name="dictDataPage">
 import { nextTick, ref, reactive, onMounted } from "vue";
 // @ts-ignore
-import { koiNoticeSuccess, koiNoticeError, koiMsgError, koiMsgWarning, koiMsgBox, koiMsgInfo } from "@/utils/koi";
+import { koiNoticeSuccess, koiNoticeError, koiMsgError, koiMsgWarning, koiMsgBox, koiMsgInfo } from "@/utils/message";
 // @ts-ignore
 import {
   listDictType,

@@ -1,5 +1,5 @@
 import { reactive, onMounted } from "vue";
-import { listDataByType } from "@/api/system/dict/data/index.ts";
+import { listDataByType } from "@/api/system/dict/data/index";
 
 export function useKoiDict(dictType: Array<string>) {
   let koiDicts: any = reactive({});

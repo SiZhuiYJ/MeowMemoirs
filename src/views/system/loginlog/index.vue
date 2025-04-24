@@ -179,7 +179,7 @@
 <script setup lang="ts" name="loginlogPage">
 import { ref, onMounted } from "vue";
 // @ts-ignore
-import { koiNoticeSuccess, koiNoticeError, koiMsgWarning, koiMsgBox, koiMsgInfo, koiMsgError } from "@/utils/koi.ts";
+import { koiNoticeSuccess, koiNoticeError, koiMsgWarning, koiMsgBox, koiMsgInfo, koiMsgError } from "@/utils/message";
 // @ts-ignore
 import { koiDatePicker } from "@/utils/index.ts";
 // @ts-ignore

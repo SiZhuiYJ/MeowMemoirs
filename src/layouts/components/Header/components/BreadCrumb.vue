@@ -19,12 +19,12 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { HOME_URL, STATIC_URL } from "@/config/index.ts";
+import { HOME_URL, STATIC_URL } from "@/config/index";
 import { useRoute, useRouter } from "vue-router";
 import { ArrowRight } from "@element-plus/icons-vue";
-import useAuthStore from "@/stores/modules/auth.ts";
-import { getLanguage } from "@/utils/index.ts";
-import useGlobalStore from "@/stores/modules/global.ts";
+import useAuthStore from "@/stores/modules/auth";
+import { getLanguage } from "@/utils/index";
+import useGlobalStore from "@/stores/modules/global";
 
 const globalStore = useGlobalStore();
 const route = useRoute();

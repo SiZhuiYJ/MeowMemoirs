@@ -56,17 +56,17 @@
 </template>
 
 <script setup lang="ts">
-import settings from "@/settings.ts";
-import { SVG_PREFIX } from "@/config/index.ts";
+import settings from "@/settings";
+import { SVG_PREFIX } from "@/config/index";
 import Logo from "@/layouts/components/Logo/index.vue";
 import Header from "@/layouts/components/Header/index.vue";
 import ColumnSubMenu from "@/layouts/components/Menu/ColumnSubMenu.vue";
 import Main from "@/layouts/components/Main/index.vue";
 import { ref, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import useAuthStore from "@/stores/modules/auth.ts";
-import { getLanguage } from "@/utils/index.ts";
-import useGlobalStore from "@/stores/modules/global.ts";
+import useAuthStore from "@/stores/modules/auth";
+import { getLanguage } from "@/utils/index";
+import useGlobalStore from "@/stores/modules/global";
 
 const route = useRoute();
 const router = useRouter();

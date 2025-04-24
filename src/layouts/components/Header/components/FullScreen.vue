@@ -1,7 +1,8 @@
 <template>
   <!-- 全屏 -->
-  <div class="hover:bg-[rgba(0,0,0,0.06)] koi-icon w-32px h-100% flex flex-justify-center flex-items-center" @click="toggle">
-    <el-tooltip :content="globalStore.isFullScreen === false ? $t('header.fullScreen') : $t('header.exitFullScreen')">
+  <div class="hover:bg-[rgba(0,0,0,0.06)] koi-icon w-32px h-100% flex flex-justify-center flex-items-center"
+    @click="toggle">
+    <el-tooltip :content="globalStore.isFullScreen === false ? '全屏' : '退出全屏'">
       <el-icon class="koi-icon" :size="18">
         <FullScreen v-if="!globalStore.isFullScreen" />
         <CloseBold v-else />
@@ -13,7 +14,7 @@
 <script setup lang="ts">
 import { useFullscreen } from "@vueuse/core";
 import { watch } from "vue";
-import useGlobalStore from "@/stores/modules/global.ts";
+import useGlobalStore from "@/stores/modules/global";
 
 const globalStore = useGlobalStore();
 // @vueuse/core 处理是否全屏

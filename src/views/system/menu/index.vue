@@ -327,7 +327,7 @@
 
 <script setup lang="ts" name="menuPage">
 import { nextTick, ref, reactive, onMounted } from "vue";
-import { koiNoticeSuccess, koiNoticeError, koiMsgError, koiMsgWarning, koiMsgBox, koiMsgInfo } from "@/utils/koi.ts";
+import { koiNoticeSuccess, koiNoticeError, koiMsgError, koiMsgWarning, koiMsgBox, koiMsgInfo } from "@/utils/message";
 import { handleTree } from "@/utils/index.ts";
 import {
   list,
