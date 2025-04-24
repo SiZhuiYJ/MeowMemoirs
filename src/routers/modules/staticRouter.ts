@@ -1,4 +1,4 @@
-import { RouteRecordRaw } from "vue-router";
+import type { RouteRecordRaw } from "vue-router";
 import { HOME_URL, LOGIN_URL } from "@/config";
 import Layout from "@/layouts/index.vue";
 

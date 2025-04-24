@@ -1,5 +1,5 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
-
+import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
+import axios from "axios"
 import { koiMsgError } from "@/utils/message";
 import { LOGIN_URL } from "@/config/index.ts";
 import useUserStore from "@/stores/modules/user.ts";

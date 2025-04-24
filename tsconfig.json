@@ -9,6 +9,8 @@
     }
   ],
   "compilerOptions": {
+    "moduleResolution": "node", // 模块解析策略，node表示使用Node.js的模块解析方式
+    "module": "ESNext",
     "baseUrl": "./", // 解析非相对模块的基地址，默认是当前目录
     "paths": {
       // 路径映射，相对于baseUrl

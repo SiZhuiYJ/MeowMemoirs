@@ -1,35 +1,83 @@
-<template>
-  <svg :style="{ width: width + 'px', height: height + 'px' }">
-    <use :xlink:href="prefix + name" :fill="color"></use>
-  </svg>
-</template>
-
-<script setup lang="ts">
-// 组件使用，图标需要放置@/assets/icons文件夹下，图标名字需要跟name="图标名称"保持一致。
-// <KoiSvgIcon name="koi-mobile-menu" width="30" height="30"></KoiSvgIcon>
-defineProps({
-  // xlink:href属性值的前缀
-  prefix: {
+<script lang="ts" setup>
+import { computed, defineAsyncComponent } from 'vue'
+const props = defineProps({
+  // 名称
+  name: {
     type: String,
-    default: "#icon-"
+    default: '',
+    required: true,
   },
-  // svg矢量图的名字
-  name: String,
-  // svg图标的颜色
+  // 大小
+  size: {
+    type: Number,
+    default: 24,
+  },
+  // 颜色
   color: {
     type: String,
-    default: ""
+    default: '',
   },
-  // svg宽度
-  width: {
+  // class
+  className: {
     type: String,
-    default: "18"
+    default: '',
   },
-  // svg高度
-  height: {
+  // 无障碍朗读文本
+  ariaTitle: {
     type: String,
-    default: "18"
+    default: '',
+  },
+})
+
+const svgStyle = computed(() => {
+  return {
+    width: props.size + 'px',
+    height: props.size + 'px',
+    color: props.color,
   }
-});
+})
+const svgModules = import.meta.glob('@/assets/svgs/**/*.svg')
+const svgIconMap: Record<string, () => Promise<any>> = {}
+
+Object.keys(svgModules).forEach((path) => {
+  const relativePath = path.replace('/src/assets/svgs/', '').replace('.svg', '')
+  // 子文件夹里svg 命名空间
+  const iconName = relativePath.replace(/\//g, '-')
+  console.log('svgModules', svgModules)
+  console.log('path', path)
+  console.log('svgIconMap', svgIconMap)
+  console.log('relativePath', relativePath)
+  console.log('iconName', iconName)
+  svgIconMap[iconName] = svgModules[path]
+})
+
+const iconComponent = computed(() => {
+  console.log('props.name', props.name)
+  const component = defineAsyncComponent(svgIconMap[props.name])
+  return component
+})
 </script>
-<style scoped></style>
+
+<template>
+  <Suspense>
+    <template #default>
+      <component v-if="iconComponent" :is="iconComponent" class="svg-icon" :style="svgStyle" :class="className"
+        :aria-hidden="ariaTitle ? 'false' : 'true'" role="img" :aria-label="ariaTitle"></component>
+    </template>
+    <template #fallback>
+      <div class="svg-icon-placeholder" :style="{ width: svgStyle.width, height: svgStyle.height }"></div>
+    </template>
+  </Suspense>
+</template>
+
+<style scoped>
+.svg-icon,
+.svg-icon-placeholder {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.svg-icon-placeholder {
+  background-color: #ccc;
+}
+</style>

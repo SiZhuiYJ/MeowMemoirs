@@ -1,7 +1,6 @@
 {
   "extends": "@vue/tsconfig/tsconfig.dom.json",
   "compilerOptions": {
-    "moduleResolution": "node", // 模块解析策略，node表示使用Node.js的模块解析方式
     "resolveJsonModule": true, // 允许导入JSON模块
     "composite": true,
     "baseUrl": "./", // 解析非相对模块的基地址，默认是当前目录

@@ -4,7 +4,9 @@ import path from "path";
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    vue(),
+  ],
   // resolve: {
   //   // 配置路径别名
   //   alias: {
@@ -19,6 +21,8 @@ export default defineConfig({
       "@": path.join(__dirname, "./src"),
     }
   },
+
+
   css: {
     // css全局变量使用，@/styles/variable.scss文件
     preprocessorOptions: {
