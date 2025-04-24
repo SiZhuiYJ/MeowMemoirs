@@ -1,19 +1,23 @@
 <template>
   <div>
     <!-- 明亮模式 -->
-    <el-tooltip :content="$t('header.lightMode')" v-if="!globalStore.isDark">
-      <KoiSvgIcon name="koi-menu-sun" width="20" height="20" class="rounded-full p-6px bg-[rgba(50,50,50,0.06)] dark:bg-[rgba(255,255,255,0.06)] m-r-10px border-none outline-none" @click="handleSwitchDark"></KoiSvgIcon>
+    <el-tooltip :content="'明亮模式'" v-if="!globalStore.isDark">
+      <KoiSvgIcon name="menu-sun" width="20" height="20"
+        class="rounded-full p-6px bg-[rgba(50,50,50,0.06)] dark:bg-[rgba(255,255,255,0.06)] m-r-10px border-none outline-none"
+        @click="handleSwitchDark"></KoiSvgIcon>
     </el-tooltip>
     <!-- 暗黑模式 -->
-    <el-tooltip :content="$t('header.darkMode')" v-if="globalStore.isDark">
-      <KoiSvgIcon name="koi-menu-moon" width="20" height="20" class="rounded-full p-6px bg-[rgba(50,50,50,0.06)] dark:bg-[rgba(255,255,255,0.06)] m-r-10px border-none outline-none" @click="handleSwitchDark"></KoiSvgIcon>
+    <el-tooltip :content="'暗黑模式'" v-if="globalStore.isDark">
+      <KoiSvgIcon name="menu-moon" width="20" height="20"
+        class="rounded-full p-6px bg-[rgba(50,50,50,0.06)] dark:bg-[rgba(255,255,255,0.06)] m-r-10px border-none outline-none"
+        @click="handleSwitchDark"></KoiSvgIcon>
     </el-tooltip>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useTheme } from "@/utils/theme.ts";
-import useGlobalStore from "@/stores/modules/global.ts";
+import { useTheme } from "@/utils/theme";
+import useGlobalStore from "@/stores/modules/global";
 
 const globalStore = useGlobalStore();
 const { switchDark } = useTheme();
@@ -70,15 +74,19 @@ const handleSwitchDark = async (event: MouseEvent) => {
   mix-blend-mode: normal;
   animation: none;
 }
+
 ::view-transition-old(root) {
   z-index: 9999;
 }
+
 ::view-transition-new(root) {
   z-index: 1;
 }
+
 .dark::view-transition-old(root) {
   z-index: 1;
 }
+
 .dark::view-transition-new(root) {
   z-index: 9999;
 }

@@ -51,9 +51,9 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import settings from "@/settings";
-import logoUrl from "@/assets/images/logo/logo.webp";
-import { getLanguage } from "@/utils/index.ts";
-import useGlobalStore from "@/stores/modules/global.ts";
+import logoUrl from "@/assets/images/logo/logo.svg";
+import { getLanguage } from "@/utils/index";
+import useGlobalStore from "@/stores/modules/global";
 
 const globalStore = useGlobalStore();
 

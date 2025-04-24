@@ -2,13 +2,13 @@
   <div class="koi-flex">
     <KoiCard>
       <span>
-        Gitee仓库：
-        <a href="https://gitee.com/BigCatHome/koi-ui" target="_blank">https://gitee.com/BigCatHome/koi-ui</a>
+        Github仓库：
+        <a href="https://github.com/lovejjw/MeowMemoirs" target="_blank">https://github.com/lovejjw/MeowMemoirs</a>
       </span>
     </KoiCard>
   </div>
 </template>
 
-<script setup lang="ts" name="gitee"></script>
+<script setup lang="ts" name="Github"></script>
 
 <style scoped lang="scss"></style>

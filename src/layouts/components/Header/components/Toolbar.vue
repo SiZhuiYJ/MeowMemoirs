@@ -8,8 +8,6 @@
     <Refresh class="<md:visible"></Refresh>
     <!-- 明亮/暗黑模式图标 -->
     <Dark></Dark>
-    <!-- 中英文翻译 -->
-    <Language class="<md:visible"></Language>
     <!-- 全屏图标 -->
     <FullScreen></FullScreen>
     <!-- 主题配置 -->
@@ -26,7 +24,6 @@ import Dark from "@/layouts/components/Header/components/Dark.vue";
 import ThemeSetting from "@/layouts/components/Header/components/ThemeSetting.vue";
 import Refresh from "@/layouts/components/Header/components/Refresh.vue";
 import Dimension from "@/layouts/components/Header/components/Dimension.vue";
-import Language from "@/layouts/components/Header/components/Language.vue";
 import SearchMenu from "@/layouts/components/Header/components/SearchMenu.vue";
 </script>
 

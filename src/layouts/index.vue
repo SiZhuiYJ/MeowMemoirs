@@ -9,17 +9,17 @@
 </template>
 
 <script setup lang="ts" name="layout">
-import { useScreenStore } from "@/hooks/screen/index.ts";
+import { useScreenStore } from "@/hooks/screen/index";
 import { computed, type Component } from "vue";
 // 全局主题配置
-// import useGlobalStore from "@/stores/modules/global.ts";
-// import ThemeConfig from "@/layouts/components/ThemeConfig/index.vue";
-// import LayoutVertical from "@/layouts/LayoutVertical/index.vue";
-// import LayoutColumns from "@/layouts/LayoutColumns/index.vue";
-// import LayoutClassic from "@/layouts/LayoutClassic/index.vue";
-// import LayoutHorizontal from "@/layouts/LayoutHorizontal/index.vue";
-// import LayoutOptimum from "@/layouts/LayoutOptimum/index.vue";
-// import LayoutMobile from "@/layouts/LayoutMobile/index.vue";
+import useGlobalStore from "@/stores/modules/global";
+import ThemeConfig from "@/layouts/components/ThemeConfig/index.vue";
+import LayoutVertical from "@/layouts/LayoutVertical/index.vue";
+import LayoutColumns from "@/layouts/LayoutColumns/index.vue";
+import LayoutClassic from "@/layouts/LayoutClassic/index.vue";
+import LayoutHorizontal from "@/layouts/LayoutHorizontal/index.vue";
+import LayoutOptimum from "@/layouts/LayoutOptimum/index.vue";
+import LayoutMobile from "@/layouts/LayoutMobile/index.vue";
 
 type LayoutType = "vertical" | "columns" | "classic" | "horizontal" | 'optimum' | string;
 const LayoutComponent: Record<LayoutType, Component> = {

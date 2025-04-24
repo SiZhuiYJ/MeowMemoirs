@@ -2,7 +2,6 @@
   <div class="h-full">
     <el-row class="h-100%">
       <div class="absolute top-10px right-10px flex flex-items-center">
-        <KoiLanguage></KoiLanguage>
         <KoiDark></KoiDark>
       </div>
       <el-col :lg="16" :md="12" :sm="15" :xs="0" class="flex flex-items-center flex-justify-center">
@@ -10,81 +9,59 @@
         <div class="absolute text-center select-none">
           <el-image class="w-400px h-360px mb-50px animate-float <md:hidden <lg:w-360px h-320px" :src="bg" />
           <div class="font-bold text-3xl chroma-text mb-6px text-center <lg:text-2xl <md:hidden">
-            {{ $t("login.welcome") }} {{ loginTitle || "KOI-ADMIN 管理平台" }}
+            欢迎登录 {{ loginTitle || "MeowMemoirs 管理平台" }}
           </div>
-          <div class="chroma-text text-lg text-center <md:hidden">{{ $t("login.description") }}</div>
+          <div class="chroma-text text-lg text-center <md:hidden">许我们只是差点运气</div>
         </div>
         <!-- 备案号-->
         <div class="beianhao select-none <md:hidden">
-          <a class="chroma-text" href="https://beian.miit.gov.cn/" target="_blank"
-            >{{ $t("login.beianhao") }}：豫ICP备2022022094号-1</a
-          >
+          <a class="chroma-text" href="https://beian.miit.gov.cn/" target="_blank">站备案号：豫ICP备20********号-*</a>
         </div>
       </el-col>
-      <el-col :lg="8" :md="12" :sm="9" :xs="24" class="dark:bg-#161616 bg-gray-100 flex flex-items-center flex-justify-center flex-col">
+      <el-col :lg="8" :md="12" :sm="9" :xs="24"
+        class="dark:bg-#161616 bg-gray-100 flex flex-items-center flex-justify-center flex-col">
         <div class="flex flex-items-center">
           <el-image class="rounded-full w-36px h-36px" :src="logo" />
           <div class="ml-6px font-bold text-xl">{{ loginTitle || "KOI-ADMIN 管理平台" }}</div>
         </div>
         <div class="flex flex-items-center space-x-3 text-gray-400 mt-16px mb-16px">
           <span class="h-1px w-16 bg-gray-300 inline-block"></span>
-          <span class="text-center">{{ $t("login.account") }}</span>
+          <span class="text-center">账号密码登录</span>
           <span class="h-1px w-16 bg-gray-300 inline-block"></span>
         </div>
         <!-- 输入框盒子 -->
         <el-form ref="loginFormRef" :model="loginForm" :rules="loginRules" class="w-260px">
           <el-form-item prop="loginName">
-            <el-input type="text" :placeholder="$t('login.loginName')" :suffix-icon="User" v-model="loginForm.loginName" />
+            <el-input type="text" :placeholder="'输入用户名'" :suffix-icon="User" v-model="loginForm.loginName" />
           </el-form-item>
           <el-form-item prop="password">
-            <el-input
-              type="password"
-              :placeholder="$t('login.password')"
-              show-password
-              :suffix-icon="Lock"
-              v-model="loginForm.password"
-            />
+            <el-input type="password" :placeholder="'请输入密码'" show-password :suffix-icon="Lock"
+              v-model="loginForm.password" />
           </el-form-item>
           <el-form-item prop="securityCode">
-            <el-input
-              type="text"
-              :placeholder="$t('login.security')"
-              :suffix-icon="Open"
-              v-model="loginForm.securityCode"
-              @keydown.enter="handleKoiLogin"
-            ></el-input>
+            <el-input type="text" :placeholder="'请输入验证码'" :suffix-icon="Open" v-model="loginForm.securityCode"
+              @keydown.enter="handleKoiLogin"></el-input>
           </el-form-item>
           <el-form-item>
             <el-image class="w-100px h-30px" :src="loginForm.captchaPicture" @click="handleCaptcha" />
             <el-button text size="small" class="ml-6px" @click="handleCaptcha">
-              <div class="text-gray-400 hover:text-#8B5CF6 select-none">{{ $t("login.blur") }}</div>
+              <div class="text-gray-400 hover:text-#8B5CF6 select-none">看不清，换一张</div>
             </el-button>
           </el-form-item>
           <!-- 登录按钮 -->
           <el-form-item>
-            <el-button
-              type="primary"
-              v-if="!loading"
-              class="w-245px bg-[--el-color-primary]"
-              round
-              v-throttle:3000="handleKoiLogin"
-              >{{ $t("login.in") }}</el-button
-            >
-            <el-button type="primary" v-else class="w-245px bg-[--el-color-primary]" round :loading="loading">{{
-              $t("login.center")
-            }}</el-button>
+            <el-button type="primary" v-if="!loading" class="w-245px bg-[--el-color-primary]" round
+              v-throttle:3000="handleKoiLogin">登录</el-button>
+            <el-button type="primary" v-else class="w-245px bg-[--el-color-primary]" round
+              :loading="loading">登录中</el-button>
           </el-form-item>
         </el-form>
         <!-- 备案号-->
         <div class="beianhao select-none lg:hidden">
-          <a class="chroma-text" href="https://beian.miit.gov.cn/" target="_blank"
-            >{{ $t("login.beianhao") }}：豫ICP备2022022094号-1</a
-          >
+          <a class="chroma-text" href="https://beian.miit.gov.cn/" target="_blank">站备案号：豫ICP备20********号-*</a>
         </div>
       </el-col>
     </el-row>
-
-    <KoiLoading></KoiLoading>
   </div>
 </template>
 
@@ -94,23 +71,21 @@ import { User, Lock, Open } from "@element-plus/icons-vue";
 import { ref, reactive, onMounted, onUnmounted, computed } from "vue";
 
 import type { FormInstance, FormRules } from "element-plus";
-import { koiMsgWarning, koiMsgError } from "@/utils/koi.ts";
+import { koiMsgWarning, koiMsgError } from "@/utils/koi";
 import { useRouter } from "vue-router";
 // import { koiLogin, getCaptcha } from "@/api/system/login/index.ts";
 import authLogin from "@/assets/json/authLogin.json";
-import useUserStore from "@/stores/modules/user.ts";
-import useKeepAliveStore from "@/stores/modules/keepAlive.ts";
-import { HOME_URL, LOGIN_URL } from "@/config/index.ts";
-import { initDynamicRouter } from "@/routers/modules/dynamicRouter.ts";
-import useTabsStore from "@/stores/modules/tabs.ts";
-import logo from "@/assets/images/logo/logo.webp";
-import bg from "@/assets/images/login/bg.png";
+import useUserStore from "@/stores/modules/user";
+import useKeepAliveStore from "@/stores/modules/keepAlive";
+import { HOME_URL, LOGIN_URL } from "@/config/index";
+import { initDynamicRouter } from "@/routers/modules/dynamicRouter";
+import useTabsStore from "@/stores/modules/tabs";
+import logo from "@/assets/images/logo/logo.svg";
+import bg from "@/assets/images/login/bg.webp";
 import settings from "@/settings";
 import KoiDark from "./components/KoiDark.vue";
-import KoiLoading from "./components/KoiLoading.vue";
-import KoiLanguage from "./components/KoiLanguage.vue";
-import { getLanguage } from "@/utils/index.ts";
-import useGlobalStore from "@/stores/modules/global.ts";
+import { getLanguage } from "@/utils/index";
+import useGlobalStore from "@/stores/modules/global";
 
 
 // 标题语言切换
@@ -271,9 +246,11 @@ const handleKoiLogin = () => {
   0% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-20px);
   }
+
   100% {
     transform: translateY(0);
   }

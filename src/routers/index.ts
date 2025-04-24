@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory, createWebHistory } from "vue-router";
 import { layoutRouter, staticRouter, errorRouter } from "@/routers/modules/staticRouter";
 import nprogress from "@/utils/nprogress";
-import { RouteLocationNormalized, NavigationGuardNext } from "vue-router";
+import type { RouteLocationNormalized, NavigationGuardNext } from "vue-router";
 import useUserStore from "@/stores/modules/user.ts";
 import useAuthStore from "@/stores/modules/auth.ts";
 import { LOGIN_URL, ROUTER_WHITE_LIST } from "@/config/index.ts";
@@ -50,7 +50,7 @@ router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormali
   } else {
     document.title = to.meta.title || import.meta.env.VITE_WEB_TITLE;
   }
-  
+
   // 3、判断是访问登陆页，有Token访问当前页面，token过期访问接口，axios封装则自动跳转登录页面，没有Token重置路由到登陆页。
   if (to.path.toLocaleLowerCase() === LOGIN_URL) {
     // 有Token访问当前页面
@@ -109,7 +109,7 @@ router.onError(error => {
  */
 // @ts-ignore
 router.afterEach((to: RouteLocationNormalized, from: RouteLocationNormalized) => {
-  // console.log("后置守卫", to, from);
+  console.log("后置守卫", to, from);
   // 结束全屏动画
   nprogress.done();
 });

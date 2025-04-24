@@ -21,16 +21,16 @@
 import TabMenu from "@/layouts/components/Tabs/components/TabMenu.vue";
 // @ts-ignore
 import Sortable from "sortablejs";
-import { koiMsgWarning } from "@/utils/koi.ts";
+import { koiMsgWarning } from "@/utils/koi";
 import { TabsPaneContext } from "element-plus";
 import { ref, watch, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { HOME_URL } from "@/config/index.ts";
+import { HOME_URL } from "@/config/index";
 
-import useTabsStore from "@/stores/modules/tabs.ts";
-import useAuthStore from "@/stores/modules/auth.ts";
-import { getLanguage } from "@/utils/index.ts";
-import useGlobalStore from "@/stores/modules/global.ts";
+import useTabsStore from "@/stores/modules/tabs";
+import useAuthStore from "@/stores/modules/auth";
+import { getLanguage } from "@/utils/index";
+import useGlobalStore from "@/stores/modules/global";
 
 const globalStore = useGlobalStore();
 

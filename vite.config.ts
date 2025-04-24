@@ -19,4 +19,12 @@ export default defineConfig({
       "@": path.join(__dirname, "./src"),
     }
   },
+  css: {
+    // css全局变量使用，@/styles/variable.scss文件
+    preprocessorOptions: {
+      scss: {
+        additionalData: '@use "@/styles/variable.scss" as *;'
+      }
+    }
+  },
 })
