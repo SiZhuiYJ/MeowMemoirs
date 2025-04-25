@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 import { useRouter } from "vue-router";
-import { HOME_URL } from "@/config/index.ts";
+import { HOME_URL } from "@/config/index";
 
 // 路由跳转
 const router = useRouter();

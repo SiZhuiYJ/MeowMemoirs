@@ -2,7 +2,7 @@
   <el-container class="layout-container">
     <el-header class="layout-header flex flex-items-center flex-justify-between">
       <div class="w-30px flex flex-items-center">
-        <SvgIcon name="mobile-menu" width="30" height="30" @click="mobileDrawer = true"></SvgIcon>
+        <SvgIcon name="mobile-menu" :size="30" @click="mobileDrawer = true"></SvgIcon>
       </div>
       <div class="flex flex-items-center h-100%">
         <!-- 明亮/暗黑模式图标 -->

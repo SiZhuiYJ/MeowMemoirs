@@ -5,8 +5,10 @@
     <el-sub-menu v-if="item.children?.length" :index="item.path">
       <template #title>
         <KoiGlobalIcon v-if="item.meta.icon" :name="item.meta.icon" size="18"></KoiGlobalIcon>
-        <el-tooltip :content="getLanguage(globalStore.language, item.meta?.title, item.meta?.enName)" :show-after="2000" placement="right">
-          <span class="menu-ellipsis" v-text="getLanguage(globalStore.language, item.meta?.title, item.meta?.enName)"></span>
+        <el-tooltip :content="getLanguage(globalStore.language, item.meta?.title, item.meta?.enName)" :show-after="2000"
+          placement="right">
+          <span class="menu-ellipsis"
+            v-text="getLanguage(globalStore.language, item.meta?.title, item.meta?.enName)"></span>
         </el-tooltip>
       </template>
       <ColumnSubMenu :menuList="item.children" />
@@ -15,8 +17,10 @@
     <el-menu-item v-else :index="item.path" @click="handleMenuRouter(item)">
       <KoiGlobalIcon v-if="item.meta.icon" :name="item.meta.icon" size="18"></KoiGlobalIcon>
       <template #title>
-        <el-tooltip :content="getLanguage(globalStore.language, item.meta?.title, item.meta?.enName)" :show-after="2000" placement="right">
-          <span class="menu-ellipsis" v-text="getLanguage(globalStore.language, item.meta?.title, item.meta?.enName)"></span>
+        <el-tooltip :content="getLanguage(globalStore.language, item.meta?.title, item.meta?.enName)" :show-after="2000"
+          placement="right">
+          <span class="menu-ellipsis"
+            v-text="getLanguage(globalStore.language, item.meta?.title, item.meta?.enName)"></span>
         </el-tooltip>
       </template>
     </el-menu-item>
@@ -27,8 +31,8 @@
 import ColumnSubMenu from "@/layouts/components/Menu/ColumnSubMenu.vue";
 import { koiMsgWarning } from "@/utils/message";
 import { useRouter } from "vue-router";
-import { getLanguage } from "@/utils/index.ts";
-import useGlobalStore from "@/stores/modules/global.ts";
+import { getLanguage } from "@/utils/index";
+import useGlobalStore from "@/stores/modules/global";
 
 const globalStore = useGlobalStore();
 const router = useRouter();
@@ -70,9 +74,11 @@ const handleMenuRouter = (value: any) => {
 
   // @apply dark:c-#E5E3FA;
   color: var(--el-menu-text-color);
+
   i {
     transform: translate($aside-menu-font-icon-translate); // 图标偏移
   }
+
   span {
     transform: translate($aside-menu-font-icon-translate); // 文字偏移
   }
@@ -116,18 +122,22 @@ const handleMenuRouter = (value: any) => {
 
   // @apply dark:c-#E5E3FA;
   color: var(--el-menu-text-color);
+
   i {
     transform: translate($aside-menu-font-icon-translate); // 图标偏移
   }
+
   span {
     transform: translate($aside-menu-font-icon-translate); // 文字偏移
   }
+
   &:hover {
     // color: var(--el-color-primary);
     color: var(--el-menu-hover-text-color);
     // background: var(--el-color-primary-light-8);
     background: var(--el-menu-hover-bg-color);
   }
+
   &:active {
     // color: var(--el-color-primary);
     color: var(--el-menu-active-text-color);
@@ -139,13 +149,13 @@ const handleMenuRouter = (value: any) => {
 
 <style lang="scss">
 /** 子级菜单字体高亮，父级菜单也高亮 */
-.el-sub-menu.is-active > .el-sub-menu__title {
+.el-sub-menu.is-active>.el-sub-menu__title {
   // color: var(--el-color-primary) !important;
   color: var(--el-menu-active-text-color) !important;
 }
 
 /** icon图标也跟着变 */
-.el-sub-menu.is-active > .el-sub-menu__title i {
+.el-sub-menu.is-active>.el-sub-menu__title i {
   // color: var(--el-color-primary) !important;
   color: var(--el-menu-active-text-color) !important;
 }

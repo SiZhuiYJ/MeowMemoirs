@@ -1,20 +1,3 @@
-<template>
-  <div>
-    <!-- 明亮模式 -->
-    <el-tooltip :content="'明亮模式'" v-if="!globalStore.isDark">
-      <SvgIcon name="menu-sun" :size="20"
-        class="rounded-full p-6px bg-[rgba(50,50,50,0.06)] dark:bg-[rgba(255,255,255,0.06)] m-r-10px border-none outline-none"
-        @click="handleSwitchDark"></SvgIcon>
-    </el-tooltip>
-    <!-- 暗黑模式 -->
-    <el-tooltip :content="'暗黑模式'" v-if="globalStore.isDark">
-      <SvgIcon name="menu-moon" :size="20"
-        class="rounded-full p-6px bg-[rgba(50,50,50,0.06)] dark:bg-[rgba(255,255,255,0.06)] m-r-10px border-none outline-none"
-        @click="handleSwitchDark"></SvgIcon>
-    </el-tooltip>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { useTheme } from "@/utils/theme";
 import useGlobalStore from "@/stores/modules/global";
@@ -67,7 +50,36 @@ const handleSwitchDark = async (event: MouseEvent) => {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<template>
+  <div>
+    <!-- 明亮模式 -->
+    <el-tooltip :content="'明亮模式'" v-if="!globalStore.isDark">
+      <SvgIcon name="menu-sun" :size="20" class="icon-wrapper light" @click="handleSwitchDark"></SvgIcon>
+    </el-tooltip>
+    <!-- 暗黑模式 -->
+    <el-tooltip :content="'暗黑模式'" v-if="globalStore.isDark">
+      <SvgIcon name="menu-moon" :size="20" class="icon-wrapper dark" @click="handleSwitchDark"></SvgIcon>
+    </el-tooltip>
+  </div>
+</template>
+
+<style lang="scss" scoped>
+.icon-wrapper {
+  border-radius: 9999px;
+  padding: 6px;
+  margin-right: 10px;
+  border: none;
+  outline: none;
+
+  &.light {
+    background-color: rgba(50, 50, 50, 0.06);
+  }
+
+  &.dark {
+    background-color: rgba(255, 255, 255, 0.06);
+  }
+}
+</style>
 <style lang="scss">
 ::view-transition-old(root),
 ::view-transition-new(root) {

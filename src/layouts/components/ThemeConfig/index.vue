@@ -316,7 +316,7 @@
 import { nextTick, ref } from "vue";
 import { useTheme } from "@/utils/theme";
 import { storeToRefs } from "pinia";
-import mittBus from "@/utils/mittBus.ts";
+import mittBus from "@/utils/mittBus";
 import useGlobalStore from "@/stores/modules/global";
 
 const globalStore = useGlobalStore();

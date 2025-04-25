@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 import { useRouter } from "vue-router";
-import { HOME_URL } from "@/config/index.ts";
+import { HOME_URL } from "@/config/index";
 
 // 路由跳转
 const router = useRouter();
@@ -26,25 +26,30 @@ const handleHomePage = () => {
 #box {
   overflow: hidden;
 }
+
 #banner {
   margin-top: 60px;
   background: url("@/assets/images/error/404.png") no-repeat;
   background-size: 100%;
 }
+
 .koi-top {
   width: 600px;
   height: 500px;
   margin: 0 auto;
 }
+
 .koi-bottom {
   height: 300px;
   margin-top: 20px;
   text-align: center;
 }
+
 .koi-text1 {
   font-size: 46px;
   font-weight: bold;
 }
+
 .koi-text2 {
   padding-top: 30px;
   font-family: YouYuan;

@@ -3,44 +3,32 @@
   <el-container class="layout-container">
     <div class="layout-column">
       <el-scrollbar>
-        <div
-          v-for="item in menuList"
-          :key="item.path"
-          class="left-column"
-          :class="{
-            'is-active': columnActive === item.path || `/${columnActive.split('/')[1]}` === item.path
-          }"
-          @click="handleSubMenu(item)"
-        >
+        <div v-for="item in menuList" :key="item.path" class="left-column" :class="{
+          'is-active': columnActive === item.path || `/${columnActive.split('/')[1]}` === item.path
+        }" @click="handleSubMenu(item)">
           <el-icon v-if="item.meta.icon && item.meta.icon.indexOf(SVG_PREFIX) == -1">
             <component :is="item.meta.icon"></component>
           </el-icon>
           <!-- 本地SVG -->
           <el-icon v-if="item.meta.icon && item.meta.icon.indexOf(SVG_PREFIX) == 0">
-            <component is="KoiSvgIcon" :name="item.meta.icon"></component>
+            <component is="SvgIcon" :name="item.meta.icon"></component>
           </el-icon>
-          <el-tooltip :content="getLanguage(globalStore.language, item.meta?.title, item.meta?.enName)" :show-after="2000" placement="top">
-            <span class="title line-clamp-2">{{ getLanguage(globalStore.language, item.meta?.title, item.meta?.enName) }}</span>
+          <el-tooltip :content="getLanguage(globalStore.language, item.meta?.title, item.meta?.enName)"
+            :show-after="2000" placement="top">
+            <span class="title line-clamp-2">{{ getLanguage(globalStore.language, item.meta?.title, item.meta?.enName)
+              }}</span>
           </el-tooltip>
         </div>
       </el-scrollbar>
     </div>
-    <el-aside
-      class="layout-aside transition-all"
+    <el-aside class="layout-aside transition-all"
       :style="{ width: !globalStore.isCollapse ? globalStore.menuWidth + 'px' : settings.columnMenuCollapseWidth }"
-      v-if="subMenuList.length != 0"
-    >
+      v-if="subMenuList.length != 0">
       <Logo :isCollapse="globalStore.isCollapse" :layout="globalStore.layout"></Logo>
       <el-scrollbar class="layout-scrollbar">
         <!-- :unique-opened="true" 子菜单不能同时展开 -->
-        <el-menu
-          :default-active="activeMenu"
-          :collapse="globalStore.isCollapse"
-          :collapse-transition="false"
-          :uniqueOpened="globalStore.uniqueOpened"
-          :router="false"
-          :class="menuAnimate"
-        >
+        <el-menu :default-active="activeMenu" :collapse="globalStore.isCollapse" :collapse-transition="false"
+          :uniqueOpened="globalStore.uniqueOpened" :router="false" :class="menuAnimate">
           <ColumnSubMenu :menuList="subMenuList"></ColumnSubMenu>
         </el-menu>
       </el-scrollbar>
@@ -132,6 +120,7 @@ const activeMenu = computed(() => (route.meta.activeMenu ? route.meta.activeMenu
   user-select: none;
   background-color: var(--el-menu-bg-color); // 用来做色弱模式
   box-shadow: $column-menu-box-shadow; // 双栏最左侧右边框阴影
+
   .left-column {
     display: flex;
     flex-direction: column;
@@ -145,6 +134,7 @@ const activeMenu = computed(() => (route.meta.activeMenu ? route.meta.activeMenu
     border-radius: 4px;
     // border: 1px solid var(--el-border-color);
     border: 1px solid transparent;
+
     &:hover {
       // color: var(--el-color-primary);
       color: var(--el-menu-hover-text-color);
@@ -154,6 +144,7 @@ const activeMenu = computed(() => (route.meta.activeMenu ? route.meta.activeMenu
       border: 1px solid var(--el-menu-border-left-color);
       border-radius: 4px;
     }
+
     &.is-active {
       // color: var(--el-color-primary);
       color: var(--el-menu-hover-text-color);
@@ -163,9 +154,11 @@ const activeMenu = computed(() => (route.meta.activeMenu ? route.meta.activeMenu
       border: 1px solid var(--el-menu-border-left-color);
       border-radius: 4px;
     }
+
     .el-icon {
       font-size: 18px;
     }
+
     .title {
       margin-top: 8px;
       font-size: 12px;
@@ -176,10 +169,12 @@ const activeMenu = computed(() => (route.meta.activeMenu ? route.meta.activeMenu
     }
   }
 }
+
 .layout-container {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+
   .layout-aside {
     z-index: $layout-aside-z-index; // 左侧菜单层级
     padding-right: $column-menu-padding-right; // 左侧布局右边距[用于悬浮和选择更明显]
@@ -188,10 +183,12 @@ const activeMenu = computed(() => (route.meta.activeMenu ? route.meta.activeMenu
     border-right: none;
     box-shadow: $aside-menu-box-shadow; // 双栏左侧布局菜单右边框阴影
   }
+
   .layout-header {
     height: $aside-header-height;
     background-color: var(--el-header-bg-color);
   }
+
   .layout-main {
     box-sizing: border-box;
     padding: 0;
@@ -199,6 +196,7 @@ const activeMenu = computed(() => (route.meta.activeMenu ? route.meta.activeMenu
     background-color: var(--el-bg-color);
   }
 }
+
 .layout-scrollbar {
   width: 100%;
   height: calc(100vh - $aside-header-height);
