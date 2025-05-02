@@ -2,11 +2,10 @@ import { createRouter, createWebHashHistory, createWebHistory } from "vue-router
 import { layoutRouter, staticRouter, errorRouter } from "@/routers/modules/staticRouter";
 import nprogress from "@/utils/nprogress";
 import type { RouteLocationNormalized, NavigationGuardNext } from "vue-router";
-import useUserStore from "@/stores/modules/user.ts";
-import useAuthStore from "@/stores/modules/auth.ts";
+import { useAuthStore, useUserStore } from "@/stores";
 import { LOGIN_URL, ROUTER_WHITE_LIST } from "@/config/index.ts";
-import { koiMsgWarning } from "@/utils/koi.ts";
-import { initDynamicRouter } from "@/routers/modules/dynamicRouter.ts";
+import { meowMsgWarning } from "@/utils/message";
+import { initDynamicRouter } from "@/routers/modules/dynamicRouter";
 
 // .env配置文件读取
 const mode = import.meta.env.VITE_ROUTER_MODE;
@@ -36,8 +35,7 @@ const router = createRouter({
  * @description 前置路由
  * */
 router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
-    const userStore = useUserStore();
-    const authStore = useAuthStore();
+    const userStore = useUserStore().userStore;
 
     // 1、NProgress 开始
     nprogress.start();
@@ -53,7 +51,7 @@ router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormali
         if (userStore.token) {
             return next(from.fullPath);
         } else {
-            koiMsgWarning("账号身份已过期，请重新登录🌻");
+            meowMsgWarning("账号身份已过期，请重新登录");
         }
         // 没有Token重置路由到登陆页。
         resetRouter();
@@ -62,12 +60,12 @@ router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormali
 
     // 4、判断访问页面是否在路由白名单地址[静态路由]中，如果存在直接放行。
     if (ROUTER_WHITE_LIST.includes(to.path)) return next();
-
+    console.log("路由白名单", ROUTER_WHITE_LIST, to.path);
     // 5、判断是否有 Token，没有重定向到 login 页面。
     if (!userStore.token) return next({ path: LOGIN_URL, replace: true });
 
     // 6、如果没有菜单列表[一级扁平化路由 OR 递归菜单路由数据判断是否存在都阔以]，就重新请求菜单列表并添加动态路由。
-    if (!authStore.getMenuList.length) {
+    if (!useAuthStore().getMenuList.length) {
         // 注意：authStore.getMenuList，不能持久化菜单数据，否则这里一直有值，就不会走这里，而且持久化之后还会被篡改数据。
         // 获取相关菜单数据 && 按钮数据 && 角色数据 && 用户信息。
         console.log("刷新页面");

@@ -1,8 +1,8 @@
 
 import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse, type InternalAxiosRequestConfig, type AxiosError } from 'axios'
-import { message } from 'ant-design-vue'
+import { meowMsgError } from '@/utils/message'
 import router from '@/routers/index'
-import { useUserStore } from '@/stores/user'
+import { useUserStore } from '@/stores/index'
 import type { ResponseData, BusinessError, DownloadConfig } from './type'
 import { generateReqId, handleFileDownload } from './utils'
 
@@ -37,7 +37,7 @@ class Http {
         this.removePending(config)
         this.addPending(config)
 
-        const token = useUserStore().token
+        const token = useUserStore().userStore.token
         if (token && config.headers) {
             config.headers.Authorization = `Bearer ${token}`
         }
@@ -61,13 +61,46 @@ class Http {
         }
 
         if (code !== 200) {
-            response.config.showError !== false && message.error(msg)
+            response.config.showError !== false && meowMsgError(msg)
             return Promise.reject({ code, message: msg })
         }
 
         return data
     }
+    // 添加请求错误处理方法
+    private handleRequestError(error: AxiosError<ResponseData>) {
+        this.removePending(error.config || {})
 
+        const showError = error.config?.showError !== false
+        const status = error.response?.status || 0
+        const businessCode = error.response?.data?.code || -1
+        const errorMessage = error.response?.data?.message || error.message
+
+        // 业务错误处理
+        if (businessCode !== -1) {
+            showError && meowMsgError(errorMessage)
+            return Promise.reject({
+                code: businessCode,
+                message: errorMessage,
+                originalError: error
+            } as BusinessError)
+        }
+
+        // HTTP 错误处理
+        const httpError = this.getHttpErrorMessage(status)
+        showError && meowMsgError(httpError)
+
+        // 401 特殊处理
+        if (status === 401) {
+            this.handleUnauthorized()
+        }
+
+        return Promise.reject({
+            code: status,
+            message: httpError,
+            originalError: error
+        } as BusinessError)
+    }
     // 错误处理
     private handleResponseError(error: AxiosError<ResponseData>) {
         this.removePending(error.config || {})
@@ -79,7 +112,7 @@ class Http {
 
         // 业务错误处理
         if (businessCode !== -1) {
-            showError && message.error(errorMessage)
+            showError && meowMsgError(errorMessage)
             return Promise.reject({
                 code: businessCode,
                 message: errorMessage,
@@ -89,7 +122,7 @@ class Http {
 
         // HTTP 错误处理
         const httpError = this.getHttpErrorMessage(status)
-        showError && message.error(httpError)
+        showError && meowMsgError(httpError)
 
         // 401 特殊处理
         if (status === 401) {
@@ -122,23 +155,27 @@ class Http {
     // 获取 HTTP 错误信息
     private getHttpErrorMessage(status: number): string {
         const messages: Record<number, string> = {
-            400: '请求参数错误',
-            401: '登录状态已过期',
-            403: '没有操作权限',
-            404: '请求资源不存在',
-            500: '服务器内部错误',
-            502: '网关错误',
-            503: '服务不可用',
-            504: '网关超时'
+            400: "错误请求",
+            401: "未授权，请重新登录",
+            403: "对不起，您没有权限访问",
+            404: "请求错误,未找到请求路径",
+            405: "请求方法未允许",
+            408: "请求超时",
+            500: "服务器又偷懒了，请重试",
+            501: "网络未实现",
+            502: "网络错误",
+            503: "服务不可用",
+            504: "网络超时",
+            505: "http版本不支持该请求",
         }
         return messages[status] || `网络连接错误 (${status})`
     }
 
     // 处理未授权
     private handleUnauthorized() {
-        useUserStore().logout()
+        useUserStore().setToken({ access_token: '', expires_in: 1, refresh_token: '', token_type: '' })
         router.replace('/login')
-        message.error('登录状态已过期，请重新登录')
+        meowMsgError('登录状态已过期，请重新登录')
     }
 
     // 核心请求方法

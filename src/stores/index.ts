@@ -11,5 +11,7 @@ pinia.use(persist)
 // 导出 Pinia 实例
 export default pinia
 
-// 导出 dataStore 模块
+// 导出 userStore 模块
 export * from './modules/userStores'
+// 导出 authStore 模块
+export * from './modules/authStore'

@@ -11,7 +11,7 @@ export interface User {
 
 // 登录参数
 export interface LoginParams {
-    
+    handover: string
     username: string
     password: string
 }
@@ -19,7 +19,7 @@ export interface LoginParams {
 export const userApi = {
     // 用户登录
     login(params: LoginParams) {
-        return http.post<ResponseData<{ token: string }>>('/auth/login', params)
+        return http.post<ResponseData<{ token: string }>>('/Auth/UserToLogin', params)
     },
 
     // 获取当前用户信息

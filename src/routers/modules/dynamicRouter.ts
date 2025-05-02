@@ -1,5 +1,5 @@
-import useUserStore from "@/stores/modules/user.ts";
-import useAuthStore from "@/stores/modules/auth.ts";
+import useUserStore from "@/stores/";
+import useAuthStore from "@/stores/";
 
 import { LOGIN_URL } from "@/config/index.ts";
 // TS OR JS 中不能直接导入 import { useRouter } from "vue-router";
