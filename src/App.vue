@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { meowMsgError } from '@/utils/message'
 import { onMounted } from 'vue'
+import { setCursor } from '@/utils/cursor'
+setCursor()
 onMounted(() => {
     meowMsgError('请先登录')
-    
     console.log('Herrscher_of_Human')
 })
 </script>

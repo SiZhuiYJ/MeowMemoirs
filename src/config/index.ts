@@ -15,7 +15,7 @@ export const CACHE_PREFIX: string = "MeowMemoirs-";
 export const SVG_PREFIX: string = "MeowMemoirs-";
 
 // 默认主题颜色
-export const DEFAULT_THEME: string = "#2992FF";
+export const DEFAULT_THEME: string = "#e3c0df";
 
 // 路由白名单地址[本地存在的路由 staticRouter.ts 中]
 export const ROUTER_WHITE_LIST: string[] = ["/500", "/404", "/403", "/login", "/home/index"];

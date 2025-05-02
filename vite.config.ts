@@ -2,14 +2,25 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
+import fs from 'fs'
 
 // https://vite.dev/config/
+
 export default defineConfig({
-  plugins: [vue(),
-  createSvgIconsPlugin({
-    iconDirs: [path.resolve(process.cwd(), 'src/assets/icons')],
-    symbolId: 'icon-[dir]-[name]',
-  }),],
+  plugins: [
+    vue(),
+    createSvgIconsPlugin({
+      iconDirs: [path.resolve(process.cwd(), 'src/assets/icons')],
+      symbolId: 'icon-[dir]-[name]',
+    }),
+  ],
+  server: {
+    host: '0.0.0.0',
+    https: {
+      key: fs.readFileSync('certs/localhost+1-key.pem'),
+      cert: fs.readFileSync('certs/localhost+1.pem')
+    }
+  },
   //路径别名
   resolve: {
     alias: {
@@ -20,5 +31,5 @@ export default defineConfig({
       '@utils': path.resolve(__dirname, 'src/utils'),
       '@views': path.resolve(__dirname, 'src/views'),
     }
-  }
+  },
 })

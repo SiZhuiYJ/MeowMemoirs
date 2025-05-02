@@ -20,7 +20,7 @@ export const layoutRouter: RouteRecordRaw[] = [
                 path: HOME_URL, // [唯一]
                 component: () => import("@/views/main/home/index.vue"),
                 meta: {
-                    title: "主控台", // 标题
+                    title: "首页", // 标题
                     enName: "Master Station", // 英文名称
                     icon: "HomeFilled", // 图标
                     isHide: "0", // 代表路由在菜单中是否隐藏，是否隐藏[0隐藏，1显示]
@@ -50,7 +50,7 @@ export const staticRouter: RouteRecordRaw[] = [
         path: HOME_URL, // [唯一]
         component: () => import("@/views/main/home/index.vue"),
         meta: {
-            title: "主控台", // 标题
+            title: "首页", // 标题
             enName: "Master Station", // 英文名称
             icon: "HomeFilled", // 图标 HomeFilled
             isHide: "1", // 代表路由在菜单中是否隐藏，是否隐藏[0隐藏，1显示]

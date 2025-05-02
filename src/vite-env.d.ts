@@ -1,1 +1,12 @@
 /// <reference types="vite/client" />
+// src/types/ani-cursor.d.ts
+declare module 'ani-cursor.js' {
+    export function setANICursor(selector: string, aniPath: string): void;
+    export function setANICursorWithGroupElement(selectors: string[], aniPath: string): void;
+}
+//./types/vue.d.ts
+declare module "*.vue" {
+    import Vue from 'vue';
+    export default Vue;
+
+}
