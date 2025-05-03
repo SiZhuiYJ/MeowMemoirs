@@ -1,12 +1,12 @@
 import type { RouteRecordRaw } from 'vue-router'
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-interface UserInfo {
+export interface UserInfo {
     rainbowId: string, // [UserID] --id,
     userImg: string,// [RainbowID] --编号,
     userName: string,// [UserName] --昵称,
 }
-interface Auth {
+export interface Auth {
     // 扁平化路由数据
     menuList: RouteRecordRaw[],
     // 递归之后的菜单数据

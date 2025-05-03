@@ -3,18 +3,19 @@ import { ref, onMounted } from 'vue'
 // import { useRouter } from 'vue-router'
 import { meowMsgError } from '@/utils/message'
 import { ElLoading } from 'element-plus'
-// import { userApi } from '@/libs/api/user'
-import { UserToLogin, GetUserInfo, PostProfile } from './index'
-
-
-type LoginParams = 'RainbowId' | 'userPhone' | 'userEmail'
-type LoginLabel = '账号' | '电话' | '邮箱'
-
+import { userApi } from '@/libs/api/user'
+// import { MMLogin } from './index'
+import { useUserStore, useAuthStore } from '@/stores/'
+type handoverParams = 'RainbowId' | 'userPhone' | 'userEmail'
+interface handoverType {
+	value: handoverParams,
+	label: '账号' | '电话' | '邮箱'
+}
 const Identifier = ref('')
 const password = ref('')
-const handover = ref<LoginParams>('RainbowId')
+const handover = ref<handoverParams>('RainbowId')
 // 登录类型
-const handoverList: { label: LoginLabel, value: LoginParams }[] = [
+const handoverList: handoverType[] = [
 	{
 		label: '账号',
 		value: 'RainbowId'
@@ -35,21 +36,20 @@ const login = async () => {
 		background: 'rgba(0, 0, 0, 0.7)',
 	})
 	try {
-		const data = await UserToLogin({
+		const { data } = await userApi.MMLogin({
 			Type: handover.value,
 			Identifier: Identifier.value,
-			Password: password.value,
+			Password: password.value
 		})
-		// const data = await GetUserInfo()
-		// const data = await PostProfile(Identifier.value)
-		console.log(data)
-		setTimeout(() => {
-			loading.close()
-		}, 10000);
-	} catch (error) {
+		useUserStore().setToken(data.jwtTokenResult)
+		useAuthStore().authStore.loginUser = data.userInfo
+		useAuthStore().authStore.menuList = data.menuList
+		loading.close()
+
+	} catch (error: any) {
 		console.log(error)
 		loading.close()
-		meowMsgError('登录失败，请稍后再试')
+		meowMsgError(error.message)
 	}
 }
 onMounted(async () => {

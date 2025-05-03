@@ -1,3 +1,4 @@
+// @/libs/http/index.ts
 import Http from './axios'
 import type { AxiosRequestConfig } from 'axios'
 

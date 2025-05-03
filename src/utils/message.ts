@@ -55,3 +55,49 @@ export function meowMsgWarning(message: string, plain = false, duration = 2000, 
         dangerouslyUseHTMLString: parseHtml
     })
 }
+/** 封装通知信息，默认info */
+export function meowNoticeInfo(message: any, title = "温馨提示", duration = 2000, type: MessageType = "info", parseHtml = false) {
+    ElNotification.closeAll();
+    ElNotification({
+        message: message + emoji('喵喵喵'),
+        title,
+        type,
+        duration: duration,
+        showClose: true,
+        dangerouslyUseHTMLString: parseHtml
+    });
+}
+/** 封装通知信息，默认error */
+export function meowNoticeError(message: any, title = "温馨提示", duration = 2000, type: MessageType = "error", parseHtml = false) {
+    ElNotification.closeAll();
+    ElNotification({
+        message: message + emoji('喵喵喵'),
+        title,
+        type,
+        duration: duration,
+        showClose: true,
+        dangerouslyUseHTMLString: parseHtml
+    });
+}/** 封装通知信息，默认success */
+export function meowNoticeSuccess(message: any, title = "温馨提示", duration = 2000, type: MessageType = "success", parseHtml = false) {
+    ElNotification.closeAll();
+    ElNotification({
+        message: message + emoji('喵喵喵'),
+        title,
+        type,
+        duration: duration,
+        showClose: true,
+        dangerouslyUseHTMLString: parseHtml
+    });
+}/** 封装通知信息，默认warning */
+export function meowNoticeWarning(message: any, title = "温馨提示", duration = 2000, type: MessageType = "warning", parseHtml = false) {
+    ElNotification.closeAll();
+    ElNotification({
+        message: message + emoji('喵喵喵'),
+        title,
+        type,
+        duration: duration,
+        showClose: true,
+        dangerouslyUseHTMLString: parseHtml
+    });
+}
