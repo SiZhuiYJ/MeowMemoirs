@@ -1,6 +1,4 @@
-import useUserStore from "@/stores/";
-import useAuthStore from "@/stores/";
-
+import { useUserStore, useAuthStore } from "@/stores/";
 import { LOGIN_URL } from "@/config/index.ts";
 // TS OR JS 中不能直接导入 import { useRouter } from "vue-router";
 import router from "@/routers/index";
@@ -8,20 +6,21 @@ import router from "@/routers/index";
 // const modules = import.meta.glob("@/views/**/*.vue");
 
 export const initDynamicRouter = async () => {
-  const userStore = useUserStore();
-  const authStore = useAuthStore();
+  const authStore = useAuthStore().authStore;
 
   try {
     // 1、获取菜单列表 && 按钮权限列表 && 递归菜单数据
-    await authStore.listRouters();
-    await authStore.getLoginUserInfo();
+    await useAuthStore().listRouters();
+    await useAuthStore().getLoginUserInfo();
 
     // 2、判断当前用户是否拥有菜单权限
     console.log("authStore.menuList", authStore.menuList);
     // Proxy对象转换为正常的JSON数据
     // const menuRouters = JSON.parse(JSON.stringify(authStore.menuList));
     if (authStore.menuList == null || authStore.menuList.length == 0) {
-      userStore.setToken("");
+
+      console.log("没路由数据了", authStore.menuList);
+      useUserStore().setToken(null);
       router.replace(LOGIN_URL);
       return;
     }
@@ -42,7 +41,7 @@ export const initDynamicRouter = async () => {
   } catch (error) {
     console.log(error);
     // 当菜单请求出错时，重定向到登陆页
-    userStore.setToken("");
+    useUserStore().setToken(null);
     router.replace(LOGIN_URL);
     return Promise.reject(error);
   }

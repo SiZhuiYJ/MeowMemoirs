@@ -38,8 +38,12 @@ class Yu {
     };
     private handleRequest(config: InternalAxiosRequestConfig) {
         console.log('发送请求', config)
+        // 请求路径
+        console.log('请求路径', config.url)
+        console.log('请求方法', config.baseURL)
         // 获取token
         const token = getToken();
+        console.log('token', token)
         // 如果实现挤下线功能，需要用户绑定一个uuid，uuid发生变化，后端将数据进行处理[直接使用Sa-Token框架也阔以]
         if (token) {
             config.headers!["Authorization"] = "Bearer " + token;

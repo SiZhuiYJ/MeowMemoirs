@@ -29,7 +29,21 @@ export const layoutRouter: RouteRecordRaw[] = [
                     isFull: "1", // 是否缓存全屏[0是，1否]
                     isAffix: "0" // 是否缓存固定路由[0是，1否]
                 }
-            }
+            },
+            {
+                path: '/main/TimeStyle',
+                component: () => import('@/views/main/TimeStyle/index.vue'),
+                meta: {
+                    title: '时间',
+                    enName: 'TimeStyle',
+                    icon: 'Clock',
+                    isHide: '0',
+                    isLink: '',
+                    isKeepAlive: '0',
+                    isFull: '1',
+                    isAffix: '0'
+                },
+            },
         ]
     },
     {

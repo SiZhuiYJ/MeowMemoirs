@@ -1,14 +1,12 @@
-import type { RouteRecordRaw } from 'vue-router'
+
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-export interface UserInfo {
-    rainbowId: string, // [UserID] --id,
-    userImg: string,// [RainbowID] --编号,
-    userName: string,// [UserName] --昵称,
-}
+import type { UserInfo } from '@/libs/api/user/type'
+import { userApi } from '@/libs/api/user'
+import { generateRoutes, getShowStaticAndDynamicMenuList } from '@/routers/utils'
 export interface Auth {
     // 扁平化路由数据
-    menuList: RouteRecordRaw[],
+    menuList: any[],
     // 递归之后的菜单数据
     recursiveMenuList: [],
     // 面包屑数据
@@ -20,6 +18,7 @@ export interface Auth {
     // 用户信息
     loginUser: UserInfo
 }
+
 const infoAuth: Auth = {
     // 扁平化路由数据
     menuList: [],
@@ -42,7 +41,29 @@ export const useAuthStore = defineStore('auth', () => {
 
     const authStore = ref<Auth>(infoAuth)
 
-    const getMenuList = computed(() => authStore.value.menuList)
+    async function listRouters() {
+        const { data } = await userApi.MMPostRouter()
+        console.log('路由数据', data)
+        // 去除掉不需要的路由数据
+        const filterMenuList = getShowStaticAndDynamicMenuList(data.menuList)
+        console.log('去除掉不需要的路由数据', filterMenuList)
+        // 递归菜单数据
+        const recursiveMenuList = generateRoutes(filterMenuList, 0)
+        console.log('递归菜单数据', recursiveMenuList)
+        authStore.value.menuList = recursiveMenuList
+        console.log('扁平化路由数据', authStore.value.menuList)
+    }
+    async function getLoginUserInfo() {
+        const { data } = await userApi.MMPostUser()
+        authStore.value.loginUser = data.userInfo
+        authStore.value.buttonList = data.buttonList
+        authStore.value.roleList = data.roleList
+    }
 
-    return { authStore, getMenuList }
+    const getMenuList = computed(() => authStore.value.menuList)
+    const getRouters = computed(() => authStore.value.menuList.filter(item => item.menuType === '1'))
+    const getButtonList = computed(() => authStore.value.buttonList)
+    const getRoleList = computed(() => authStore.value.roleList)
+
+    return { authStore, listRouters, getLoginUserInfo, getMenuList, getRouters, getButtonList, getRoleList }
 })

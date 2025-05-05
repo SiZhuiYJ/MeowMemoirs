@@ -6,8 +6,8 @@ import { CACHE_PREFIX } from "@/config";
 export const getToken = () => {
   const koiUser = window.localStorage.getItem(CACHE_PREFIX + "user");
   if (koiUser != null && koiUser != "" && koiUser != undefined) {
-    const parseKoiUser = JSON.parse(koiUser);
-    // console.log("parseKoiUser",parseKoiUser)
+    const parseKoiUser = JSON.parse(koiUser).userStore;
+    console.log("parseKoiUser",parseKoiUser)
     const keys = Object.keys(parseKoiUser);
     if (keys.includes("token")) {
       return parseKoiUser.token;

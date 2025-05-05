@@ -62,6 +62,7 @@ router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormali
     if (ROUTER_WHITE_LIST.includes(to.path)) return next();
     console.log("路由白名单", ROUTER_WHITE_LIST, to.path);
     // 5、判断是否有 Token，没有重定向到 login 页面。
+    console.log("userStore.token", userStore.token);
     if (!userStore.token) return next({ path: LOGIN_URL, replace: true });
 
     // 6、如果没有菜单列表[一级扁平化路由 OR 递归菜单路由数据判断是否存在都阔以]，就重新请求菜单列表并添加动态路由。

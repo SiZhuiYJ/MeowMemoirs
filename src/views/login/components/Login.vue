@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-// import { useRouter } from 'vue-router'
-import { meowMsgError } from '@/utils/message'
+import { meowMsgError, meowMsgSuccess } from '@/utils/message'
 import { ElLoading } from 'element-plus'
-import { userApi } from '@/libs/api/user'
 // import { MMLogin } from './index'
-import { useUserStore, useAuthStore } from '@/stores/'
+import { useUserStore } from '@/stores/'
 type handoverParams = 'RainbowId' | 'userPhone' | 'userEmail'
 interface handoverType {
 	value: handoverParams,
@@ -35,22 +33,16 @@ const login = async () => {
 		text: '登录中……',
 		background: 'rgba(0, 0, 0, 0.7)',
 	})
-	try {
-		const { data } = await userApi.MMLogin({
-			Type: handover.value,
-			Identifier: Identifier.value,
-			Password: password.value
-		})
-		useUserStore().setToken(data.jwtTokenResult)
-		useAuthStore().authStore.loginUser = data.userInfo
-		useAuthStore().authStore.menuList = data.menuList
-		loading.close()
-
-	} catch (error: any) {
-		console.log(error)
-		loading.close()
-		meowMsgError(error.message)
-	}
+	useUserStore().login({
+		Type: handover.value,
+		Identifier: Identifier.value,
+		Password: password.value
+	}).then(() => {
+		meowMsgSuccess('登录成功')
+	}).catch((err) => {
+		meowMsgError(err.message)
+	})
+	loading.close()
 }
 onMounted(async () => {
 })

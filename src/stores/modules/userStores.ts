@@ -1,6 +1,9 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import { CACHE_PREFIX } from "@/config";
+import { CACHE_PREFIX, STATIC_URL } from "@/config";
+import { userApi } from "@/libs/api/user";
+import type { ILoginParams } from "@/libs/api/user/type";
+import router from "@/routers";
 export interface User {
     token: string, // [token] --token,
     expires_in: number, // [ExpiresIn] --过期时间,
@@ -30,7 +33,26 @@ export const useUserStore = defineStore("user", () => {
         userStore.value.token_type = token?.token_type || "";
     }
 
-    return { userStore, setToken };
+    async function login(ILoginParams: ILoginParams) {
+        try {
+            const { data } = await userApi.MMLogin({
+                Type: ILoginParams.Type,
+                Identifier: ILoginParams.Identifier,
+                Password: ILoginParams.Password,
+            })
+            setToken(data.jwtTokenResult);
+            console.log(STATIC_URL);
+            router.push(STATIC_URL);
+        } catch (error: any) {
+            setToken(null);
+            return Promise.reject(error);
+        }
+    }
+    return {
+        userStore,
+        setToken,
+        login,
+    };
 }, {
     persist: {
         // enabled: true, // true 表示开启持久化保存，默认localStorage
