@@ -9,7 +9,6 @@ import { HOME_URL } from "@/config/index.ts";
  * */
 export function getShowStaticAndDynamicMenuList(menuList: any) {
     let newMenuList: any = JSON.parse(JSON.stringify(menuList));
-    console.log('newMenuList', newMenuList);
     return newMenuList.filter((item: any) => {
         return item.isHide == "1" || item.meta?.isHide == "1";
     });
@@ -20,19 +19,21 @@ export function getShowStaticAndDynamicMenuList(menuList: any) {
 // 递归函数用于生成路由配置，登录的时候也需要调用一次。
 export function generateRoutes(data: any[], parentId: any) {
     // 首先把你需要动态路由的组件地址全部获取[vue2中可以直接用拼接的方式，但是vue3中必须用这种方式]
-    console.log("modules", data);
     let modules = import.meta.glob("@/views/**/*.vue");
     const routeList: any = [];
+    // 如果 data 为空，直接返回空数组
+    if (!data || data.length === 0) {
+        return routeList;
+    }
     for (var i = 0; i < data.length; i++) {
         if (data[i] && !router.hasRoute(data[i].path)) {
             if (data[i].parentId === parentId) {
-                // console.log("component", data[i].component);
                 const componentTemplate = data[i].component;
                 const route: any = {
                     path: `${data[i].path}`,
                     name: `${data[i].name}`,
                     // 这里modules[`/src/views/${componentTemplate}.vue`] 一定要用绝对定位
-                    component: data[i]?.component ? modules[`/src/views/system/${componentTemplate}.vue`] : Layout,
+                    component: data[i]?.component ? modules[`/src/views/${componentTemplate}.vue`] : Layout,
                     meta: {
                         title: data[i]?.menuName,
                         enName: data[i]?.enName,

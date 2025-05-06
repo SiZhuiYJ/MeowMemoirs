@@ -15,3 +15,5 @@ export default pinia
 export * from './modules/userStores'
 // 导出 authStore 模块
 export * from './modules/authStore'
+// 导出 globalStore 模块
+export * from './modules/globalStore'

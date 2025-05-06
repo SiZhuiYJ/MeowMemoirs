@@ -41,7 +41,6 @@ export const useUserStore = defineStore("user", () => {
                 Password: ILoginParams.Password,
             })
             setToken(data.jwtTokenResult);
-            console.log(STATIC_URL);
             router.push(STATIC_URL);
         } catch (error: any) {
             setToken(null);

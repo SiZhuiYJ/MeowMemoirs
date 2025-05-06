@@ -38,9 +38,6 @@ class Yu {
     };
     private handleRequest(config: InternalAxiosRequestConfig) {
         console.log('发送请求', config)
-        // 请求路径
-        console.log('请求路径', config.url)
-        console.log('请求方法', config.baseURL)
         // 获取token
         const token = getToken();
         console.log('token', token)
@@ -51,7 +48,6 @@ class Yu {
         return config;
     }
     private handleRequestError(error: any) {
-        console.log("发送失败", error);
         error.data = {};
         error.data.msg = "服务器异常，请联系管理员🌻";
         return error;

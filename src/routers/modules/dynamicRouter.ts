@@ -18,7 +18,6 @@ export const initDynamicRouter = async () => {
     // Proxy对象转换为正常的JSON数据
     // const menuRouters = JSON.parse(JSON.stringify(authStore.menuList));
     if (authStore.menuList == null || authStore.menuList.length == 0) {
-
       console.log("没路由数据了", authStore.menuList);
       useUserStore().setToken(null);
       router.replace(LOGIN_URL);
@@ -31,13 +30,15 @@ export const initDynamicRouter = async () => {
       //   // 扁平化路由也需要构造component路由函数
       //   item.component = modules["/src/views/" + item.component + ".vue"];
       // }
-      if (item.isFull == "0") {
-        // 如果是全屏的话，直接为整个页面
-        router.addRoute(item);
-      } else {
-        router.addRoute("layout", item);
-      }
+      // if (item.isFull == "0") {
+      //   // 如果是全屏的话，直接为整个页面
+      //   router.addRoute(item);
+      // } else {
+      //   router.addRoute("layout", item);
+      // }
+      router.addRoute(item);
     });
+    console.log("router", router.getRoutes());
   } catch (error) {
     console.log(error);
     // 当菜单请求出错时，重定向到登陆页

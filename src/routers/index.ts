@@ -59,12 +59,12 @@ router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormali
     }
 
     // 4、判断访问页面是否在路由白名单地址[静态路由]中，如果存在直接放行。
-    if (ROUTER_WHITE_LIST.includes(to.path)) return next();
     console.log("路由白名单", ROUTER_WHITE_LIST, to.path);
+    if (ROUTER_WHITE_LIST.includes(to.path)) return next();
+    console.log("不在白名单需要登陆");
     // 5、判断是否有 Token，没有重定向到 login 页面。
-    console.log("userStore.token", userStore.token);
     if (!userStore.token) return next({ path: LOGIN_URL, replace: true });
-
+    console.log("有token");
     // 6、如果没有菜单列表[一级扁平化路由 OR 递归菜单路由数据判断是否存在都阔以]，就重新请求菜单列表并添加动态路由。
     if (!useAuthStore().getMenuList.length) {
         // 注意：authStore.getMenuList，不能持久化菜单数据，否则这里一直有值，就不会走这里，而且持久化之后还会被篡改数据。

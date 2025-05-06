@@ -38,7 +38,7 @@ const initGlobal: global = {
     maximize: false,
     language: "zh",
     themeColor: DEFAULT_THEME,
-    layout: "column",
+    layout: "my",
     transition: "fade-default",
     uniqueOpened: true,
     isGrey: false,

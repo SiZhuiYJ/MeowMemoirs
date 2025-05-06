@@ -44,14 +44,8 @@ export const useAuthStore = defineStore('auth', () => {
     async function listRouters() {
         const { data } = await userApi.MMPostRouter()
         console.log('路由数据', data)
-        // 去除掉不需要的路由数据
-        const filterMenuList = getShowStaticAndDynamicMenuList(data.menuList)
-        console.log('去除掉不需要的路由数据', filterMenuList)
-        // 递归菜单数据
-        const recursiveMenuList = generateRoutes(filterMenuList, 0)
-        console.log('递归菜单数据', recursiveMenuList)
+        const recursiveMenuList = generateRoutes(getShowStaticAndDynamicMenuList(data.menuList), 0)
         authStore.value.menuList = recursiveMenuList
-        console.log('扁平化路由数据', authStore.value.menuList)
     }
     async function getLoginUserInfo() {
         const { data } = await userApi.MMPostUser()
