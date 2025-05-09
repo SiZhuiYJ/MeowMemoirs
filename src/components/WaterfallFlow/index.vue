@@ -93,7 +93,7 @@ onUnmounted(() => {
 
 <style scoped lang="scss">
 .waterfall-container {
-    width: 99.9%;
+    width: 100%;
     position: relative;
 }
 </style>

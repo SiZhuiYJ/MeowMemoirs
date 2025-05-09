@@ -28,10 +28,12 @@ interface global {
     isGrey: boolean,
     //色弱模式
     isWeak: boolean,
+    asideInverted: boolean,
+    headerInverted: boolean,
 }
 const initGlobal: global = {
     isCollapse: false,
-    menuWidth: 220,
+    menuWidth: 200,
     isFullScreen: false,
     isDark: false,
     dimension: "default",
@@ -43,6 +45,8 @@ const initGlobal: global = {
     uniqueOpened: true,
     isGrey: false,
     isWeak: false,
+    asideInverted: false,
+    headerInverted: false
 }
 export const useGlobalStore = defineStore("global", () => {
 

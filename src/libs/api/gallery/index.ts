@@ -4,6 +4,7 @@ import type { ResponseData } from '@/libs/http/type'
 import type { item } from '@/libs/api/gallery/type'
 interface items {
     items: item[]
+    rootPath: string
 }
 export const galleryApi = {
     MMGetImageList() {

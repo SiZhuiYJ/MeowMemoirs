@@ -115,7 +115,7 @@ const background = computed(() => {
             // position: absolute;
             top: -10%;
             left: 5%;
-            background-color: var(--foreground-color);
+            background-color: #e3c0df;
             width: 320px;
             height: 500px;
             border-radius: 5px;

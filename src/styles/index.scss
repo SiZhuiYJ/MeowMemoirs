@@ -12,7 +12,9 @@
 }
 
 :root {
-  --foreground-color: #e3c0df;
+  // --foreground-color: #e3c0df;
+  --foreground-color: rgba(246, 249, 254, 1);
+  --background-color: rgba(255, 255, 255, 0.8);
 }
 
 #app {
@@ -20,4 +22,30 @@
   width: 100vw;
   height: 100vh;
   text-align: center;
+}
+
+.el-menu--horizontal {
+  --el-menu-horizontal-height: 100px;
+}
+
+/* 为webkit浏览器设置纵向和横向滚动条宽度和高度 */
+::-webkit-scrollbar {
+  width: 6px; // 纵向滚动条宽度
+  height: 6px; // 纵向滚动条高度
+}
+
+/* 为滚动条轨道设置背景颜色 */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* 为滚动条设置滑块颜色 */
+::-webkit-scrollbar-thumb {
+  background: var(--foreground-color);
+  border-radius: 10px;
+}
+
+/* 悬浮在滑块上时为滑块设置背景颜色 */
+::-webkit-scrollbar-thumb:hover {
+  background: #00000000;
 }

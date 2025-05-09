@@ -1,14 +1,52 @@
 
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, type Component } from "vue";
 import type { UserInfo } from '@/libs/api/user/type'
 import { userApi } from '@/libs/api/user'
-import { generateRoutes, getShowStaticAndDynamicMenuList } from '@/routers/utils'
+import { generateFlattenRoutes, generateRoutes, getShowStaticAndDynamicMenuList, getAllBreadcrumbList } from '@/routers/utils'
+import { staticRouter } from '@/routers/modules/staticRouter'
+export interface RouterItemID {
+    children: RouterItemID[]
+    component: Component | (() => Promise<Component>)
+    meta: {
+        activeMenu: string | undefined
+        enName: string
+        icon: string
+        isAffix: string
+        isFull: string
+        isHide: string
+        isKeepAlive: string
+        isLink: string
+        title: string
+        parentId: number
+    }
+    name: string
+    path: string
+    redirect: string
+}
+export interface RouterItem {
+    children: RouterItem[]
+    component: Component | (() => Promise<Component>)
+    meta: {
+        activeMenu: string | undefined
+        enName: string
+        icon: string
+        isAffix: string
+        isFull: string
+        isHide: string
+        isKeepAlive: string
+        isLink: string
+        title: string
+    }
+    name: string
+    path: string
+    redirect: string
+}
 export interface Auth {
     // 扁平化路由数据
-    menuList: any[],
+    menuList: RouterItemID[],
     // 递归之后的菜单数据
-    recursiveMenuList: [],
+    recursiveMenuList: RouterItem[],
     // 面包屑数据
     breadcrumbList: [],
     // 用户角色
@@ -43,9 +81,9 @@ export const useAuthStore = defineStore('auth', () => {
 
     async function listRouters() {
         const { data } = await userApi.MMPostRouter()
-        console.log('路由数据', data)
-        const recursiveMenuList = generateRoutes(getShowStaticAndDynamicMenuList(data.menuList), 0)
-        authStore.value.menuList = recursiveMenuList
+        authStore.value.menuList = generateFlattenRoutes(data.menuList)
+        authStore.value.recursiveMenuList = generateRoutes(getShowStaticAndDynamicMenuList(data.menuList), 0)
+        authStore.value.breadcrumbList = staticRouter.concat(generateRoutes(data.menuList, 0));
     }
     async function getLoginUserInfo() {
         const { data } = await userApi.MMPostUser()
@@ -55,9 +93,10 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     const getMenuList = computed(() => authStore.value.menuList)
-    const getRouters = computed(() => authStore.value.menuList.filter(item => item.menuType === '1'))
     const getButtonList = computed(() => authStore.value.buttonList)
     const getRoleList = computed(() => authStore.value.roleList)
-
-    return { authStore, listRouters, getLoginUserInfo, getMenuList, getRouters, getButtonList, getRoleList }
+    // 菜单权限列表 ==> 左侧菜单栏渲染，这里的菜单将后端数据进行递归，需要将动态路由 isHide == 0 的隐藏菜单剔除, 将静态路由 isHide == 0 的隐藏菜单剔除
+    const showMenuList = computed(() => authStore.value.recursiveMenuList)
+    const getBreadcrumbList = computed(() => getAllBreadcrumbList(authStore.value.breadcrumbList))
+    return { authStore, listRouters, getLoginUserInfo, getMenuList, getButtonList, getRoleList, showMenuList, getBreadcrumbList }
 })

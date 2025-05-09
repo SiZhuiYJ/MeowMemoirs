@@ -1,6 +1,8 @@
 import Layout from "@/layouts/index.vue";
 import router from "@/routers/index.ts";
 import { HOME_URL } from "@/config/index.ts";
+import type { RouterItemID, RouterItem } from "@/stores"
+import type { Component } from 'vue'
 
 /**
  * @description 使用递归过滤出需要渲染在左侧菜单动态数据的列表 (需剔除 isHide == 0 隐藏的菜单)
@@ -29,11 +31,13 @@ export function generateRoutes(data: any[], parentId: any) {
         if (data[i] && !router.hasRoute(data[i].path)) {
             if (data[i].parentId === parentId) {
                 const componentTemplate = data[i].component;
-                const route: any = {
+                const route: RouterItem = {
                     path: `${data[i].path}`,
                     name: `${data[i].name}`,
                     // 这里modules[`/src/views/${componentTemplate}.vue`] 一定要用绝对定位
-                    component: data[i]?.component ? modules[`/src/views/${componentTemplate}.vue`] : Layout,
+                    component: data[i]?.component
+                        ? modules[`/src/views/${componentTemplate}.vue`]
+                        : Layout,
                     meta: {
                         title: data[i]?.menuName,
                         enName: data[i]?.enName,
@@ -44,7 +48,9 @@ export function generateRoutes(data: any[], parentId: any) {
                         isFull: data[i]?.isFull,
                         isAffix: data[i]?.isAffix,
                         activeMenu: data[i]?.activeMenu
-                    }
+                    },
+                    children: [],
+                    redirect: ""
                 };
                 // console.log("component", route.component);
                 if (data[i].menuType == "1") {
@@ -62,3 +68,59 @@ export function generateRoutes(data: any[], parentId: any) {
     }
     return routeList;
 }
+
+/**
+ * 初始化动态路由[用于生成扁平化一级路由，将后端一级路由数据转化为前端router格式的一级路由]
+ */
+export function generateFlattenRoutes(data: any[]) {
+    // 首先把你需要动态路由的组件地址全部获取[vue2中可以直接用拼接的方式，但是vue3中必须用这种方式]
+    let modules = import.meta.glob("@/views/**/*.vue");
+    const routes: any = [];
+    for (var i = 0; i < data.length; i++) {
+        // console.log("component", data[i].component)
+        const componentTemplate = data[i].component;
+        const route: RouterItemID = {
+            path: `${data[i].path}`,
+            name: `${data[i].name}`,
+            // 这里modules[`/src/views/${componentTemplate}.vue`] 一定要用绝对定位
+            component: data[i]?.component
+                ? modules[`/src/views/${componentTemplate}.vue`]
+                : Layout,
+            meta: {
+                parentId: data[i].parentId,
+                title: data[i].menuName,
+                enName: data[i]?.enName,
+                icon: data[i]?.icon,
+                isHide: data[i]?.isHide,
+                isKeepAlive: data[i]?.isKeepAlive,
+                isLink: data[i]?.isLink,
+                isFull: data[i]?.isFull,
+                isAffix: data[i]?.isAffix,
+                activeMenu: data[i]?.activeMenu
+            },
+            children: [],
+            redirect: ""
+        };
+        // console.log("component", route.component)
+        if (data[i].menuType == "2") {
+            route.redirect = `${data[i]?.redirect}` || HOME_URL;
+        }
+        routes.push(route);
+    }
+    return routes;
+}
+/**
+ * @description 使用递归找出所有面包屑存储到 pinia 中
+ * @param {Array} menuList 菜单列表
+ * @param {Array} parent 父级菜单
+ * @param {Object} result 处理后的结果
+ * @returns {Object}
+ */
+export const getAllBreadcrumbList = (menuList: any, parent = [], result: { [key: string]: any } = {}) => {
+    for (const item of menuList) {
+        result[item.path] = [...parent, item];
+
+        if (item.children) getAllBreadcrumbList(item.children, result[item.path], result);
+    }
+    return result;
+};

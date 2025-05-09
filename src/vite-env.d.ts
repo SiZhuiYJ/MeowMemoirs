@@ -1,4 +1,5 @@
 /// <reference types="vite/client" />
+/// <reference types="vite-plugin-svg-icons/client" />
 // src/types/ani-cursor.d.ts
 declare module 'ani-cursor.js' {
     export function setANICursor(selector: string, aniPath: string): void;

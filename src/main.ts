@@ -15,6 +15,7 @@ import pinia from './stores'
 // 路由
 import router from './routers'
 
+import 'virtual:svg-icons-register'
 
 const app = createApp(App)
 const { getLocalImgUrl } = useApiUrl()

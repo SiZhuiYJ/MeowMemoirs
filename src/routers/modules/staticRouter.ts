@@ -58,8 +58,8 @@ export const layoutRouter: RouteRecordRaw[] = [
 /**
  * staticRouter[静态路由]
  */
-export const staticRouter: RouteRecordRaw[] = [
-    /** 主控台 */
+export const staticRouter: any = [
+    /** 主控台 RouteRecordRaw[]*/
     {
         path: HOME_URL, // [唯一]
         component: () => import("@/views/main/home/index.vue"),
