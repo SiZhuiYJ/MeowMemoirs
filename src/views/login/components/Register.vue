@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { meowMsgError, meowMsgSuccess } from '@/utils/message'
 import { ElLoading } from 'element-plus'
 import { userApi } from '@/libs/api/user'
@@ -146,7 +145,7 @@ button {
 	color: #a262ad;
 	letter-spacing: 2px;
 	border: none;
-	cursor: pointer;
+	// cursor: pointer;
 }
 
 button:hover {

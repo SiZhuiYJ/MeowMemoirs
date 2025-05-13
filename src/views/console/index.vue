@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import commonHeader from './components/header/index.vue'
-import { useGlobalStore, useAuthStore } from "@/stores"
-import type { AppRouteRecordRaw } from '@/routers/type'
+import { useGlobalStore, useAuthStore, type RouterItem } from "@/stores"
 const { globalStore } = useGlobalStore()
 import { SVG_PREFIX } from "@/config/index.ts";
 // import Logo from "@/layouts/components/Logo/index.vue";
@@ -20,11 +19,11 @@ console.log("双栏布局左侧动态路由", showMenuList);
 const menuAnimate = ref("animate__animated animate__fadeInLeft");
 
 /** 隐藏静态路由中isHide == '1'的数据 */
-const menuList = computed(() => showMenuList.filter((item: AppRouteRecordRaw) => item.meta.isHide == "1"));
+const menuList = computed(() => showMenuList[0]?.children.filter((item: RouterItem) => item.meta.isHide == "1"));
 // const menuHoverCollapse = ref(settings.columnMenuHoverCollapse);
 
 const columnActive = ref("");
-const subMenuList = ref<AppRouteRecordRaw[]>();
+const subMenuList = ref([]);
 
 watch(
     () => [menuList, route],
@@ -32,17 +31,17 @@ watch(
         // 当前菜单没有数据直接 return
         if (!menuList.value.length) return;
         columnActive.value = route.path;
-        const menuItem: AppRouteRecordRaw[] = menuList.value.filter((item: AppRouteRecordRaw) => {
+        const menuItem: any = menuList.value.filter((item: any) => {
+            console.log("当前菜单", item.path, route.path);
             // 刷新浏览器，一级路由就会变成点击的二级路由，所以需要加上`/${route.path.split("/")[1]}` 进行获取，否则就没有默认选择的颜色。
-            return route.path === item.path || route.path.split('/').slice(0, 3).join('/') === item.path;
-            // return route.path === item.path || `/${route.path.split("/")[2]}` === item.path;
+            return route.path === item.path || `/${route.path.split("/")[2]}` === item.path;
         });
+        console.log("当前菜单", menuList.value);
+        console.log("当前菜单", menuItem);
         // 若获取的路由没有子菜单，则赋值为空。
-        // if (!menuItem[0].children?.length) return (subMenuList.value = []);
-        if (!menuItem[0]?.children || !menuItem[0].children?.length) return (subMenuList.value = []);
+        if (!menuItem[0].children?.length) return (subMenuList.value = []);
         // 若有子菜单则赋值给子菜单变量。
         subMenuList.value = menuItem[0].children;
-        console.log('二级菜单', subMenuList.value)
     },
     {
         deep: true,
@@ -70,9 +69,9 @@ const activeMenu = computed(() => (route.meta.activeMenu ? route.meta.activeMenu
     <el-container class="layout-container">
         <div class="layout-column">
             <el-scrollbar>
-                <div v-for="item in menuList" :key="item.path" class="left-column"
-                    :class="{ 'is-active': columnActive === item.path || columnActive.split('/').slice(0, 3).join('/') === item.path }"
-                    @click="handleSubMenu(item)" :title="columnActive + '+' + item.path">
+                <div v-for="item in menuList" :key="item.path" class="left-column" :class="{
+                    'is-active': columnActive === item.path || `/${columnActive.split('/')[1]}` === item.path
+                }" @click="handleSubMenu(item)" :title="item.path">
                     <el-icon v-if="item.meta.icon && item.meta.icon.indexOf(SVG_PREFIX) == -1">
                         <component :is="item.meta.icon"></component>
                     </el-icon>
@@ -81,23 +80,15 @@ const activeMenu = computed(() => (route.meta.activeMenu ? route.meta.activeMenu
                         <svg-icons :icon-class="item.meta.icon" />
                     </el-icon>
                     <el-tooltip :content="item.meta?.title" :show-after="2000" placement="top">
-                        <span class="title">{{ item.meta?.title }}</span>
+                        <span class="title line-clamp-2">{{ item.meta?.title }}</span>
                     </el-tooltip>
                 </div>
             </el-scrollbar>
         </div>
         <el-aside class="layout-aside transition-all"
             :style="{ width: !globalStore.isCollapse ? globalStore.menuWidth + 'px' : '56px' }"
-            v-if="subMenuList?.length != 0">
+            v-if="subMenuList.length != 0">
             <!-- <Logo :isCollapse="globalStore.isCollapse" :layout="globalStore.layout"></Logo> -->
-            <div class="layout-logo">
-                <div class="logo">
-                    <img src="/src/assets/image/catsdiary.webp" alt="">
-                </div>
-                <div class="text" v-show="!globalStore.isCollapse">
-                    喵咪记事簿
-                </div>
-            </div>
             <el-scrollbar class="layout-scrollbar">
                 <!-- :unique-opened="true" 子菜单不能同时展开 -->
                 <el-menu :default-active="activeMenu" :collapse="globalStore.isCollapse" :collapse-transition="false"
@@ -124,7 +115,7 @@ const activeMenu = computed(() => (route.meta.activeMenu ? route.meta.activeMenu
     height: 100%;
     user-select: none;
     background-color: var(--el-menu-bg-color); // 用来做色弱模式
-    box-shadow: var(--column-menu-box-shadow); // 双栏最左侧右边框阴影
+    box-shadow: 2px 0 12px #1d23290d; // 双栏最左侧右边框阴影
 
     .left-column {
         display: flex;
@@ -167,43 +158,14 @@ const activeMenu = computed(() => (route.meta.activeMenu ? route.meta.activeMenu
         .title {
             margin-top: 8px;
             font-size: 12px;
-            font-weight: var(--aside-menu-font-weight);
+            font-weight: 500;
             line-height: 14px;
             text-align: center;
             letter-spacing: 2px;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
         }
     }
 }
 
-.layout-logo {
-    display: flex;
-    align-items: center;
-
-    .logo {
-        width: 44px;
-        height: 44px;
-
-        img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-    }
-
-    .text {
-        padding: 0 8px;
-        background: linear-gradient(270deg, rgba(198, 141, 255, 0.9019607843) 8.92%, #5685ff 46.17%, var(--el-color-primary) 92.17%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        white-space: nowrap;
-        color: transparent;
-    }
-}
 
 
 .layout-container {
@@ -236,11 +198,7 @@ const activeMenu = computed(() => (route.meta.activeMenu ? route.meta.activeMenu
 
 .layout-scrollbar {
     width: 100%;
-    height: calc(100vh - 44px);
-}
-
-.el-menu--collapse {
-    width: calc(var(--el-menu-icon-width) + var(--el-menu-base-level-padding));
+    height: calc(100vh - 40px);
 }
 
 /** 去除菜单右侧边框 */

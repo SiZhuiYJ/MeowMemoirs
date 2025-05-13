@@ -6,8 +6,8 @@ declare module 'ani-cursor.js' {
     export function setANICursorWithGroupElement(selectors: string[], aniPath: string): void;
 }
 //./types/vue.d.ts
-declare module "*.vue" {
-    import Vue from 'vue';
-    export default Vue;
-
+declare module '*.vue' {
+    import type { DefineComponent } from 'vue'
+    const component: DefineComponent<{}, {}, any>
+    export default component
 }

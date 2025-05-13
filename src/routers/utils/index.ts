@@ -1,8 +1,8 @@
-import Layout from "@/layouts/index.vue";
+import Layout from "@/views/system/index.vue";
 import router from "@/routers/index.ts";
 import { HOME_URL } from "@/config/index.ts";
-import type { RouterItemID, RouterItem } from "@/stores"
-import type { Component } from 'vue'
+import type { AppRouteRecordRaw } from '@/routers/type'
+import { markRaw, type DefineComponent } from 'vue'
 
 /**
  * @description 使用递归过滤出需要渲染在左侧菜单动态数据的列表 (需剔除 isHide == 0 隐藏的菜单)
@@ -15,14 +15,18 @@ export function getShowStaticAndDynamicMenuList(menuList: any) {
         return item.isHide == "1" || item.meta?.isHide == "1";
     });
 }
+
 /**
  * 注意：使用console.log("路由数据", JSON.stringify(generateRoutes(res.data, 0))打印会发现子路由的component打印不出来，JSON不能打印出来函数。${data[i].component}
  */
 // 递归函数用于生成路由配置，登录的时候也需要调用一次。
 export function generateRoutes(data: any[], parentId: any) {
     // 首先把你需要动态路由的组件地址全部获取[vue2中可以直接用拼接的方式，但是vue3中必须用这种方式]
-    let modules = import.meta.glob("@/views/**/*.vue");
-    const routeList: any = [];
+    // let modules = import.meta.glob("@/views/**/*.vue");
+    // 类型安全的动态导入处理器
+    const modules = import.meta.glob('/src/views/**/*.vue') as Record<string, () => Promise<{ default: DefineComponent }>>
+    // 处理动态导入模块的类型
+    const routeList: AppRouteRecordRaw[] = [];
     // 如果 data 为空，直接返回空数组
     if (!data || data.length === 0) {
         return routeList;
@@ -30,14 +34,16 @@ export function generateRoutes(data: any[], parentId: any) {
     for (var i = 0; i < data.length; i++) {
         if (data[i] && !router.hasRoute(data[i].path)) {
             if (data[i].parentId === parentId) {
-                const componentTemplate = data[i].component;
-                const route: RouterItem = {
+                const componentPath = `/src/views/${data[i].component}.vue`
+                // 处理动态组件
+                const asyncComponent = modules[componentPath]
+                    ? () => modules[componentPath]()
+                    : undefined
+                const route: AppRouteRecordRaw = {
                     path: `${data[i].path}`,
                     name: `${data[i].name}`,
                     // 这里modules[`/src/views/${componentTemplate}.vue`] 一定要用绝对定位
-                    component: data[i]?.component
-                        ? modules[`/src/views/${componentTemplate}.vue`]
-                        : Layout,
+                    component: asyncComponent || markRaw(Layout as DefineComponent),
                     meta: {
                         title: data[i]?.menuName,
                         enName: data[i]?.enName,
@@ -74,18 +80,20 @@ export function generateRoutes(data: any[], parentId: any) {
  */
 export function generateFlattenRoutes(data: any[]) {
     // 首先把你需要动态路由的组件地址全部获取[vue2中可以直接用拼接的方式，但是vue3中必须用这种方式]
-    let modules = import.meta.glob("@/views/**/*.vue");
+    // let modules = import.meta.glob("@/views/**/*.vue");
+    // 类型安全的动态导入处理器
+    const modules = import.meta.glob('/src/views/**/*.vue') as Record<string, () => Promise<{ default: DefineComponent }>>
     const routes: any = [];
     for (var i = 0; i < data.length; i++) {
         // console.log("component", data[i].component)
-        const componentTemplate = data[i].component;
-        const route: RouterItemID = {
+        const componentPath = `/src/views/${data[i].component}.vue`
+        // 处理动态组件
+        const asyncComponent = modules[componentPath] ? () => modules[componentPath]() : undefined
+        const route: AppRouteRecordRaw = {
             path: `${data[i].path}`,
             name: `${data[i].name}`,
             // 这里modules[`/src/views/${componentTemplate}.vue`] 一定要用绝对定位
-            component: data[i]?.component
-                ? modules[`/src/views/${componentTemplate}.vue`]
-                : Layout,
+            component: asyncComponent || markRaw(Layout as DefineComponent),
             meta: {
                 parentId: data[i].parentId,
                 title: data[i].menuName,
@@ -107,6 +115,7 @@ export function generateFlattenRoutes(data: any[]) {
         }
         routes.push(route);
     }
+    console.log("扁平化路由数据", routes);
     return routes;
 }
 /**

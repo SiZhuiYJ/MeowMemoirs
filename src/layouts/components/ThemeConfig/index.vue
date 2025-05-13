@@ -373,7 +373,7 @@ mittBus.on("handleThemeConfig", () => {
 .koi-icon {
   &:hover {
     color: var(--el-color-primary);
-    cursor: pointer;
+    // cursor: pointer;
   }
 }
 
@@ -391,7 +391,7 @@ mittBus.on("handleThemeConfig", () => {
     width: 100px;
     height: 70px;
     padding: 6px;
-    cursor: pointer;
+    // cursor: pointer;
     border-radius: 5px;
     box-shadow: 0 0 5px 1px var(--el-border-color-dark);
     transition: all 0.2s;

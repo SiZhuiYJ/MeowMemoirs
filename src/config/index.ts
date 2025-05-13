@@ -3,7 +3,7 @@
 export const HOME_URL: string = "/home/index";
 
 // 跳转子页面静态路由父级节点
-export const STATIC_URL: string = "/system/PhotoAlbum";// /home/index
+export const STATIC_URL: string = "/system/home";// /home/index  /console
 
 // 登录页地址[默认]
 export const LOGIN_URL: string = "/login";

@@ -165,7 +165,7 @@ defineExpose({
   position: absolute;
   z-index: 9999;
   display: none;
-  cursor: pointer;
+  // cursor: pointer;
   background-color: #ffffff;
   @apply dark:bg-black dark:text-#E5EAF3;
   border-radius: var(--el-border-radius-base);

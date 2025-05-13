@@ -84,7 +84,7 @@ const background = computed(() => {
         display: flex;
         align-items: center;
         margin-left: 20px;
-        cursor: pointer;
+        // cursor: pointer;
 
         img {
             width: 80px;
@@ -181,7 +181,7 @@ const background = computed(() => {
                 border-radius: 5px;
                 letter-spacing: 1px;
                 outline: none;
-                cursor: pointer;
+                // cursor: pointer;
             }
 
             button:hover {
@@ -244,7 +244,7 @@ const background = computed(() => {
             color: #a262ad;
             letter-spacing: 2px;
             border: none;
-            cursor: pointer;
+            // cursor: pointer;
         }
 
         button:hover {

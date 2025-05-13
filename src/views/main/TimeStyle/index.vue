@@ -118,7 +118,7 @@ a.switcher:before {
 	bottom: 0;
 	left: 0;
 	margin: auto;
-	cursor: default;
+	// cursor: default;
 }
 
 .clock span {

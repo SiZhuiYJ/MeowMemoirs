@@ -22,7 +22,7 @@ const handleExitMaximize = () => {
   z-index: 999;
   width: 66px;
   height: 66px;
-  cursor: pointer;
+  // cursor: pointer;
   background-color: var(--el-color-primary-light-8);
   border: 2px dashed var(--el-color-primary);
   border-radius: 50%;

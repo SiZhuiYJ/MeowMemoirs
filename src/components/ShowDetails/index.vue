@@ -780,7 +780,7 @@ button {
     background: none;
     border: none;
     color: white;
-    cursor: pointer;
+    // cursor: pointer;
     // padding: 0.5rem;
     transition: opacity 0.2s;
     display: flex;
@@ -826,7 +826,7 @@ button:hover {
             transform-origin: center center;
             width: 100%;
             height: 100%;
-            cursor: pointer;
+            // cursor: pointer;
         }
     }
 
@@ -923,7 +923,7 @@ button:hover {
             background-color: #ffffff00;
             border-radius: 50%;
             font-size: 12px;
-            cursor: pointer;
+            // cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -955,7 +955,7 @@ button:hover {
         left: 20px;
         top: 40px;
         font-size: 12px;
-        cursor: pointer;
+        // cursor: pointer;
     }
 
     .controls {

@@ -133,7 +133,7 @@ button {
 	color: #a262ad;
 	letter-spacing: 2px;
 	border: none;
-	cursor: pointer;
+	// cursor: pointer;
 }
 
 button:hover {
