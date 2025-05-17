@@ -1,18 +1,18 @@
-<template>
-  <div class="maximize" @click="handleExitMaximize">
-    <el-icon :size="22" class="exitIcon"><CloseBold /></el-icon>
-  </div>
-</template>
-
 <script setup lang="ts">
-import useGlobalStore from "@/stores/modules/global.ts";
-
-const globalStore = useGlobalStore();
+import { useGlobalStore } from "@/stores";
 
 const handleExitMaximize = () => {
-  globalStore.setGlobalState("maximize", false);
+  useGlobalStore().setGlobal("maximize", false);
 };
 </script>
+
+<template>
+  <div class="maximize" @click="handleExitMaximize">
+    <el-icon :size="22" class="exitIcon">
+      <CloseBold />
+    </el-icon>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .maximize {
@@ -27,9 +27,11 @@ const handleExitMaximize = () => {
   border: 2px dashed var(--el-color-primary);
   border-radius: 50%;
   opacity: 0.9;
+
   &:hover {
     background-color: var(--el-color-primary-light-7);
   }
+
   .exitIcon {
     position: relative;
     top: 46%;

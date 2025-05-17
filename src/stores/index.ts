@@ -17,3 +17,7 @@ export * from './modules/userStores'
 export * from './modules/authStore'
 // 导出 globalStore 模块
 export * from './modules/globalStore'
+// 导出 keepAliveStore 模块
+export * from './modules/keepAliveStore'
+// 导出 TabsStore 模块
+export * from './modules/tabStore'

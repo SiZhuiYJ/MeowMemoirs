@@ -41,7 +41,7 @@ const initGlobal: global = {
     language: "zh",
     themeColor: DEFAULT_THEME,
     layout: "my",
-    transition: "fade-default",
+    transition: "fade",
     uniqueOpened: true,
     isGrey: false,
     isWeak: false,

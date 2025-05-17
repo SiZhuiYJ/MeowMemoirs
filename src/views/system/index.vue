@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import commonHeader from './components/header/index.vue'
+import commonHeader from '@/layouts/components/HeaderBackstage/index.vue'
 import { useGlobalStore, useAuthStore } from "@/stores"
 import type { AppRouteRecordRaw } from '@/routers/type'
 const { globalStore } = useGlobalStore()
 import { SVG_PREFIX } from "@/config/index.ts";
 // import Logo from "@/layouts/components/Logo/index.vue";
+import Main from "@/layouts/components/Main/index.vue";
 import ColumnSubMenu from "@/layouts/components/Menu/ColumnSubMenu.vue";
 import { ref, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -111,8 +112,7 @@ const activeMenu = computed(() => (route.meta.activeMenu ? route.meta.activeMenu
                 <common-header></common-header>
             </el-header>
             <!-- 路由页面 -->
-            <!-- <Main></Main> -->
-            <router-view></router-view>
+            <Main></Main>
         </el-container>
     </el-container>
 </template>

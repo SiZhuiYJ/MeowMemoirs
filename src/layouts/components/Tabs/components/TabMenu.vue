@@ -1,48 +1,17 @@
-<template>
-  <div class="tabs-card">
-    <div @click="handleRefresh()" class="tab-menu-item">
-      <el-icon size="16" class="m-r-5px"><Refresh class="icon-scale" /></el-icon>{{ $t("tabs.refresh") }}
-    </div>
-    <div @click="handleMaximize()" class="tab-menu-item">
-      <el-icon size="16" class="m-r-5px"><FullScreen class="icon-scale" /></el-icon>{{ $t("tabs.maximize") }}
-    </div>
-    <div @click="handleCloseCurrentTab()" class="tab-menu-item">
-      <el-icon size="16" class="m-r-5px"><Close class="icon-scale" /></el-icon>{{ $t("tabs.closeCurrent") }}
-    </div>
-    <div @click="handleCloseOtherTabs()" class="tab-menu-item">
-      <el-icon size="16" class="m-r-5px"><Star class="icon-scale" /></el-icon>{{ $t("tabs.closeOther") }}
-    </div>
-    <div @click="handleCloseSideTabs('left')" class="tab-menu-item">
-      <el-icon size="16" class="m-r-5px"><DArrowLeft class="icon-scale" /></el-icon>{{ $t("tabs.closeLeft") }}
-    </div>
-    <div @click="handleCloseSideTabs('right')" class="tab-menu-item">
-      <el-icon size="16" class="m-r-5px"><DArrowRight class="icon-scale" /></el-icon>{{ $t("tabs.closeRight") }}
-    </div>
-    <div icon="Remove" @click="handleCloseAllTabs()" class="tab-menu-item">
-      <el-icon size="16" class="m-r-5px"><Remove class="icon-scale" /></el-icon>{{ $t("tabs.closeAll") }}
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { inject, nextTick, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
-import useTabsStore from "@/stores/modules/tabs.ts";
-import useKeepAliveStore from "@/stores/modules/keepAlive.ts";
-import useGlobalStore from "@/stores/modules/global.ts";
+import { useGlobalStore, useTabsStore, useKeepAliveStore } from "@/stores";
 import { HOME_URL } from "@/config/index.ts";
 
 const route = useRoute();
 const router = useRouter();
-const keepAliveStore = useKeepAliveStore();
-const tabsStore = useTabsStore();
-const globalStore = useGlobalStore();
 
 // 点击鼠标右键点击出现菜单
 const choosePath = ref();
-const handleKoiMenuParent = (e: any) => {
-  if(e.srcElement?.id) {
+const handleMenuParent = (e: any) => {
+  if (e.srcElement?.id) {
     choosePath.value = e.srcElement.id.split("-")[1];
   } else {
     return;
@@ -71,7 +40,7 @@ const handleKoiMenuParent = (e: any) => {
   e.stopPropagation();
 };
 
-const handleKoiMenuChildren = (path: any, e: any) => {
+const handleMenuChildren = (path: any, e: any) => {
   choosePath.value = path;
   const card = document.querySelector(".tabs-card") as HTMLElement | null;
 
@@ -101,10 +70,10 @@ const handleKoiMenuChildren = (path: any, e: any) => {
 const refreshCurrentPage: Function = inject("refresh") as Function;
 const handleRefresh = () => {
   setTimeout(() => {
-    route.meta.isKeepAlive && keepAliveStore.removeKeepAliveName(route.name as string);
+    route.meta.isKeepAlive && useKeepAliveStore().removeKeepAliveName(route.name as string);
     refreshCurrentPage(false);
     nextTick(() => {
-      route.meta.isKeepAlive && keepAliveStore.addKeepAliveName(route.name as string);
+      route.meta.isKeepAlive && useKeepAliveStore().addKeepAliveName(route.name as string);
       refreshCurrentPage(true);
     });
   }, 0);
@@ -114,50 +83,92 @@ const handleRefresh = () => {
 const handleMaximize = () => {
   // 切换哪个，先跳转哪个
   router.push(choosePath.value);
-  globalStore.setGlobalState("maximize", !globalStore.maximize);
+  useGlobalStore().setGlobal("maximize", !useGlobalStore().globalStore.maximize);
 };
 
 /** 关闭左边 OR 右边选项卡 */
 const handleCloseSideTabs = (direction: any) => {
   // console.log("关闭左边 OR 右边选项卡", direction);
   if (choosePath.value) {
-    tabsStore.closeSideTabs(choosePath.value, direction);
+    useTabsStore().closeSideTabs(choosePath.value, direction);
   } else {
-    tabsStore.closeSideTabs(route.fullPath, direction);
+    useTabsStore().closeSideTabs(route.fullPath, direction);
   }
 };
 
 /** 关闭当前选项卡 */
 const handleCloseCurrentTab = () => {
   if (choosePath.value) {
-    tabsStore.removeTab(choosePath.value, true, route.fullPath);
+    useTabsStore().removeTab(choosePath.value, true, route.fullPath);
   } else {
-    tabsStore.removeTab(route.fullPath);
+    useTabsStore().removeTab(route.fullPath);
   }
 };
 
 /** 关闭其他选项卡 */
 const handleCloseOtherTabs = () => {
   if (choosePath.value) {
-    tabsStore.closeManyTabs(choosePath.value);
+    useTabsStore().closeManyTabs(choosePath.value);
     router.push(choosePath.value);
   } else {
-    tabsStore.closeManyTabs(route.fullPath);
+    useTabsStore().closeManyTabs(route.fullPath);
   }
 };
 
 /** 关闭全部选项卡 */
 const handleCloseAllTabs = () => {
-  tabsStore.closeManyTabs();
+  useTabsStore().closeManyTabs();
   router.push(HOME_URL);
 };
 
 /** 组件对外暴露 */
 defineExpose({
-  handleKoiMenuParent,
-  handleKoiMenuChildren
+  handleMenuParent,
+  handleMenuChildren
 });
 </script>
+
+<template>
+  <div class="tabs-card">
+    <div @click="handleRefresh()" class="tab-menu-item">
+      <el-icon size="16" class="m-r-5px">
+        <Refresh class="icon-scale" />
+      </el-icon>重新刷新
+    </div>
+    <div @click="handleMaximize()" class="tab-menu-item">
+      <el-icon size="16" class="m-r-5px">
+        <FullScreen class="icon-scale" />
+      </el-icon>全屏切换
+    </div>
+    <div @click="handleCloseCurrentTab()" class="tab-menu-item">
+      <el-icon size="16" class="m-r-5px">
+        <Close class="icon-scale" />
+      </el-icon>关闭当前
+    </div>
+    <div @click="handleCloseOtherTabs()" class="tab-menu-item">
+      <el-icon size="16" class="m-r-5px">
+        <Star class="icon-scale" />
+      </el-icon>关闭其它
+    </div>
+    <div @click="handleCloseSideTabs('left')" class="tab-menu-item">
+      <el-icon size="16" class="m-r-5px">
+        <DArrowLeft class="icon-scale" />
+      </el-icon>关闭左侧
+    </div>
+    <div @click="handleCloseSideTabs('right')" class="tab-menu-item">
+      <el-icon size="16" class="m-r-5px">
+        <DArrowRight class="icon-scale" />
+      </el-icon>关闭右侧
+    </div>
+    <div icon="Remove" @click="handleCloseAllTabs()" class="tab-menu-item">
+      <el-icon size="16" class="m-r-5px">
+        <Remove class="icon-scale" />
+      </el-icon>关闭所有
+    </div>
+  </div>
+</template>
+
+
 
 <style lang="scss" scoped>
 /** 右键点击选项开始 */
@@ -186,6 +197,7 @@ defineExpose({
   user-select: none;
   background-color: var(--el-bg-color);
   border-radius: var(--el-border-radius-base);
+
   &:hover {
     color: var(--el-color-primary);
     background-color: var(--el-color-primary-light-9);
@@ -194,24 +206,30 @@ defineExpose({
 }
 
 .tab-menu-item:hover .icon-scale {
-  animation: koi-scale 0.6s ease-in-out forwards;
+  animation: scale 0.6s ease-in-out forwards;
 }
 
-@keyframes koi-scale {
+@keyframes scale {
   0% {
-      transform: scale(1); /* 初始状态为原始大小 */
-      -webkit-transform: scale(1);
-      transform-origin: center;
-      -webkit-transform-origin: center;
+    transform: scale(1);
+    /* 初始状态为原始大小 */
+    -webkit-transform: scale(1);
+    transform-origin: center;
+    -webkit-transform-origin: center;
   }
+
   50% {
-      transform: scale(1.16); /* 中间放大到1.16倍 */
-      -webkit-transform: scale(1.16);
+    transform: scale(1.16);
+    /* 中间放大到1.16倍 */
+    -webkit-transform: scale(1.16);
   }
+
   100% {
-      transform: scale(1); /* 最终状态恢复到原始大小 */
-      -webkit-transform: scale(1);
+    transform: scale(1);
+    /* 最终状态恢复到原始大小 */
+    -webkit-transform: scale(1);
   }
 }
+
 /** 右键点击选项结束 */
 </style>

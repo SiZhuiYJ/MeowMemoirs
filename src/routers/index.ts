@@ -63,13 +63,14 @@ router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormali
     // console.log("路由白名单", ROUTER_WHITE_LIST, to.path);
     if (ROUTER_WHITE_LIST.includes(to.path)) return next();
     // 5、判断是否有 Token，没有重定向到 login 页面。
-    if (!userStore.token) return next({ path: LOGIN_URL, replace: true });
-    console.log("有token,不在白名单需要登陆");
+    if (!userStore.token && to.path !== LOGIN_URL) return next({ path: LOGIN_URL, replace: true });
+    // if (!userStore.token) return next({ path: LOGIN_URL, replace: true });
+    // console.log("有token,不在白名单需要登陆");
     // 6、如果没有菜单列表[一级扁平化路由 OR 递归菜单路由数据判断是否存在都阔以]，就重新请求菜单列表并添加动态路由。
     if (!useAuthStore().getMenuList.length) {
         // 注意：authStore.getMenuList，不能持久化菜单数据，否则这里一直有值，就不会走这里，而且持久化之后还会被篡改数据。
         // 获取相关菜单数据 && 按钮数据 && 角色数据 && 用户信息。
-        console.log("刷新页面");
+        // console.log("刷新页面");
         await initDynamicRouter();
         return next({ ...to, replace: true }); // ...to 保证路由添加完了再进入页面 (可以理解为重进一次) replace: true 重进一次, 不保留重复历史
     }
