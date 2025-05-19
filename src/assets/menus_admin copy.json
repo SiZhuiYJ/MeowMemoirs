@@ -1,0 +1,205 @@
+[
+    {
+        "path": "/console",
+        "name": "console",
+        "label": "控制台",
+        "icon": "Monitor",
+        "menuId": 1,
+        "menuName": "控制台",
+        "enName": "console",
+        "parentId": 0,
+        "menuType": "1",
+        "component": "console/index",
+        "children": [
+            {
+                "path": "/console/home",
+                "name": "home",
+                "label": "首页",
+                "icon": "HomeFilled",
+                "menuId": 11,
+                "menuName": "首页",
+                "enName": "Home",
+                "parentId": 1,
+                "menuType": "2",
+                "component": "console/home/index",
+                "redirect": ""
+            },
+            {
+                "path": "/console/message",
+                "name": "message",
+                "label": "留言管理",
+                "icon": "ChatLineSquare",
+                "menuId": 12,
+                "menuName": "留言管理",
+                "enName": "Message",
+                "parentId": 1,
+                "menuType": "2",
+                "component": "console/message/index",
+                "redirect": ""
+            },
+            {
+                "path": "/console/files",
+                "name": "files",
+                "label": "资源管理",
+                "icon": "Files",
+                "menuId": 13,
+                "menuName": "资源管理",
+                "enName": "files",
+                "parentId": 1,
+                "menuType": "2",
+                "component": "",
+                "children": [
+                    {
+                        "path": "/console/files/image",
+                        "name": "image",
+                        "label": "图片管理",
+                        "icon": "Picture",
+                        "menuId": 131,
+                        "menuName": "图片管理",
+                        "enName": "Image",
+                        "parentId": 13,
+                        "menuType": "3",
+                        "component": "console/files/image/index",
+                        "redirect": ""
+                    },
+                    {
+                        "path": "/console/files/video",
+                        "name": "video",
+                        "label": "视频管理",
+                        "icon": "Film",
+                        "menuId": 132,
+                        "menuName": "视频管理",
+                        "enName": "video",
+                        "parentId": 13,
+                        "menuType": "3",
+                        "component": "console/files/video/index",
+                        "redirect": ""
+                    },
+                    {
+                        "path": "/console/files/file",
+                        "name": "file",
+                        "label": "文件管理",
+                        "icon": "Folder",
+                        "menuId": 133,
+                        "menuName": "文件管理",
+                        "enName": "File",
+                        "parentId": 13,
+                        "menuType": "3",
+                        "component": "console/files/file/index",
+                        "redirect": ""
+                    }
+                ],
+                "redirect": "console/image/index"
+            },
+            {
+                "path": "/console/memo",
+                "name": "memo",
+                "label": "备忘录",
+                "icon": "Notebook",
+                "menuId": 14,
+                "menuName": "备忘录",
+                "enName": "Todo",
+                "parentId": 1,
+                "menuType": "2",
+                "component": "",
+                "children": [
+                    {
+                        "path": "/console/memo/notes",
+                        "name": "Notes",
+                        "label": "笔记管理",
+                        "icon": "List",
+                        "menuId": 141,
+                        "menuName": "笔记管理",
+                        "enName": "Notes",
+                        "parentId": 14,
+                        "menuType": "3",
+                        "component": "console/memo/notes/index",
+                        "redirect": ""
+                    },
+                    {
+                        "path": "/console/memo/todo",
+                        "name": "todo",
+                        "label": "待办管理",
+                        "icon": "Checked",
+                        "menuId": 142,
+                        "menuName": "待办管理",
+                        "enName": "Todo",
+                        "parentId": 14,
+                        "menuType": "3",
+                        "component": "console/memo/todo/index",
+                        "redirect": ""
+                    }
+                ],
+                "redirect": "console/memo/todo/index"
+            },
+            {
+                "path": "/console/system",
+                "name": "system",
+                "label": "系统管理",
+                "icon": "Setting",
+                "menuId": 15,
+                "menuName": "系统管理",
+                "enName": "System",
+                "parentId": 1,
+                "menuType": "2",
+                "component": "",
+                "children": [
+                    {
+                        "path": "/console/system/user",
+                        "name": "user",
+                        "label": "个人中心",
+                        "icon": "User",
+                        "menuId": 151,
+                        "menuName": "个人中心",
+                        "enName": "User",
+                        "parentId": 15,
+                        "menuType": "3",
+                        "component": "console/system/user/index",
+                        "redirect": ""
+                    },
+                    {
+                        "path": "/console/system/users",
+                        "name": "users",
+                        "label": "用户管理",
+                        "icon": "UserFilled",
+                        "menuId": 152,
+                        "menuName": "用户管理",
+                        "enName": "Users",
+                        "parentId": 15,
+                        "menuType": "3",
+                        "component": "console/system/users/index",
+                        "redirect": ""
+                    },
+                    {
+                        "path": "/console/system/menu",
+                        "name": "menu",
+                        "label": "菜单管理",
+                        "icon": "Memo",
+                        "menuId": 153,
+                        "menuName": "菜单管理",
+                        "enName": "menu",
+                        "parentId": 15,
+                        "menuType": "3",
+                        "component": "console/system/menu/index",
+                        "redirect": ""
+                    },
+                    {
+                        "path": "/console/system/loginlog",
+                        "name": "loginlog",
+                        "label": "登录日志",
+                        "icon": "Calendar",
+                        "menuId": 154,
+                        "menuName": "登录日志",
+                        "enName": "loginlog",
+                        "parentId": 15,
+                        "menuType": "3",
+                        "component": "console/system/loginlog/index",
+                        "redirect": ""
+                    }
+                ],
+                "redirect": "console/system/index"
+            }
+        ],
+        "redirect": "/console/home"
+    }
+]

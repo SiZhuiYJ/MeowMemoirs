@@ -1,139 +1,102 @@
+<script setup lang="ts">
+import { nextTick, ref } from "vue";
+import { useTheme } from "@/utils/theme.ts";
+import { storeToRefs } from "pinia";
+import mittBus from "@/utils/mittBus";
+import { useGlobalStore } from "@/stores";
+import Drawer from "@/components/Drawer/Index.vue";
+
+import { meowMsgWarning } from "@/utils/message";
+
+// ["vertical", "columns", "classic", "optimum", "horizontal"]
+const layouts = ["columns"];
+interface ColorItem {
+  color: string;
+  name: string;
+}
+
+const colorList: ColorItem[] = [
+  { color: "#e3c0df", name: "淡粉紫色" },
+  { color: "#2992FF", name: "睛蓝色" },
+  { color: "#1E71EE", name: "墨蓝色" },
+  { color: "#6169FF", name: "紫罗兰" },
+  { color: "#8076C3", name: "槿紫色" },
+  { color: "#1BA784", name: "竹绿色" },
+  { color: "#316C72", name: "蓝绿色" },
+  { color: "#BE967F", name: "海鸥棕" },
+  { color: "#D85916", name: "铁棕色" },
+  { color: "#CF4813", name: "落霞红" },
+  { color: "#CD6227", name: "火砖红" },
+  { color: "#381924", name: "檀紫" },
+  { color: "#2E317C", name: "满天星紫" },
+];
+
+const { changeThemeColor, changeGreyOrWeak, setAsideTheme, setHeaderTheme } = useTheme();
+const { globalStore } = storeToRefs(useGlobalStore());
+
+const DrawerRef = ref();
+/** 打开主题配置 */
+const handleThemeConfig = () => {
+  nextTick(() => {
+    DrawerRef.value.Open();
+  });
+};
+
+/** 布局切换 */
+const setLayout = (value: string) => {
+  // layouts数组内是否包含value
+  if (layouts.includes(value)) {
+    useGlobalStore().setGlobal("layout", value);
+    setAsideTheme();
+    return;
+  } else {
+    meowMsgWarning("当前布局未实现，试试其他的布局吧~");
+  }
+};
+
+/** 打开主题配置对话框，on 接收事件 */
+mittBus.on("handleThemeConfig", () => {
+  handleThemeConfig();
+});
+</script>
+
 <template>
   <!-- 主题配置 -->
-  <KoiDrawer
-    ref="koiDrawerRef"
-    title="主题配置"
-    :footerHidden="true"
-  >
+  <Drawer ref="DrawerRef" title="主题配置" :footerHidden="true">
     <template #content>
       <el-row>
         <el-col :sm="{ span: 24 }" :xs="{ span: 24 }">
-          <el-divider class="flex" content-position="center">
-            <div class="flex flex-row flex-justify-center flex-items-center">
+          <el-divider class="flex" style="display: flex" content-position="center">
+            <div class="theme-container">
               <el-icon :size="18"><Connection /></el-icon>
-              <div class="text-14px m-l-4px">主题颜色</div>
+              <div class="theme-name">主题颜色</div>
             </div>
           </el-divider>
         </el-col>
       </el-row>
 
       <!-- 可使用 column-gap 解决 flex-justify-between 问题 -->
-      <div class="w-full flex flex-wrap flex-justify-between">
-        <div class="flex flex-col">
-          <div class="rounded-md border-1px border-dashed border-[--el-border-color-darker] shadow-[--el-box-shadow-lighter]" 
-            @click="changeThemeColor('#2992FF')"
-            :style="{ 'border-color': globalStore.themeColor === '#2992FF' ? '#2992FF' : '' }">
-           <div class="rounded-md w-20px h-20px bg-#2992FF m-x-36px m-y-12px"></div>
+      <div class="color-container">
+        <div class="color-card" v-for="(item, index) in colorList" :key="index">
+          <div
+            class="color-item"
+            @click="changeThemeColor(item.color)"
+            :style="{
+              'border-color': globalStore.themeColor === item.color ? item.color : '',
+            }"
+          >
+            <div class="color-plate" :style="{ 'background-color': item.color }"></div>
           </div>
-          <div class="text-12px text-center m-y-8px">睛蓝色</div>
-        </div>
-
-        <div class="flex flex-col">
-          <div class="rounded-md border-1px border-dashed border-[--el-border-color-darker] shadow-[--el-box-shadow-lighter]" 
-            @click="changeThemeColor('#1E71EE')"
-            :style="{ 'border-color': globalStore.themeColor === '#1E71EE' ? '#1E71EE' : '' }">
-           <div class="rounded-md w-20px h-20px bg-#1E71EE m-x-36px m-y-12px"></div>
-          </div>
-          <div class="text-12px text-center m-y-8px">墨蓝色</div>
-        </div>
-
-        <div class="flex flex-col">
-          <div class="rounded-md border-1px border-dashed border-[--el-border-color-darker] shadow-[--el-box-shadow-lighter]" 
-            @click="changeThemeColor('#6169FF')"
-            :style="{ 'border-color': globalStore.themeColor === '#6169FF' ? '#6169FF' : '' }">
-           <div class="rounded-md w-20px h-20px bg-#6169FF m-x-36px m-y-12px"></div>
-          </div>
-          <div class="text-12px text-center m-y-8px">紫罗兰</div>
-        </div>
-
-        <div class="flex flex-col">
-          <div class="rounded-md border-1px border-dashed border-[--el-border-color-darker] shadow-[--el-box-shadow-lighter]" 
-            @click="changeThemeColor('#8076C3')"
-            :style="{ 'border-color': globalStore.themeColor === '#8076C3' ? '#8076C3' : '' }">
-           <div class="rounded-md w-20px h-20px bg-#8076C3 m-x-36px m-y-12px"></div>
-          </div>
-          <div class="text-12px text-center m-y-8px">槿紫色</div>
-        </div>
-
-        <div class="flex flex-col">
-          <div class="rounded-md border-1px border-dashed border-[--el-border-color-darker] shadow-[--el-box-shadow-lighter]" 
-            @click="changeThemeColor('#1BA784')"
-            :style="{ 'border-color': globalStore.themeColor === '#1BA784' ? '#1BA784' : '' }">
-           <div class="rounded-md w-20px h-20px bg-#1BA784  m-x-36px m-y-12px"></div>
-          </div>
-          <div class="text-12px text-center m-y-8px">竹绿色</div>
-        </div>
-
-        <div class="flex flex-col">
-          <div class="rounded-md border-1px border-dashed border-[--el-border-color-darker] shadow-[--el-box-shadow-lighter]" 
-            @click="changeThemeColor('#316C72')"
-            :style="{ 'border-color': globalStore.themeColor === '#316C72' ? '#316C72' : '' }">
-           <div class="rounded-md w-20px h-20px bg-#316C72 m-x-36px m-y-12px"></div>
-          </div>
-          <div class="text-12px text-center m-y-8px">蓝绿色</div>
-        </div>
-
-        <div class="flex flex-col">
-          <div class="rounded-md border-1px border-dashed border-[--el-border-color-darker] shadow-[--el-box-shadow-lighter]" 
-            @click="changeThemeColor('#BE967F')"
-            :style="{ 'border-color': globalStore.themeColor === '#BE967F' ? '#BE967F' : '' }">
-           <div class="rounded-md w-20px h-20px bg-#BE967F m-x-36px m-y-12px"></div>
-          </div>
-          <div class="text-12px text-center m-y-8px">海鸥棕</div>
-        </div>
-
-        <div class="flex flex-col">
-          <div class="rounded-md border-1px border-dashed border-[--el-border-color-darker] shadow-[--el-box-shadow-lighter]" 
-            @click="changeThemeColor('#D85916')"
-            :style="{ 'border-color': globalStore.themeColor === '#D85916' ? '#D85916' : '' }">
-           <div class="rounded-md w-20px h-20px bg-#d85916 m-x-36px m-y-12px"></div>
-          </div>
-          <div class="text-12px text-center m-y-8px">铁棕色</div>
-        </div>
-
-        <div class="flex flex-col">
-          <div class="rounded-md border-1px border-dashed border-[--el-border-color-darker] shadow-[--el-box-shadow-lighter]" 
-            @click="changeThemeColor('#CF4813')"
-            :style="{ 'border-color': globalStore.themeColor === '#CF4813' ? '#CF4813' : '' }">
-           <div class="rounded-md w-20px h-20px bg-#CF4813  m-x-36px m-y-12px"></div>
-          </div>
-          <div class="text-12px text-center m-y-8px">落霞红</div>
-        </div>
-
-        <div class="flex flex-col">
-          <div class="rounded-md border-1px border-dashed border-[--el-border-color-darker] shadow-[--el-box-shadow-lighter]" 
-            @click="changeThemeColor('#CD6227')"
-            :style="{ 'border-color': globalStore.themeColor === '#CD6227' ? '#CD6227' : '' }">
-           <div class="rounded-md w-20px h-20px bg-#CD6227  m-x-36px m-y-12px"></div>
-          </div>
-          <div class="text-12px text-center m-y-8px">火砖红</div>
-        </div>
-
-        <div class="flex flex-col">
-          <div class="rounded-md border-1px border-dashed border-[--el-border-color-darker] shadow-[--el-box-shadow-lighter]" 
-            @click="changeThemeColor('#381924')"
-            :style="{ 'border-color': globalStore.themeColor === '#381924' ? '#381924' : '' }">
-           <div class="rounded-md w-20px h-20px bg-#381924 m-x-36px m-y-12px"></div>
-          </div>
-          <div class="text-12px text-center m-y-8px">檀紫</div>
-        </div>
-
-        <div class="flex flex-col">
-          <div class="rounded-md border-1px border-dashed border-[--el-border-color-darker] shadow-[--el-box-shadow-lighter]" 
-            @click="changeThemeColor('#2E317C')"
-            :style="{ 'border-color': globalStore.themeColor === '#2E317C' ? '#2E317C' : '' }">
-           <div class="rounded-md w-20px h-20px bg-#2E317C m-x-36px m-y-12px"></div>
-          </div>
-          <div class="text-12px text-center m-y-8px">满天星紫</div>
+          <div class="color-name">{{ item.name }}</div>
         </div>
       </div>
 
       <el-row>
         <el-col :sm="{ span: 24 }" :xs="{ span: 24 }">
           <el-divider class="flex" content-position="center">
-            <div class="flex flex-row flex-justify-center flex-items-center">
+            <div class="theme-container">
               <el-icon :size="18"><Notification /></el-icon>
-              <div class="text-14px m-l-4px">布局样式</div>
+              <div class="theme-name">布局样式</div>
             </div>
           </el-divider>
         </el-col>
@@ -141,42 +104,63 @@
 
       <div class="layout-box">
         <el-tooltip content="纵向" placement="top" :show-after="200">
-          <div :class="['layout-item layout-vertical', { 'is-active': layout == 'vertical' }]" @click="setLayout('vertical')">
+          <div
+            :class="[
+              'layout-item layout-vertical',
+              { 'is-active': globalStore.layout == 'vertical' },
+            ]"
+            @click="setLayout('vertical')"
+          >
             <div class="layout-dark"></div>
             <div class="layout-container">
               <div class="layout-light"></div>
               <div class="layout-content"></div>
             </div>
-            <el-icon v-if="layout == 'vertical'">
+            <el-icon v-if="globalStore.layout == 'vertical'">
               <CircleCheckFilled />
             </el-icon>
           </div>
         </el-tooltip>
         <el-tooltip content="分栏" placement="top" :show-after="200">
-          <div :class="['layout-item layout-columns', { 'is-active': layout == 'columns' }]" @click="setLayout('columns')">
+          <div
+            :class="[
+              'layout-item layout-columns',
+              { 'is-active': globalStore.layout == 'columns' },
+            ]"
+            @click="setLayout('columns')"
+          >
             <div class="layout-dark"></div>
             <div class="layout-light"></div>
             <div class="layout-content"></div>
-            <el-icon v-if="layout == 'columns'">
+            <el-icon v-if="globalStore.layout == 'columns'">
               <CircleCheckFilled />
             </el-icon>
           </div>
         </el-tooltip>
         <el-tooltip content="经典" placement="top" :show-after="200">
-          <div :class="['layout-item layout-classic', { 'is-active': layout == 'classic' }]" @click="setLayout('classic')">
+          <div
+            :class="[
+              'layout-item layout-classic',
+              { 'is-active': globalStore.layout == 'classic' },
+            ]"
+            @click="setLayout('classic')"
+          >
             <div class="layout-dark"></div>
             <div class="layout-container">
               <div class="layout-light"></div>
               <div class="layout-content"></div>
             </div>
-            <el-icon v-if="layout == 'classic'">
+            <el-icon v-if="globalStore.layout == 'classic'">
               <CircleCheckFilled />
             </el-icon>
           </div>
         </el-tooltip>
         <el-tooltip content="混合" placement="top" :show-after="200">
           <div
-            :class="['layout-item layout-optimum', { 'is-active': layout == 'optimum' }]"
+            :class="[
+              'layout-item layout-optimum',
+              { 'is-active': globalStore.layout == 'optimum' },
+            ]"
             @click="setLayout('optimum')"
           >
             <div class="layout-dark"></div>
@@ -184,47 +168,59 @@
               <div class="layout-light"></div>
               <div class="layout-content"></div>
             </div>
-            <el-icon v-if="layout == 'optimum'">
+            <el-icon v-if="globalStore.layout == 'optimum'">
               <CircleCheckFilled />
             </el-icon>
           </div>
         </el-tooltip>
         <el-tooltip content="横向" placement="top" :show-after="200">
           <div
-            :class="['layout-item layout-horizontal', { 'is-active': layout == 'horizontal' }]"
+            :class="[
+              'layout-item layout-horizontal',
+              { 'is-active': globalStore.layout == 'horizontal' },
+            ]"
             @click="setLayout('horizontal')"
           >
             <div class="layout-dark"></div>
             <div class="layout-content"></div>
-            <el-icon v-if="layout == 'horizontal'">
+            <el-icon v-if="globalStore.layout == 'horizontal'">
               <CircleCheckFilled />
             </el-icon>
           </div>
         </el-tooltip>
-      </div> 
-      
+      </div>
+
       <el-row>
         <el-col :sm="{ span: 24 }" :xs="{ span: 24 }">
           <el-divider class="flex" content-position="center">
-            <div class="flex flex-row flex-justify-center flex-items-center">
+            <div class="theme-container">
               <el-icon :size="18"><ChatLineRound /></el-icon>
-              <div class="text-14px m-l-4px">界面配置</div>
+              <div class="theme-name">界面配置</div>
             </div>
           </el-divider>
         </el-col>
       </el-row>
-      
-      <el-form label-width="auto" label-position="left" class="p-t-8px p-l-3px">
+
+      <el-form
+        label-width="auto"
+        label-position="left"
+        style="padding-top: 8px; padding-left: 3px"
+      >
         <el-row>
           <el-col :sm="{ span: 24 }" :xs="{ span: 24 }">
             <el-form-item>
-              <div class="flex flex-items-center">
-                <span class="m-r-2px">路由动画</span>
+              <div style="display: flex; align-items: center">
+                <span style="margin-right: 2px">路由动画</span>
                 <el-tooltip placement="bottom" content="路由加载动画模式">
-                  <el-icon class="m-r-20px"><QuestionFilled /></el-icon>
+                  <el-icon style="margin-right: 20px"><QuestionFilled /></el-icon>
                 </el-tooltip>
               </div>
-              <el-select placeholder="请选择路由动画" v-model="transition" clearable style="width: 200px">
+              <el-select
+                placeholder="请选择路由动画"
+                v-model="globalStore.transition"
+                clearable
+                style="width: 200px"
+              >
                 <el-option label="默认" value="fade-default" />
                 <el-option label="淡入淡出" value="fade" />
                 <el-option label="滑动" value="fade-slide" />
@@ -236,15 +232,24 @@
           </el-col>
           <el-col :sm="{ span: 24 }" :xs="{ span: 24 }">
             <el-form-item label="菜单宽度">
-              <el-input-number class="w-200px" :min="200" :max="260" :step="2" v-model="menuWidth"></el-input-number>
+              <el-input-number
+                style="width: 200px"
+                :min="200"
+                :max="260"
+                :step="2"
+                v-model="globalStore.menuWidth"
+              ></el-input-number>
             </el-form-item>
           </el-col>
           <el-col :sm="{ span: 24 }" :xs="{ span: 24 }">
             <el-form-item>
-              <div class="flex flex-items-center">
-                <span class="m-r-2px">菜单手风琴</span>
-                <el-tooltip placement="bottom" content="左侧菜单是否展开单个子菜单[启用-单个/关闭-多个]">
-                  <el-icon class="m-r-10px"><QuestionFilled /></el-icon>
+              <div style="display: flex; align-items: center">
+                <span style="margin-right: 2px">菜单手风琴</span>
+                <el-tooltip
+                  placement="bottom"
+                  content="左侧菜单是否展开单个子菜单[启用-单个/关闭-多个]"
+                >
+                  <el-icon style="margin-right: 10px"><QuestionFilled /></el-icon>
                 </el-tooltip>
               </div>
               <el-switch
@@ -253,7 +258,7 @@
                 :active-value="true"
                 :inactive-value="false"
                 :inline-prompt="true"
-                v-model="uniqueOpened"
+                v-model="globalStore.uniqueOpened"
               >
               </el-switch>
             </el-form-item>
@@ -266,7 +271,7 @@
                 :active-value="true"
                 :inactive-value="false"
                 :inline-prompt="true"
-                v-model="asideInverted"
+                v-model="globalStore.asideInverted"
                 @change="setAsideTheme"
               >
               </el-switch>
@@ -280,7 +285,7 @@
                 :active-value="true"
                 :inactive-value="false"
                 :inline-prompt="true"
-                v-model="headerInverted"
+                v-model="globalStore.headerInverted"
                 @change="setHeaderTheme"
               >
               </el-switch>
@@ -294,7 +299,7 @@
                 :active-value="true"
                 :inactive-value="false"
                 :inline-prompt="true"
-                v-model="isGrey"
+                v-model="globalStore.isGrey"
                 @change="changeGreyOrWeak('grey', !!$event)"
               >
               </el-switch>
@@ -308,7 +313,7 @@
                 :active-value="true"
                 :inactive-value="false"
                 :inline-prompt="true"
-                v-model="isWeak"
+                v-model="globalStore.isWeak"
                 @change="changeGreyOrWeak('weak', !!$event)"
               >
               </el-switch>
@@ -318,7 +323,7 @@
             <el-form-item label="折叠菜单">
               <el-form-item>
                 <el-switch
-                  v-model="isCollapse"
+                  v-model="globalStore.isCollapse"
                   active-text="展开"
                   inactive-text="折叠"
                   :active-value="true"
@@ -332,45 +337,12 @@
         </el-row>
       </el-form>
     </template>
-  </KoiDrawer>
+  </Drawer>
 </template>
-
-<script setup lang="ts">
-import { nextTick, ref } from "vue";
-import { useTheme } from "@/utils/theme.ts";
-import { storeToRefs } from "pinia";
-import mittBus from "@/utils/mittBus.ts";
-import useGlobalStore from "@/stores/modules/global.ts";
-
-const globalStore = useGlobalStore();
-
-const { changeThemeColor, changeGreyOrWeak, setAsideTheme, setHeaderTheme } = useTheme();
-const { layout, isCollapse, transition, uniqueOpened, menuWidth, isGrey, isWeak, asideInverted, headerInverted } =
-  storeToRefs(globalStore);
-
-const koiDrawerRef = ref();
-/** 打开主题配置 */
-const handleThemeConfig = () => {
-  nextTick(() => {
-    koiDrawerRef.value.koiOpen();
-  });
-};
-
-/** 布局切换 */
-const setLayout = (value: any) => {
-  globalStore.setGlobalState("layout", value);
-  setAsideTheme();
-};
-
-/** 打开主题配置对话框，on 接收事件 */
-mittBus.on("handleThemeConfig", () => {
-  handleThemeConfig();
-});
-</script>
 
 <style lang="scss" scoped>
 /** 图标颜色 */
-.koi-icon {
+.icon {
   &:hover {
     color: var(--el-color-primary);
     // cursor: pointer;
@@ -426,6 +398,7 @@ mittBus.on("handleThemeConfig", () => {
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
+
     .layout-dark {
       width: 20%;
     }
@@ -508,5 +481,49 @@ mittBus.on("handleThemeConfig", () => {
       height: 67%;
     }
   }
+}
+.theme-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  .theme-name {
+    font-size: 14px;
+    margin-left: 4px;
+  }
+}
+.color-container {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.color-item {
+  border-radius: 0.375rem;
+  border-width: 1px;
+  border-style: dashed;
+  border-color: var(--el-border-color-darker);
+  --un-shadow: var(--el-box-shadow-lighter);
+  box-shadow: var(--un-ring-offset-shadow), var(--un-ring-shadow), var(--un-shadow);
+}
+.color-card {
+  display: flex;
+  flex-direction: column;
+}
+.color-plate {
+  border-radius: 0.375rem;
+  width: 20px;
+  height: 20px;
+  --un-bg-opacity: 1;
+  margin-left: 36px;
+  margin-right: 36px;
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+.color-name {
+  font-size: 12px;
+  text-align: center;
+  margin-top: 8px;
+  margin-bottom: 8px;
 }
 </style>

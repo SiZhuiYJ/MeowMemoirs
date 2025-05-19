@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { inject, nextTick, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-
 import { useGlobalStore, useTabsStore, useKeepAliveStore } from "@/stores";
-import { HOME_URL } from "@/config/index.ts";
+import { STATIC_URL } from "@/config/index.ts";
 
 const route = useRoute();
 const router = useRouter();
@@ -70,10 +69,12 @@ const handleMenuChildren = (path: any, e: any) => {
 const refreshCurrentPage: Function = inject("refresh") as Function;
 const handleRefresh = () => {
   setTimeout(() => {
-    route.meta.isKeepAlive && useKeepAliveStore().removeKeepAliveName(route.name as string);
+    route.meta.isKeepAlive &&
+      useKeepAliveStore().removeKeepAliveName(route.name as string);
     refreshCurrentPage(false);
     nextTick(() => {
-      route.meta.isKeepAlive && useKeepAliveStore().addKeepAliveName(route.name as string);
+      route.meta.isKeepAlive &&
+        useKeepAliveStore().addKeepAliveName(route.name as string);
       refreshCurrentPage(true);
     });
   }, 0);
@@ -118,57 +119,45 @@ const handleCloseOtherTabs = () => {
 /** 关闭全部选项卡 */
 const handleCloseAllTabs = () => {
   useTabsStore().closeManyTabs();
-  router.push(HOME_URL);
+  router.push(STATIC_URL);
 };
 
 /** 组件对外暴露 */
 defineExpose({
   handleMenuParent,
-  handleMenuChildren
+  handleMenuChildren,
 });
 </script>
 
 <template>
   <div class="tabs-card">
     <div @click="handleRefresh()" class="tab-menu-item">
-      <el-icon size="16" class="m-r-5px">
-        <Refresh class="icon-scale" />
-      </el-icon>重新刷新
+      <el-icon size="16" class="m-r-5px"> <Refresh class="icon-scale" /> </el-icon
+      >重新刷新
     </div>
     <div @click="handleMaximize()" class="tab-menu-item">
-      <el-icon size="16" class="m-r-5px">
-        <FullScreen class="icon-scale" />
-      </el-icon>全屏切换
+      <el-icon size="16" class="m-r-5px"> <FullScreen class="icon-scale" /> </el-icon
+      >全屏切换
     </div>
     <div @click="handleCloseCurrentTab()" class="tab-menu-item">
-      <el-icon size="16" class="m-r-5px">
-        <Close class="icon-scale" />
-      </el-icon>关闭当前
+      <el-icon size="16" class="m-r-5px"> <Close class="icon-scale" /> </el-icon>关闭当前
     </div>
     <div @click="handleCloseOtherTabs()" class="tab-menu-item">
-      <el-icon size="16" class="m-r-5px">
-        <Star class="icon-scale" />
-      </el-icon>关闭其它
+      <el-icon size="16" class="m-r-5px"> <Star class="icon-scale" /> </el-icon>关闭其它
     </div>
     <div @click="handleCloseSideTabs('left')" class="tab-menu-item">
-      <el-icon size="16" class="m-r-5px">
-        <DArrowLeft class="icon-scale" />
-      </el-icon>关闭左侧
+      <el-icon size="16" class="m-r-5px"> <DArrowLeft class="icon-scale" /> </el-icon
+      >关闭左侧
     </div>
     <div @click="handleCloseSideTabs('right')" class="tab-menu-item">
-      <el-icon size="16" class="m-r-5px">
-        <DArrowRight class="icon-scale" />
-      </el-icon>关闭右侧
+      <el-icon size="16" class="m-r-5px"> <DArrowRight class="icon-scale" /> </el-icon
+      >关闭右侧
     </div>
     <div icon="Remove" @click="handleCloseAllTabs()" class="tab-menu-item">
-      <el-icon size="16" class="m-r-5px">
-        <Remove class="icon-scale" />
-      </el-icon>关闭所有
+      <el-icon size="16" class="m-r-5px"> <Remove class="icon-scale" /> </el-icon>关闭所有
     </div>
   </div>
 </template>
-
-
 
 <style lang="scss" scoped>
 /** 右键点击选项开始 */
@@ -202,7 +191,6 @@ defineExpose({
     color: var(--el-color-primary);
     background-color: var(--el-color-primary-light-9);
   }
-
 }
 
 .tab-menu-item:hover .icon-scale {

@@ -2,7 +2,7 @@ import { useUserStore, useAuthStore } from "@/stores/";
 import { LOGIN_URL } from "@/config/index.ts";
 // TS OR JS 中不能直接导入 import { useRouter } from "vue-router";
 import router from "@/routers/index";
-import type { RouterItem } from '@/routers/type'
+import type { RouterItem } from "@/routers/type";
 
 // const modules = import.meta.glob("@/views/**/*.vue");
 

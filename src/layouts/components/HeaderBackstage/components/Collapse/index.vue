@@ -1,8 +1,8 @@
 <template>
     <div class="collapse-icon" @click="changeCollapseIcon">
         <el-icon :size="20">
-            <svg-icon icon-class="menu-left" size="20px" v-if="!globalStore.isCollapse" />
-            <svg-icon icon-class="menu-right" size="20px" v-if="globalStore.isCollapse" />
+            <svg-icon icon-class="menu-left" size="20px" v-if="!globalStore.isCollapse" style="color: var(--el-header-text-color-regular);" />
+            <svg-icon icon-class="menu-right" size="20px" v-if="globalStore.isCollapse" style="color: var(--el-header-text-color-regular);"/>
         </el-icon>
     </div>
 </template>

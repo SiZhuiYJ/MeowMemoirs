@@ -145,15 +145,34 @@ const handleTabsMenuChildren = (path: any, value: any) => {
 </script>
 
 <template>
-  <el-tabs v-model="activeTab" type="card" class="tabs" @tab-remove="removeTab" @tab-click="clickToggleTab"
-    @contextmenu.prevent="handleTabsMenuParent($event)">
+  <el-tabs
+    v-model="activeTab"
+    type="card"
+    class="tabs"
+    @tab-remove="removeTab"
+    @tab-click="clickToggleTab"
+    @contextmenu.prevent="handleTabsMenuParent($event)"
+  >
     <!-- :closable="true" 显示关闭图标 -->
-    <el-tab-pane v-for="item in tabList" :key="item.path" :label="item.title" :name="item.path"
-      :closable="item.closeIcon">
+    <el-tab-pane
+      v-for="item in tabList"
+      :key="item.path"
+      :label="item.title"
+      :name="item.path"
+      :closable="item.closeIcon"
+    >
       <!-- 加载图标 -->
       <template #label>
-        <div class="card-tab" @contextmenu.prevent="handleTabsMenuChildren(item.path, $event)">
-          <GlobalIcon style="margin-right: 2px;" v-show="item.icon" :name="item.icon" size="16"></GlobalIcon>
+        <div
+          class="card-tab"
+          @contextmenu.prevent="handleTabsMenuChildren(item.path, $event)"
+        >
+          <GlobalIcon
+            style="margin-right: 2px"
+            v-show="item.icon"
+            :name="item.icon"
+            size="16"
+          ></GlobalIcon>
           <div>{{ item?.title }}</div>
         </div>
       </template>
@@ -165,12 +184,12 @@ const handleTabsMenuChildren = (path: any, value: any) => {
   </div>
 </template>
 
-
-
 <style lang="scss" scoped>
 /** tabs选项卡的css开始 */
+// .dark .tabs {
+//   background-color: #000000;
+// }
 .tabs {
-  border-bottom: 1px solid #d1d1da;
   @apply dark:border-#313233;
   // 色弱模式
   background-color: var(--el-bg-color);
@@ -205,7 +224,6 @@ const handleTabsMenuChildren = (path: any, value: any) => {
   margin-top: 1px;
   font-size: 14px;
   font-weight: 500;
-  color: #1F1F1F;
   @apply dark:text-#E0E0E0;
   border: 1px solid #d1d1da;
   border-radius: 4px;
@@ -224,7 +242,7 @@ const handleTabsMenuChildren = (path: any, value: any) => {
 
   // 设置鼠标选择的样式[可用来定制不同配色的主题]
   &.is-active {
-    color: var(--el-color-primary);
+    color: var(--el-color-primary) !important;
     background: var(--el-color-primary-light-8);
 
     // 边框选择颜色
@@ -233,8 +251,8 @@ const handleTabsMenuChildren = (path: any, value: any) => {
 }
 
 :deep(.el-tabs__header) {
-  border-top: 1px solid var(--el-color-info-light-7); // 选项卡边框实线
-  border-bottom: 1px solid var(--el-color-info-light-7); // 选项卡边框实线
+  // border-top: 1px solid var(--el-color-info-light-7); // 选项卡边框实线
+  // border-bottom: 1px solid var(--el-color-info-light-7); // 选项卡边框实线
   margin: 0px;
 }
 

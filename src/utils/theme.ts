@@ -1,7 +1,13 @@
 import { ElMessage } from "element-plus";
 import { DEFAULT_THEME } from "@/config/index.ts";
+import { storeToRefs } from "pinia";
 import { useGlobalStore } from "@/stores";
-import { menuTheme, headerTheme, asideTheme, optimumHeaderTheme } from "@/config/theme.ts";
+import {
+  menuTheme,
+  headerTheme,
+  asideTheme,
+  optimumHeaderTheme,
+} from "@/config/theme.ts";
 
 /** 主题切换方式[推荐] */
 /**
@@ -28,7 +34,8 @@ export function hexToRgb(str: any) {
  */
 export function rgbToHex(r: any, g: any, b: any) {
   let reg = /^\d{1,3}$/;
-  if (!reg.test(r) || !reg.test(g) || !reg.test(b)) return ElMessage.warning("输入错误的rgb颜色值");
+  if (!reg.test(r) || !reg.test(g) || !reg.test(b))
+    return ElMessage.warning("输入错误的rgb颜色值");
   let hexs = [r.toString(16), g.toString(16), b.toString(16)];
   for (let i = 0; i < 3; i++) if (hexs[i].length == 1) hexs[i] = `0${hexs[i]}`;
   return `#${hexs.join("")}`;
@@ -44,7 +51,8 @@ export function getDarkColor(color: string, level: number) {
   let reg = /^\#?[0-9A-Fa-f]{6}$/;
   if (!reg.test(color)) return ElMessage.warning("输入错误的hex颜色值");
   let rgb = hexToRgb(color);
-  for (let i = 0; i < 3; i++) rgb[i] = Math.round(20.5 * level + rgb[i] * (1 - level));
+  for (let i = 0; i < 3; i++)
+    rgb[i] = Math.round(20.5 * level + rgb[i] * (1 - level));
   return rgbToHex(rgb[0], rgb[1], rgb[2]);
 }
 
@@ -58,7 +66,8 @@ export function getLightColor(color: string, level: number) {
   let reg = /^\#?[0-9A-Fa-f]{6}$/;
   if (!reg.test(color)) return ElMessage.warning("输入错误的hex颜色值");
   let rgb = hexToRgb(color);
-  for (let i = 0; i < 3; i++) rgb[i] = Math.round(255 * level + rgb[i] * (1 - level));
+  for (let i = 0; i < 3; i++)
+    rgb[i] = Math.round(255 * level + rgb[i] * (1 - level));
   return rgbToHex(rgb[0], rgb[1], rgb[2]);
 }
 
@@ -66,15 +75,15 @@ export function getLightColor(color: string, level: number) {
  * @description 全局主题配置
  * */
 export const useTheme = () => {
-  const { globalStore } = useGlobalStore();
+  const { globalStore } = storeToRefs(useGlobalStore());
 
   // 切换暗黑模式 ==> 同时修改主题颜色、侧边栏、头部颜色
   const switchDark = () => {
     // 获取HTML根节点
     const html = document.documentElement as HTMLElement;
-    if (globalStore.isDark) html.setAttribute("class", "dark");
+    if (globalStore.value.isDark) html.setAttribute("class", "dark");
     else html.setAttribute("class", "");
-    changeThemeColor(globalStore.themeColor);
+    changeThemeColor(globalStore.value.themeColor);
     setAsideTheme();
     setHeaderTheme();
     setOptimumHeaderTheme();
@@ -90,11 +99,18 @@ export const useTheme = () => {
     document.documentElement.style.setProperty("--el-color-primary", val);
     document.documentElement.style.setProperty(
       "--el-color-primary-dark-2",
-      globalStore.isDark ? `${getLightColor(val, 0.2)}` : `${getDarkColor(val, 0.3)}`
+      globalStore.value.isDark
+        ? `${getLightColor(val, 0.2)}`
+        : `${getDarkColor(val, 0.3)}`
     );
     for (let i = 1; i <= 9; i++) {
-      const primaryColor = globalStore.isDark ? `${getDarkColor(val, i / 10)}` : `${getLightColor(val, i / 10)}`;
-      document.documentElement.style.setProperty(`--el-color-primary-light-${i}`, primaryColor);
+      const primaryColor = globalStore.value.isDark
+        ? `${getDarkColor(val, i / 10)}`
+        : `${getLightColor(val, i / 10)}`;
+      document.documentElement.style.setProperty(
+        `--el-color-primary-light-${i}`,
+        primaryColor
+      );
     }
     useGlobalStore().setGlobal("themeColor", val);
   };
@@ -105,7 +121,7 @@ export const useTheme = () => {
     if (!value) return body.removeAttribute("style");
     const styles: any = {
       grey: "filter: grayscale(1)",
-      weak: "filter: invert(80%)"
+      weak: "filter: invert(80%)",
     };
     body.setAttribute("style", styles[type]);
     const propName = type === "grey" ? "isWeak" : "isGrey";
@@ -116,11 +132,19 @@ export const useTheme = () => {
   const setMenuTheme = () => {
     let type = "light";
     // 如果布局为横向 && 头部反转
-    if (globalStore.layout === "horizontal" && globalStore.headerInverted) type = "inverted";
+    if (
+      globalStore.value.layout === "horizontal" &&
+      globalStore.value.headerInverted
+    )
+      type = "inverted";
     // 如果布局不为横向 && 侧边反转
-    if (globalStore.layout !== "horizontal" && globalStore.asideInverted) type = "inverted";
+    if (
+      globalStore.value.layout !== "horizontal" &&
+      globalStore.value.asideInverted
+    )
+      type = "inverted";
     // 如果是黑色主题，直接为黑色
-    if (globalStore.isDark) type = "dark";
+    if (globalStore.value.isDark) type = "dark";
     const theme = menuTheme[type!];
     for (const [key, value] of Object.entries(theme)) {
       document.documentElement.style.setProperty(key, value as string | null);
@@ -130,8 +154,8 @@ export const useTheme = () => {
   // 设置侧边栏样式
   const setAsideTheme = () => {
     let type = "light";
-    if (globalStore.asideInverted) type = "inverted";
-    if (globalStore.isDark) type = "dark";
+    if (globalStore.value.asideInverted) type = "inverted";
+    if (globalStore.value.isDark) type = "dark";
     const theme = asideTheme[type!];
     for (const [key, value] of Object.entries(theme)) {
       document.documentElement.style.setProperty(key, value as string | null);
@@ -142,8 +166,8 @@ export const useTheme = () => {
   // 设置头部样式
   const setHeaderTheme = () => {
     let type = "light";
-    if (globalStore.headerInverted) type = "inverted";
-    if (globalStore.isDark) type = "dark";
+    if (globalStore.value.headerInverted) type = "inverted";
+    if (globalStore.value.isDark) type = "dark";
     const theme = headerTheme[type!];
     for (const [key, value] of Object.entries(theme)) {
       document.documentElement.style.setProperty(key, value as string | null);
@@ -155,8 +179,8 @@ export const useTheme = () => {
   // 设置混合模式头部样式
   const setOptimumHeaderTheme = () => {
     let type = "light";
-    if (globalStore.headerInverted) type = "inverted";
-    if (globalStore.isDark) type = "dark";
+    if (globalStore.value.headerInverted) type = "inverted";
+    if (globalStore.value.isDark) type = "dark";
     const theme = optimumHeaderTheme[type!];
     for (const [key, value] of Object.entries(theme)) {
       document.documentElement.style.setProperty(key, value as string | null);
@@ -167,8 +191,8 @@ export const useTheme = () => {
   // 初始化主题配置
   const initThemeConfig = () => {
     switchDark();
-    if (globalStore.isGrey) changeGreyOrWeak("grey", true);
-    if (globalStore.isWeak) changeGreyOrWeak("weak", true);
+    if (globalStore.value.isGrey) changeGreyOrWeak("grey", true);
+    if (globalStore.value.isWeak) changeGreyOrWeak("weak", true);
   };
 
   return {
@@ -177,6 +201,6 @@ export const useTheme = () => {
     changeThemeColor,
     changeGreyOrWeak,
     setAsideTheme,
-    setHeaderTheme
+    setHeaderTheme,
   };
 };

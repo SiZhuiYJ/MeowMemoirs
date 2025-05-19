@@ -1,61 +1,62 @@
-export const optimumHeaderTheme: any = {
-  light: {
-    "--el-header-optimum-color": "#000000",
-    "--el-header-optimum-hover-color": "var(--el-color-primary)",
-    "--el-header-optimum-active-color": "var(--el-color-primary)",
-    "--el-header-optimum-hover-bg-color": "#f4f4f5",
-    "--el-header-optimum-active-bg-color": "var(--el-color-primary-light-8)",
-    "--el-header-optimum-border-color": "var(--el-color-primary)"
-  },
-  inverted: {
-    "--el-header-optimum-color": "#ffffff",
-    "--el-header-optimum-hover-color": "var(--el-color-primary)",
-    "--el-header-optimum-active-color": "#ffffff",
-    "--el-header-optimum-hover-bg-color": "transparent",
-    "--el-header-optimum-active-bg-color": "var(--el-color-primary)",
-    "--el-header-optimum-border-color": "var(--el-color-primary)"
-  },
-  dark: {
-    "--el-header-optimum-color": "#E5EAF3",
-    "--el-header-optimum-hover-color": "var(--el-color-primary)",
-    "--el-header-optimum-active-color": "var(--el-color-primary)",
-    "--el-header-optimum-hover-bg-color": "var(--el-color-primary-light-9)",
-    "--el-header-optimum-active-bg-color": "var(--el-color-primary-light-8)",
-    "--el-header-optimum-border-color": "var(--el-color-primary)"
-  }
-};
+export const optimumHeaderTheme: { [key: string]: { [key: string]: string } } =
+  {
+    light: {
+      "--el-header-optimum-color": "#000000",
+      "--el-header-optimum-hover-color": "var(--el-color-primary)",
+      "--el-header-optimum-active-color": "var(--el-color-primary)",
+      "--el-header-optimum-hover-bg-color": "#f4f4f5",
+      "--el-header-optimum-active-bg-color": "var(--el-color-primary-light-8)",
+      "--el-header-optimum-border-color": "var(--el-color-primary)",
+    },
+    inverted: {
+      "--el-header-optimum-color": "#ffffff",
+      "--el-header-optimum-hover-color": "var(--el-color-primary)",
+      "--el-header-optimum-active-color": "#ffffff",
+      "--el-header-optimum-hover-bg-color": "transparent",
+      "--el-header-optimum-active-bg-color": "var(--el-color-primary)",
+      "--el-header-optimum-border-color": "var(--el-color-primary)",
+    },
+    dark: {
+      "--el-header-optimum-color": "#E5EAF3",
+      "--el-header-optimum-hover-color": "var(--el-color-primary)",
+      "--el-header-optimum-active-color": "var(--el-color-primary)",
+      "--el-header-optimum-hover-bg-color": "var(--el-color-primary-light-9)",
+      "--el-header-optimum-active-bg-color": "var(--el-color-primary-light-8)",
+      "--el-header-optimum-border-color": "var(--el-color-primary)",
+    },
+  };
 
-export const headerTheme: any = {
+export const headerTheme: { [key: string]: { [key: string]: string } } = {
   light: {
     "--el-header-bg-color": "#ffffff",
     "--el-header-text-color": "#303133",
-    "--el-header-text-color-regular": "#606266"
+    "--el-header-text-color-regular": "#606266",
   },
   inverted: {
     "--el-header-bg-color": "#141414",
     "--el-header-text-color": "#E5EAF3",
-    "--el-header-text-color-regular": "#CFD3DC"
+    "--el-header-text-color-regular": "#CFD3DC",
   },
   dark: {
     "--el-header-bg-color": "#141414",
     "--el-header-text-color": "#E5EAF3",
-    "--el-header-text-color-regular": "#CFD3DC"
-  }
+    "--el-header-text-color-regular": "#CFD3DC",
+  },
 };
 
-export const asideTheme: any = {
+export const asideTheme: { [key: string]: { [key: string]: string } } = {
   light: {
-    "--el-aside-logo-text-color": "#303133"
+    "--el-aside-logo-text-color": "#303133",
   },
   inverted: {
-    "--el-aside-logo-text-color": "#E5EAF3"
+    "--el-aside-logo-text-color": "#E5EAF3",
   },
   dark: {
-    "--el-aside-logo-text-color": "#E5EAF3"
-  }
+    "--el-aside-logo-text-color": "#E5EAF3",
+  },
 };
 
-export const menuTheme: any = {
+export const menuTheme: { [key: string]: { [key: string]: string } } = {
   light: {
     "--el-menu-bg-color": "#ffffff",
     "--el-menu-hover-bg-color": "#f4f4f5",
@@ -63,7 +64,7 @@ export const menuTheme: any = {
     "--el-menu-text-color": "#333639",
     "--el-menu-hover-text-color": "var(--el-color-primary)",
     "--el-menu-active-text-color": "var(--el-color-primary)",
-    "--el-menu-border-left-color": "var(--el-color-primary)"
+    "--el-menu-border-left-color": "var(--el-color-primary)",
   },
   inverted: {
     "--el-menu-bg-color": "#191A20",
@@ -72,7 +73,7 @@ export const menuTheme: any = {
     "--el-menu-text-color": "#dBd8d8",
     "--el-menu-hover-text-color": "#ffffff",
     "--el-menu-active-text-color": "#ffffff",
-    "--el-menu-border-left-color": "transparent"
+    "--el-menu-border-left-color": "transparent",
   },
   dark: {
     "--el-menu-bg-color": "#141414",
@@ -81,6 +82,11 @@ export const menuTheme: any = {
     "--el-menu-text-color": "#e5eAf3",
     "--el-menu-hover-text-color": "var(--el-color-primary)",
     "--el-menu-active-text-color": "var(--el-color-primary)",
-    "--el-menu-border-left-color": "var(--el-color-primary)"
-  }
+    "--el-menu-border-left-color": "var(--el-color-primary)",
+  },
+};
+export const tabTheme: { [key: string]: { [key: string]: string } } = {
+  light: {},
+  inverted: {},
+  dark: {},
 };

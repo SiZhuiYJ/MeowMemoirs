@@ -3,9 +3,10 @@ import { ref, watch, provide, onBeforeUnmount, nextTick } from "vue";
 import Maximize from "@/layouts/components/Main/components/Maximize.vue";
 import { useDebounceFn } from "@vueuse/core";
 import Tabs from "@/layouts/components/Tabs/index.vue";
+import commonFooter from "@/layouts/components/Footer/index.vue";
 import { useKeepAliveStore, useGlobalStore } from "@/stores";
 import { storeToRefs } from "pinia";
-import {  useRoute } from "vue-router";
+import { useRoute } from "vue-router";
 const route = useRoute();
 
 const { globalStore } = storeToRefs(useGlobalStore());
@@ -26,7 +27,6 @@ watch(
   }
 );
 
-
 /** 监听当前页面是否最大化，动态添加 class */
 watch(
   () => globalStore.value.maximize,
@@ -41,15 +41,16 @@ watch(
   { deep: true, immediate: true }
 );
 
-
 const screenWidth = ref(0);
 const showTabs = ref(true);
 
 /** 监听窗口大小变化，折叠侧边栏 */
 const listeningWindow = useDebounceFn(() => {
   screenWidth.value = document.body.clientWidth;
-  if (!globalStore.value.isCollapse && screenWidth.value < 1200) useGlobalStore().setGlobal("isCollapse", true);
-  if (globalStore.value.isCollapse && screenWidth.value > 1200) useGlobalStore().setGlobal("isCollapse", false);
+  if (!globalStore.value.isCollapse && screenWidth.value < 1200)
+    useGlobalStore().setGlobal("isCollapse", true);
+  if (globalStore.value.isCollapse && screenWidth.value > 1200)
+    useGlobalStore().setGlobal("isCollapse", false);
   if (screenWidth.value < 520) {
     showTabs.value = false;
   } else {
@@ -67,29 +68,29 @@ onBeforeUnmount(() => {
 <template>
   <Maximize v-show="globalStore.maximize" />
   <Tabs v-if="showTabs"></Tabs>
-  <el-main class="layout-main">
+  <el-main class="layout layout-main">
     <router-view v-slot="{ Component, route }">
       <transition :name="globalStore.transition" mode="out-in" appear>
         <keep-alive :max="16" :include="useKeepAliveStore().keepAliveStore.keepAliveName">
-          <component :is="Component" :key="route.fullPath" v-if="isRouterShow"
-            @click="() => { console.log('Component', Component); console.log('route', route); console.log('transition', globalStore.transition); console.log('keepAliveName', useKeepAliveStore().keepAliveStore.keepAliveName); }" />
+          <component :is="Component" :key="route.fullPath" v-if="isRouterShow" />
         </keep-alive>
       </transition>
     </router-view>
   </el-main>
+  <common-footer class="layout"></common-footer>
 </template>
-
-
 
 <style lang="scss" scoped>
 @use "../../../styles/transition.scss";
 
-.layout-main {
+.layout {
   display: flex;
   flex-direction: column;
-  flex: 1;
   padding: 5px 6px;
   overflow-x: hidden;
-  @apply bg-[#F6F9FE] dark:bg-black;
+  background-color: var(--el-bg-color);
+}
+.layout-main {
+  flex: 1;
 }
 </style>
