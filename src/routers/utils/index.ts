@@ -3,7 +3,7 @@ import router from "@/routers/index.ts";
 import { HOME_URL } from "@/config/index.ts";
 import type { AppRouteRecordRaw } from "@/routers/type";
 import { markRaw, type DefineComponent } from "vue";
-import type { menuList } from "@/libs/api/user/type";
+import type { menuList } from "@/libs/api/login/user/type";
 
 /**
  * @description 使用递归过滤出需要渲染在左侧菜单动态数据的列表 (需剔除 isHide == 0 隐藏的菜单)

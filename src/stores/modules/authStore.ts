@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-import type { UserInfo } from "@/libs/api/user/type";
-import { userApi } from "@/libs/api/user";
+import type { UserInfo } from "@/libs/api/login/user/type";
+import { userApi } from "@/libs/api/login/user";
 import {
   generateFlattenRoutes,
   generateRoutes,

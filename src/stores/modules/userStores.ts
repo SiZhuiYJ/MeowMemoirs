@@ -1,8 +1,8 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { CACHE_PREFIX, STATIC_URL } from "@/config";
-import { userApi } from "@/libs/api/user";
-import type { ILoginParams } from "@/libs/api/user/type";
+import { userApi } from "@/libs/api/login/user";
+import type { ILoginParams } from "@/libs/api/login/user/type";
 import router from "@/routers";
 export interface User {
     token: string, // [token] --token,

@@ -1,9 +1,0 @@
-<script setup>
-// import UnusedList from '@/components/UnusedList/index.vue'
-</script>
-<template>
-	<!-- <WaterfallMin :list="list" class="WaterfallMin" /> -->
-	<!-- <UnusedList /> -->
-	<router-view></router-view>
-</template>
-<style lang="scss" scoped></style>

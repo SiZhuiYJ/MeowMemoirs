@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { meowMsgError, meowMsgSuccess } from '@/utils/message'
 import { ElLoading } from 'element-plus'
-import { userApi } from '@/libs/api/user'
+import { userApi } from '@/libs/api/login/user'
 const rainbowID = ref('')
 //手机
 type handoverParams = 'userPhone' | 'userEmail'

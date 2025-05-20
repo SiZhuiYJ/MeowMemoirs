@@ -88,9 +88,13 @@ onBeforeUnmount(() => {
   flex-direction: column;
   padding: 5px 6px;
   overflow-x: hidden;
-  background-color: var(--el-bg-color);
 }
 .layout-main {
   flex: 1;
+  background-color: rgb(246, 249, 254);
+}
+.dark .layout-main {
+  --un-bg-opacity: 1;
+  background-color: rgb(0 0 0 / var(--un-bg-opacity));
 }
 </style>
