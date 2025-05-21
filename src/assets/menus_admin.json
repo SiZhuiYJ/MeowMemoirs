@@ -126,6 +126,24 @@
         "redirect": ""
     },
     {
+        "path": "/console/files/PhotoAlbum",
+        "name": "PhotoAlbum",
+        "label": "图册",
+        "icon": "PictureFilled",
+        "menuId": 134,
+        "menuName": "图册",
+        "enName": "PhotoAlbum",
+        "parentId": 13,
+        "menuType": "3",
+        "component": "console/files/PhotoAlbum/index",
+        "isHide": "1",
+        "isLink": "",
+        "isKeepAlive": "0",
+        "isFull": "1",
+        "isAffix": "1",
+        "redirect": ""
+    },
+    {
         "path": "/console/memo",
         "name": "memo",
         "label": "备忘录",

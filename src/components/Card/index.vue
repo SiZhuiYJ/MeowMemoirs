@@ -1,10 +1,10 @@
 <template>
   <div class="content-card">
-    <div class="p-b-8px" style="padding-bottom: 8px">
+    <div style="padding-bottom: 8px">
       <slot name="header"></slot>
     </div>
     <slot></slot>
-    <div class="p-t-12px" style="padding-top: 12px">
+    <div style="padding-top: 12px">
       <slot name="footer"></slot>
     </div>
   </div>

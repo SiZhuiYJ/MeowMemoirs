@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, ref, useTemplateRef } from "vue";
 import { DatePicker, formatFileSize } from "@/utils/index";
 import Card from "@/components/Card/index.vue";
 import useApiUrl from "@/libs/useApiUrl/index";
@@ -44,6 +44,16 @@ interface ImageTable {
   // 设备名称"
   deviceName: string;
 }
+const dataList = ref<ImageItem[]>([
+  {
+    imageId: 0,
+    name: "CYY",
+    path: "CYY\\IMG\\CYY_20250327001.jpg",
+    type: ".jpg",
+    size: 502466,
+    modified: "2025-03-27 00:18:20",
+  },
+]);
 const imageList = ref<ImageTable[]>([
   {
     imageId: 0,
@@ -61,10 +71,10 @@ const imageList = ref<ImageTable[]>([
 const currentPage = ref(1);
 const pageSize = ref(10);
 const allData = ref<ImageItem[]>([]);
+
 // 使用异步获取数据
 const getData = async () => {
   try {
-    currentPage.value = 1;
     const { data } = await galleryApi.MMGetImageList();
     allData.value = data.items.map((item: item, index: number) => {
       return {
@@ -72,12 +82,6 @@ const getData = async () => {
         imageId: index,
       };
     });
-    const table = document
-      .querySelector(".el-table__body-wrapper")
-      ?.querySelector(".el-scrollbar__wrap");
-    if (table) {
-      table.scrollTop = 0;
-    }
     loadMoreData();
   } catch (error) {
     console.error("Failed to fetch data:", error);
@@ -88,11 +92,10 @@ const getData = async () => {
 const loadMoreData = () => {
   const startIndex = (currentPage.value - 1) * pageSize.value;
   const endIndex = startIndex + pageSize.value;
-  const newData = allData.value.slice(0, endIndex);
-  // const newData = allData.value.slice(startIndex, endIndex);
+  const newData = allData.value.slice(startIndex, endIndex);
 
   imageList.value = [
-    // ...imageList.value,
+    ...imageList.value,
     ...newData.map((item: ImageItem) => {
       return {
         imageId: item.imageId,
@@ -113,9 +116,7 @@ const loadMoreData = () => {
 };
 
 const handleScroll = () => {
-  const table = document
-    .querySelector(".el-table__body-wrapper")
-    ?.querySelector(".el-scrollbar__wrap");
+  const table = document.querySelector('.el-table__body-wrapper');
   if (table) {
     const { scrollTop, scrollHeight, clientHeight } = table;
     if (scrollTop + clientHeight >= scrollHeight - 10) {
@@ -165,10 +166,9 @@ const showSearch = ref<boolean>(true); // 默认显示搜索条件
 const searchParams = ref({
   pageNo: 1, // 第几页
   pageSize: 10, // 每页显示多少条
-  imageName: "", // 图片名称
-  createAddress: "", // 拍照地址
-  deviceName: "", // 设备名称
-  type: "", // 图片类型
+  imageName: "",
+  ipAddress: "",
+  loginStatus: "",
 });
 // 表格加载动画Loading
 const loading = ref(false);
@@ -177,10 +177,7 @@ const dateCreate = ref();
 const dateUpload = ref();
 const handleListPage = async () => {
   const data = DatePicker(searchParams.value, dateCreate.value);
-  console.log("DatePicker", data);
-  console.log("searchParams", searchParams.value);
-  console.log("dateCreate", dateCreate.value);
-  console.log("dateUpload", dateUpload.value);
+  console.log(data);
   // getData();
 };
 
@@ -199,28 +196,26 @@ const handleTableData = async () => {
 /** 重置搜索参数 */
 const resetSearchParams = () => {
   dateCreate.value = [];
-  dateUpload.value = [];
   searchParams.value = {
-    pageNo: 1, // 第几页
-    pageSize: 10, // 每页显示多少条
-    imageName: "", // 图片名称
-    createAddress: "", // 拍照地址
-    deviceName: "", // 设备名称
-    type: "", // 图片类型
+    pageNo: 1,
+    pageSize: 10,
+    imageName: "",
+    ipAddress: "",
+    loginStatus: "",
   };
 };
 /** 搜索 */
 const handleSearch = () => {
   console.log("搜索");
   searchParams.value.pageNo = 1;
-  handleListPage();
+  // handleListPage();
 };
 
 /** 重置 */
 const resetSearch = () => {
   console.log("重置搜索");
   resetSearchParams();
-  handleListPage();
+  // handleListPage();
 };
 
 /** 删除 */
@@ -249,23 +244,19 @@ const handleDelete = (row: any) => {
 
 onMounted(() => {
   getData();
-  const table = document
-    .querySelector(".el-table__body-wrapper")
-    ?.querySelector(".el-scrollbar__wrap");
-
+  const table = document.querySelector('.el-table__body-wrapper');
   if (table) {
-    table.addEventListener("scroll", handleScroll);
+    table.addEventListener('scroll', handleScroll);
   }
 });
 
 onUnmounted(() => {
-  const table = document
-    .querySelector(".el-table__body-wrapper")
-    ?.querySelector(".el-scrollbar__wrap");
+  const table = document.querySelector('.el-table__body-wrapper');
   if (table) {
-    table.removeEventListener("scroll", handleScroll);
+    table.removeEventListener('scroll', handleScroll);
   }
 });
+
 </script>
 
 <template>
@@ -283,7 +274,24 @@ onUnmounted(() => {
             @keyup.enter.native="handleListPage"
           ></el-input>
         </el-form-item>
-
+        <el-form-item label="IP地址" prop="ipAddress">
+          <el-input
+            placeholder="请输入IP地址"
+            v-model="searchParams.ipAddress"
+            style="width: 200px"
+            clearable
+            @keyup.enter.native="handleListPage"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="登录状态" prop="loginStatus">
+          <el-input
+            placeholder="请输入IP地址"
+            v-model="searchParams.ipAddress"
+            style="width: 200px"
+            clearable
+            @keyup.enter.native="handleListPage"
+          ></el-input>
+        </el-form-item>
         <el-form-item label="拍照时间" prop="createTime">
           <el-date-picker
             v-model="dateCreate"
@@ -298,15 +306,6 @@ onUnmounted(() => {
             ]"
           />
         </el-form-item>
-        <el-form-item label="图片类型" prop="type">
-          <el-input
-            placeholder="请选择图片类型"
-            v-model="searchParams.type"
-            style="width: 200px"
-            clearable
-            @keyup.enter.native="handleListPage"
-          ></el-input>
-        </el-form-item>
         <el-form-item label="拍照时间" prop="uploadTime">
           <el-date-picker
             v-model="dateUpload"
@@ -320,26 +319,6 @@ onUnmounted(() => {
               new Date(2000, 1, 1, 23, 59, 59),
             ]"
           />
-        </el-form-item>
-
-        <el-form-item label="拍摄地址" prop="createAddress">
-          <el-input
-            placeholder="请选择拍摄地址"
-            v-model="searchParams.createAddress"
-            style="width: 200px"
-            clearable
-            @keyup.enter.native="handleListPage"
-          ></el-input>
-        </el-form-item>
-
-        <el-form-item label="设备名称" prop="deviceName">
-          <el-input
-            placeholder="请选择设备名称"
-            v-model="searchParams.deviceName"
-            style="width: 200px"
-            clearable
-            @keyup.enter.native="handleListPage"
-          ></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="search" plain v-debounce="handleSearch">
@@ -365,7 +344,7 @@ onUnmounted(() => {
         </el-col>
         <Toolbar v-model:showSearch="showSearch" @refreshTable="handleListPage"></Toolbar>
       </el-row>
-      <div style="height: 20px">{{ imageList.length }}</div>
+      <div style="height: 20px"></div>
       <!--         :data="visibleData"数据表格 -->
       <el-table
         v-loading="loading"
@@ -408,13 +387,6 @@ onUnmounted(() => {
           label="大小"
           prop="size"
           width="120px"
-          align="center"
-          :show-overflow-tooltip="true"
-        ></el-table-column>
-        <el-table-column
-          label="类型"
-          prop="type"
-          width="60px"
           align="center"
           :show-overflow-tooltip="true"
         ></el-table-column>
