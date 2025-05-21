@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, useTemplateRef } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { DatePicker, formatFileSize } from "@/utils/index";
 import Card from "@/components/Card/index.vue";
 import useApiUrl from "@/libs/useApiUrl/index";
@@ -44,16 +44,16 @@ interface ImageTable {
   // 设备名称"
   deviceName: string;
 }
-const dataList = ref<ImageItem[]>([
-  {
-    imageId: 0,
-    name: "CYY",
-    path: "CYY\\IMG\\CYY_20250327001.jpg",
-    type: ".jpg",
-    size: 502466,
-    modified: "2025-03-27 00:18:20",
-  },
-]);
+// const dataList = ref<ImageItem[]>([
+//   {
+//     imageId: 0,
+//     name: "CYY",
+//     path: "CYY\\IMG\\CYY_20250327001.jpg",
+//     type: ".jpg",
+//     size: 502466,
+//     modified: "2025-03-27 00:18:20",
+//   },
+// ]);
 const imageList = ref<ImageTable[]>([
   {
     imageId: 0,
