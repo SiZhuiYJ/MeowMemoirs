@@ -210,9 +210,13 @@ mittBus.on("handleThemeConfig", () => {
           <el-col :sm="{ span: 24 }" :xs="{ span: 24 }">
             <el-form-item>
               <div style="display: flex; align-items: center">
-                <span style="margin-right: 2px">路由动画</span>
+                <span style="margin-right: 2px; color: var(--el-text-color-regular)">
+                  路由动画
+                </span>
                 <el-tooltip placement="bottom" content="路由加载动画模式">
-                  <el-icon style="margin-right: 20px"><QuestionFilled /></el-icon>
+                  <el-icon style="margin-right: 20px; color: var(--el-text-color-regular)"
+                    ><QuestionFilled
+                  /></el-icon>
                 </el-tooltip>
               </div>
               <el-select
@@ -244,12 +248,18 @@ mittBus.on("handleThemeConfig", () => {
           <el-col :sm="{ span: 24 }" :xs="{ span: 24 }">
             <el-form-item>
               <div style="display: flex; align-items: center">
-                <span style="margin-right: 2px">菜单手风琴</span>
+                <span style="margin-right: 2px; color: var(--el-text-color-regular)">
+                  菜单手风琴
+                </span>
                 <el-tooltip
                   placement="bottom"
                   content="左侧菜单是否展开单个子菜单[启用-单个/关闭-多个]"
                 >
-                  <el-icon style="margin-right: 10px"><QuestionFilled /></el-icon>
+                  <el-icon
+                    style="margin-right: 10px; color: var(--el-text-color-regular)"
+                  >
+                    <QuestionFilled />
+                  </el-icon>
                 </el-tooltip>
               </div>
               <el-switch

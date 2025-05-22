@@ -31,6 +31,20 @@ export default defineConfig({
       cert: fs.readFileSync("certs/localhost+1.pem"),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: function (id: string) {
+          if (
+            id.includes("node_modules") &&
+            (id.endsWith(".js") || id.endsWith(".ts"))
+          ) {
+            return "vendor";
+          }
+        },
+      },
+    },
+  },
   //路径别名
   resolve: {
     alias: {

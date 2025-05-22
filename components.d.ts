@@ -56,6 +56,7 @@ declare module 'vue' {
     Index: typeof import('./src/components/Drawer/Index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Select: typeof import('./src/components/Select/index.vue')['default']
     ShowDetails: typeof import('./src/components/ShowDetails/index.vue')['default']
     SvgIcons: typeof import('./src/components/SvgIcons/index.vue')['default']
     Toolbar: typeof import('./src/components/Toolbar/index.vue')['default']

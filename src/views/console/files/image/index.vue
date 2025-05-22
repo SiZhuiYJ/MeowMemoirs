@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from "vue";
-import { DatePicker, formatFileSize } from "@/utils/index";
+import { formatFileSize, collectImageData,type ImageTable,isArrayIncluded ,type options} from "@/utils/index";
 import Card from "@/components/Card/index.vue";
+import Select from "@/components/Select/index.vue";
 import useApiUrl from "@/libs/useApiUrl/index";
 import { galleryApi } from "@/libs/api/gallery";
 import type { item } from "@/libs/api/gallery/type";
@@ -13,72 +14,87 @@ import {
   meowMsgInfo,
   meowMsgError,
 } from "@/utils/message";
+interface searchType{
+  type: options[];
+  createAddress: options[];
+  deviceName: options[];
+}
 const { getGalleryImgUrl } = useApiUrl();
-interface ImageItem {
-  imageId: number;
-  name: string;
-  path: string;
-  type: string;
-  size: number;
-  modified: string;
-}
-interface ImageTable {
-  // 序号"
-  imageId: number;
-  // 图片"
-  url: string;
-  // 图片名称"
-  name: string;
-  // 标签"
-  tags: string[];
-  // 大小"
-  size: string;
-  // 图片类型
-  type: string;
-  // 拍照时间"
-  createTime: string[];
-  // 上传时间"
-  uploadTime: string[];
-  // 拍照地点"
-  createAddress: string;
-  // 设备名称"
-  deviceName: string;
-}
-const imageList = ref<ImageTable[]>([
-  {
-    imageId: 0,
-    name: "CYY",
-    url: getGalleryImgUrl("CYY\\IMG\\CYY_20250327001.jpg"),
-    type: ".jpg",
-    size: formatFileSize(502466)!,
-    createTime: ["2025-03-27 00:18:20"],
-    uploadTime: ["2025-03-27 00:18:20"],
-    tags: ["CYY"],
-    createAddress: "重庆",
-    deviceName: "CYY",
-  },
+const imageList = ref<ImageTable[]>([]);
+const currentPage = ref<number>(1);
+const pageSize = ref<number>(10);
+const imageFilter=ref<ImageTable[]>([]);
+const allData = ref<ImageTable[]>([]);
+
+const searchList = ref<searchType>({
+  type: [],
+  createAddress: [],
+  deviceName: [],
+});
+const imageTags  = ref<options[]>([
+  { label: "做爱",  value: "1001" },
+  { label: "旅游",  value: "1002" },
+  { label: "吃饭", value: "1003" },
+  { label: "做饭", value: "1004" },
+  { label: "内设", value: "1005" },
 ]);
-const currentPage = ref(1);
-const pageSize = ref(10);
-const allData = ref<ImageItem[]>([]);
-// 使用异步获取数据
-const getData = async () => {
-  try {
+const imageType = ref<{[key: string]: string}>({
+  "1001":"做爱",
+  "1002":"旅游",
+  "1003":"吃饭",
+  "1004":"做饭",
+  "1005":"内设",
+});
+
+//添加tag
+const addTag=(name:string)=>{
+  imageTags.value.push({label:name,value:name})
+}
+// 重置搜索条件
+const tableReset =()=>{
     currentPage.value = 1;
-    const { data } = await galleryApi.MMGetImageList();
-    allData.value = data.items.map((item: item, index: number) => {
-      return {
-        ...item,
-        imageId: index,
-      };
-    });
-    const table = document
+    pageSize.value = 10;
+    imageList.value = [];
+        const table = document
       .querySelector(".el-table__body-wrapper")
       ?.querySelector(".el-scrollbar__wrap");
     if (table) {
       table.scrollTop = 0;
     }
     loadMoreData();
+}
+
+// 使用异步获取数据
+const getData = async () => {
+  try {
+    // 重置所有数据
+    allData.value = [];
+
+    // const { data } = await galleryApi.MMGetImageList();
+    // allData.value = data.items.map((item: item, index: number) => {
+    //   return {
+    //     imageId: index,
+    //     url: item.path,
+    //     name: getName(item.path),
+    //     tags: ["1001", "1003", "1002"],
+    //     size: item.size,
+    //     createTime: "",
+    //     uploadTime: item.modified,
+    //     createAddress: [""],
+    //     deviceName: "string",
+    //     type: item.type,
+    //   };
+    // });
+    imageFilter.value=allData.value
+    const {type ,createAddress,deviceName}=collectImageData(allData.value);
+
+    searchList.value ={
+      type:type.map((item: string) => {return{label:item,value:item}}),
+      createAddress:createAddress.map((item: string) => {return{label:item,value:item}}),
+      deviceName:deviceName.map((item: string) => {return{label:item,value:item}}),
+    }
+    tableReset()
+    console.log(searchList.value);
   } catch (error) {
     console.error("Failed to fetch data:", error);
     meowNoticeError("数据获取失败，请刷新重试🌻");
@@ -88,27 +104,8 @@ const getData = async () => {
 const loadMoreData = () => {
   const startIndex = (currentPage.value - 1) * pageSize.value;
   const endIndex = startIndex + pageSize.value;
-  const newData = allData.value.slice(0, endIndex);
-  // const newData = allData.value.slice(startIndex, endIndex);
-
-  imageList.value = [
-    // ...imageList.value,
-    ...newData.map((item: ImageItem) => {
-      return {
-        imageId: item.imageId,
-        url: getGalleryImgUrl(item.path),
-        name: item.name,
-        tags: [""],
-        size: formatFileSize(item.size)!,
-        createTime: [""],
-        uploadTime: [""],
-        createAddress: "",
-        deviceName: "string",
-        type: item.type,
-      };
-    }),
-  ];
-
+  const newData = imageFilter.value.slice(startIndex, endIndex);
+  imageList.value = [...imageList.value, ...newData];
   currentPage.value += 1;
 };
 
@@ -124,14 +121,16 @@ const handleScroll = () => {
   }
 };
 
-const ids = ref([]); // 选择数组
+const ids = ref<number[]>([]); // 选择数组
 const single = ref<boolean>(true); // 非单个禁用
 const multiple = ref<boolean>(true); // 非多个禁用
 
 /** 是否多选 */
-const handleSelectionChange = (selection: any) => {
+const handleSelectionChange = (selection: ImageTable[]) => {
   console.log(selection);
-  ids.value = selection.map((item: any) => item.loginId);
+
+  ids.value = selection.map((item: ImageTable) => item.imageId);
+  console.log("ids", ids.value);
   single.value = selection.length != 1; // 单选
   multiple.value = !selection.length; // 多选
 };
@@ -162,40 +161,48 @@ const handleBatchDelete = () => {
 
 const showSearch = ref<boolean>(true); // 默认显示搜索条件
 // 查询参数
-const searchParams = ref({
+const searchParams = ref<{
+  pageNo: number;
+    pageSize: number;
+    imageName: string;
+    createAddress: string;
+    deviceName: string;
+    type: string;
+    tags: string[];
+  }>({
   pageNo: 1, // 第几页
   pageSize: 10, // 每页显示多少条
   imageName: "", // 图片名称
   createAddress: "", // 拍照地址
   deviceName: "", // 设备名称
   type: "", // 图片类型
+  tags:[] // 图片标签
 });
 // 表格加载动画Loading
-const loading = ref(false);
-const total = ref<number>(0);
+const loading = ref<boolean>(false);
 const dateCreate = ref();
 const dateUpload = ref();
 const handleListPage = async () => {
-  const data = DatePicker(searchParams.value, dateCreate.value);
-  console.log("DatePicker", data);
+  tableReset()
+  imageFilter.value=allData.value.filter((item:ImageTable)=>
+    item.name.toLowerCase().includes(searchParams.value.imageName.toLowerCase())
+    && item.deviceName.includes(searchParams.value.deviceName)
+    && item.type.includes(searchParams.value.type)
+    && isArrayIncluded(item.tags,searchParams.value.tags)
+    && item.createAddress.includes(searchParams.value.createAddress)
+    && (!dateCreate.value || (item.createTime >= dateCreate.value[0] && item.createTime <= dateCreate.value[1]))
+    && (!dateUpload.value || (item.uploadTime >= dateUpload.value[0] && item.uploadTime <= dateUpload.value[1]))
+  )
+  imageList.value=[]
+  console.log("imageFilter", imageFilter.value);
   console.log("searchParams", searchParams.value);
   console.log("dateCreate", dateCreate.value);
   console.log("dateUpload", dateUpload.value);
+  currentPage.value = 1;
+  loadMoreData()
   // getData();
 };
 
-/** 数据表格[删除、批量删除等刷新使用] */
-const handleTableData = async () => {
-  try {
-    // const res: any = await listPage(koiDatePicker(searchParams.value, dateRange.value));
-    // console.log("日志数据表格数据->", res.data);
-    // tableList.value = res.data.records;
-    // total.value = res.data.total;
-  } catch (error) {
-    console.log(error);
-    meowNoticeError("数据查询失败，请刷新重试🌻");
-  }
-};
 /** 重置搜索参数 */
 const resetSearchParams = () => {
   dateCreate.value = [];
@@ -207,6 +214,7 @@ const resetSearchParams = () => {
     createAddress: "", // 拍照地址
     deviceName: "", // 设备名称
     type: "", // 图片类型
+    tags: [], //  标签
   };
 };
 /** 搜索 */
@@ -222,7 +230,18 @@ const resetSearch = () => {
   resetSearchParams();
   handleListPage();
 };
-
+/** 数据表格[删除、批量删除等刷新使用] */
+const handleTableData = async () => {
+  try {
+    // const res: any = await listPage(koiDatePicker(searchParams.value, dateRange.value));
+    // console.log("日志数据表格数据->", res.data);
+    // tableList.value = res.data.records;
+    // total.value = res.data.total;
+  } catch (error) {
+    console.log(error);
+    meowNoticeError("数据查询失败，请刷新重试🌻");
+  }
+};
 /** 删除 */
 const handleDelete = (row: any) => {
   const id = row.loginId;
@@ -245,6 +264,16 @@ const handleDelete = (row: any) => {
     .catch(() => {
       meowMsgError("已取消🌻");
     });
+};
+const handleUpload=async()=>{
+  console.log("上传中...")
+}
+
+// 截取下划线到点之间的字符串
+const getName = (path: string) => {
+  const newName = path.split("/")[2];
+  const endIndex = newName.indexOf(".");
+  return newName.substring(0, endIndex);
 };
 
 onMounted(() => {
@@ -284,6 +313,44 @@ onUnmounted(() => {
           ></el-input>
         </el-form-item>
 
+        <el-form-item label="图片类型" prop="type">
+          <Select
+            v-model="searchParams.type"
+            :options="searchList.type"
+            multiple
+            collapseTags
+            collapse-tags-tooltip
+            placeholder="请选择图片类型"
+            @change="handleListPage"
+          >
+          </Select>
+        </el-form-item>
+        <el-form-item label="图片标签" prop="tags">
+          <Select
+            v-model="searchParams.tags"
+            :options="imageTags"
+            multiple
+            addable
+            collapseTags
+            collapse-tags-tooltip
+            placeholder="请选择图片类型"
+            @add="addTag"
+            @change="handleListPage"
+          >
+          </Select>
+        </el-form-item>
+        <el-form-item label="拍摄地址" prop="createAddress">
+          <Select
+            v-model="searchParams.createAddress"
+            :options="searchList.createAddress"
+            multiple
+            collapseTags
+            collapse-tags-tooltip
+            placeholder="请选择拍摄地址"
+            @change="handleListPage"
+          >
+          </Select>
+        </el-form-item>
         <el-form-item label="拍照时间" prop="createTime">
           <el-date-picker
             v-model="dateCreate"
@@ -297,15 +364,6 @@ onUnmounted(() => {
               new Date(2000, 1, 1, 23, 59, 59),
             ]"
           />
-        </el-form-item>
-        <el-form-item label="图片类型" prop="type">
-          <el-input
-            placeholder="请选择图片类型"
-            v-model="searchParams.type"
-            style="width: 200px"
-            clearable
-            @keyup.enter.native="handleListPage"
-          ></el-input>
         </el-form-item>
         <el-form-item label="拍照时间" prop="uploadTime">
           <el-date-picker
@@ -322,24 +380,17 @@ onUnmounted(() => {
           />
         </el-form-item>
 
-        <el-form-item label="拍摄地址" prop="createAddress">
-          <el-input
-            placeholder="请选择拍摄地址"
-            v-model="searchParams.createAddress"
-            style="width: 200px"
-            clearable
-            @keyup.enter.native="handleListPage"
-          ></el-input>
-        </el-form-item>
-
         <el-form-item label="设备名称" prop="deviceName">
-          <el-input
-            placeholder="请选择设备名称"
+          <Select
             v-model="searchParams.deviceName"
-            style="width: 200px"
-            clearable
-            @keyup.enter.native="handleListPage"
-          ></el-input>
+            :options="searchList.deviceName"
+            multiple
+            collapseTags
+            collapse-tags-tooltip
+            placeholder="请选择设备名称"
+            @change="handleListPage"
+          >
+          </Select>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="search" plain v-debounce="handleSearch">
@@ -352,6 +403,12 @@ onUnmounted(() => {
       </el-form>
       <!-- 表格头部按钮 -->
       <el-row :gutter="10">
+        <!-- 上传 -->
+        <el-col :span="1.5" v-auth="['system:role:add']">
+          <el-button type="primary" icon="upload" plain @click="handleUpload">
+            上传
+          </el-button>
+        </el-col>
         <el-col :span="1.5" v-auth="['system:role:delete']">
           <el-button
             type="danger"
@@ -366,119 +423,17 @@ onUnmounted(() => {
         <Toolbar v-model:showSearch="showSearch" @refreshTable="handleListPage"></Toolbar>
       </el-row>
       <div style="height: 20px">{{ imageList.length }}</div>
-      <!--         :data="visibleData"数据表格 -->
-      <el-table
-        v-loading="loading"
-        border
-        :data="imageList"
-        empty-text="暂时没有数据哟🌻"
-        @selection-change="handleSelectionChange"
-      >
-        <el-table-column type="selection" width="55" align="center" />
-        <el-table-column
-          label="序号"
-          prop="imageId"
-          width="60px"
-          align="center"
-          type="index"
-        ></el-table-column>
-        <el-table-column label="图片" prop="path" width="65px" align="center">
-          <template #default="scope">
-            <img
-              v-lazy="scope.row.url"
-              style="height: 40px; width: 40px; object-fit: cover"
-            />
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="图片名称"
-          prop="name"
-          width="160px"
-          align="center"
-          :show-overflow-tooltip="true"
-        ></el-table-column>
-        <el-table-column
-          label="标签"
-          prop="tags"
-          width="160px"
-          align="center"
-          :show-overflow-tooltip="true"
-        ></el-table-column>
-        <el-table-column
-          label="大小"
-          prop="size"
-          width="120px"
-          align="center"
-          :show-overflow-tooltip="true"
-        ></el-table-column>
-        <el-table-column
-          label="类型"
-          prop="type"
-          width="60px"
-          align="center"
-          :show-overflow-tooltip="true"
-        ></el-table-column>
-        <el-table-column
-          label="拍照时间"
-          prop="createTime"
-          width="260px"
-          align="center"
-          :show-overflow-tooltip="true"
-        ></el-table-column>
-        <el-table-column
-          label="上传时间"
-          prop="uploadTime"
-          width="260px"
-          align="center"
-          :show-overflow-tooltip="true"
-        ></el-table-column>
-        <el-table-column
-          label="拍照地点"
-          prop="createAddress"
-          width="260px"
-          align="center"
-          :show-overflow-tooltip="true"
-        >
-        </el-table-column>
-        <el-table-column
-          label="设备名称"
-          prop="deviceName"
-          width="150px"
-          align="center"
-          :show-overflow-tooltip="true"
-        ></el-table-column>
-        <el-table-column label="操作" align="center" width="120" fixed="right">
-          <template #default="{ row }">
-            <el-tooltip content="删除🌻" placement="top">
-              <el-button
-                type="danger"
-                icon="Delete"
-                circle
-                plain
-                @click="handleDelete(row)"
-                v-auth="['system:role:delete']"
-              ></el-button>
-            </el-tooltip>
-          </template>
-        </el-table-column>
-      </el-table>
-
-      <div style="height: 20px"></div>
-      <!-- {{ searchParams.pageNo }} --- {{ searchParams.pageSize }} -->
-      <!-- 分页 -->
-      <el-pagination
-        background
-        v-model:current-page="searchParams.pageNo"
-        v-model:page-size="searchParams.pageSize"
-        v-show="total > 0"
-        :page-sizes="[10, 20, 50, 100, 200]"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
-        @size-change="handleListPage"
-        @current-change="handleListPage"
-      />
+      <!-- 数据表格 -->
     </Card>
   </div>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+p {
+  margin: 10px;
+  padding: 0;
+}
+.tag-item + .tag-item {
+  margin-left: 5px;
+}
+</style>

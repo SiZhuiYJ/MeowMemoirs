@@ -4,6 +4,8 @@ import {  formatFileSize, collectImageData,type ImageTable ,isArrayIncluded,type
 import Card from "@/components/Card/index.vue";
 import Select from "@/components/Select/index.vue";
 import useApiUrl from "@/libs/useApiUrl/index";
+import { galleryApi } from "@/libs/api/gallery";
+import type { item } from "@/libs/api/gallery/type";
 import {
   meowNoticeSuccess,
   meowNoticeError,
@@ -71,7 +73,21 @@ const getData = async () => {
     imageType.value={};
     imageTags.value = [];
     //  查询所有的图片
-    // allData.value = await listImageNormal();
+    // const { data } = await galleryApi.MMGetImageList();
+    // allData.value = data.items.map((item: item, index: number) => {
+    //   return {
+    //     imageId: index,
+    //     url: item.path,
+    //     name: getName(item.path),
+    //     tags: ["1001", "1003", "1002"],
+    //     size: item.size,
+    //     createTime: "",
+    //     uploadTime: item.modified,
+    //     createAddress: [""],
+    //     deviceName: "string",
+    //     type: item.type,
+    //   };
+    // });
     imageFilter.value=allData.value
     const {type ,createAddress,deviceName}=collectImageData(allData.value);
 
@@ -255,6 +271,13 @@ const handleDelete = (row: any) => {
 const handleUpload=async()=>{
   console.log("上传中...")
 }
+
+// 截取下划线到点之间的字符串
+const getName = (path: string) => {
+  const newName = path.split("/")[2];
+  const endIndex = newName.indexOf(".");
+  return newName.substring(0, endIndex);
+};
 
 onMounted(() => {
   getData();

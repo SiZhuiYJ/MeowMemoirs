@@ -127,7 +127,11 @@ defineExpose({
     bottom: 50px;
     flex: 1;
     overflow-y: auto; // 超出部分则滚动
-    @apply text-14px text-#303133 dark:text-#E5EAF3;
+    font-size: 14px;
+    color: #303133;
+  }
+  .dark .body {
+    color: #e5eaf3;
   }
   .footer {
     display: flex;
@@ -138,7 +142,10 @@ defineExpose({
   }
 }
 :deep(.el-drawer__title) {
-  @apply text-#5f5f5f dark:text-#CFD3DC;
+  color: #5f5f5f;
+  .dark {
+    color: #cfd3dc;
+  }
 }
 
 :deep(.el-drawer__body) {

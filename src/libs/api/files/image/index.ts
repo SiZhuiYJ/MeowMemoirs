@@ -1,4 +1,4 @@
-// @/libs/api/gallery/index.ts
+// @/libs/api/files/index.ts
 import http from "@/libs/http";
 import type { ResponseData } from "@/libs/http/type";
 import type { item } from "@/libs/api/gallery/type";
@@ -6,13 +6,13 @@ interface items {
   items: item[];
   rootPath: string;
 }
-export const galleryApi = {
+export const imageApi = {
   // 获取图片列表
-  MMGetImageList() {
-    return http.get<ResponseData<items>>("/Gallerys/GetImageList");
+  MMPostImagedataList() {
+    return http.post<ResponseData<items>>("/files/image/dataList");
   },
   // 获取图片标签列表
   MMPostImageTagList() {
-    return http.post<ResponseData<string[]>>("/Gallerys/GetImageTagList");
+    return http.post<ResponseData<string[]>>("/files/image/tagList");
   },
 };
