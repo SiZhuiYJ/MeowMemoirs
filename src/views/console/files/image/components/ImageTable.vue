@@ -1,8 +1,64 @@
+<script setup lang="ts">
+import { ref, onMounted, onUnmounted } from "vue";
+import { formatFileSize } from "@/utils/files";
+import { useImageStore } from "@/stores";
+import { useVirtualScroll } from "./useVirtualScroll";
+import type { ImageTable, options } from "@/utils/files";
+import useApiUrl from "@/libs/useApiUrl/index";
+const { getGalleryImgUrl } = useApiUrl();
+
+const store = useImageStore();
+// const { startObserver, stopObserver } = useVirtualScroll();
+
+const tableElement = ref<Element | null | undefined>();
+const handleScroll = () => {
+  // const table = document
+  //   .querySelector(".el-table__body-wrapper")
+  //   ?.querySelector(".el-scrollbar__wrap");
+  if (tableElement.value) {
+    const { scrollTop, scrollHeight, clientHeight } = tableElement.value;
+    if (scrollTop + clientHeight >= scrollHeight - 10) {
+      store.loadMore();
+    }
+  }
+};
+
+const ids = ref<number[]>([]); // 选择数组
+const single = ref<boolean>(true); // 非单个禁用
+const multiple = ref<boolean>(true); // 非多个禁用
+const loading = ref<boolean>(false);
+/** 是否多选 */
+const handleSelectionChange = (selection: ImageTable[]) => {
+  console.log(selection);
+
+  ids.value = selection.map((item: ImageTable) => item.imageId);
+  console.log("ids", ids.value);
+  single.value = selection.length != 1; // 单选
+  multiple.value = !selection.length; // 多选
+};
+onMounted(() => {
+  const table = document
+    .querySelector(".el-table__body-wrapper")
+    ?.querySelector(".el-scrollbar__wrap");
+  if (table) {
+    tableElement.value = table;
+    tableElement.value.addEventListener("scroll", handleScroll);
+  }
+  // startObserver(handleScroll);
+});
+
+onUnmounted(() => {
+  tableElement.value?.removeEventListener("scroll", handleScroll);
+  // stopObserver();
+});
+</script>
+
 <template>
+  <!-- :data="store.filteredData" -->
   <el-table
     v-loading="loading"
     border
-    :data="imageList"
+    :data="store.currentData"
     empty-text="暂时没有数据哟🌻"
     @selection-change="handleSelectionChange"
   >
@@ -38,7 +94,7 @@
     >
       <template #default="{ row }">
         <el-tag v-for="tag in row.tags" :key="tag" class="tag-item" type="primary">
-          {{ imageType[tag] }}
+          {{ store.metaData.tagsMap[tag] }}
         </el-tag>
       </template>
     </el-table-column>
@@ -97,7 +153,7 @@
             icon="Delete"
             circle
             plain
-            @click="handleDelete(row)"
+            @click="store.deleteImage(row)"
             v-auth="['system:role:delete']"
           ></el-button>
         </el-tooltip>
@@ -105,20 +161,12 @@
     </el-table-column>
   </el-table>
 </template>
-<script setup lang="ts">
-/**
- * 转换文件大小
- * @param size 文件大小
- * @returns 转换后的文件大小
- */
-export const formatFileSize = (size: number) => {
-  if (size < 1024) {
-    return size + "B";
-  } else if (size < 1024 * 1024) {
-    return (size / 1024).toFixed(2) + "KB";
-  } else if (size < 1024 * 1024 * 1024) {
-    return (size / (1024 * 1024)).toFixed(2) + "MB";
-  }
-};
-</script>
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+p {
+  margin: 10px;
+  padding: 0;
+}
+.tag-item + .tag-item {
+  margin-left: 5px;
+}
+</style>
