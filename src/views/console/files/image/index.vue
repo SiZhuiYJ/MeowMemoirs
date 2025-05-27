@@ -3,6 +3,8 @@ import { onMounted, ref } from "vue";
 import { useImageStore } from "@/stores";
 import SearchImage from "./components/SearchImage.vue";
 import ImageTable from "./components/ImageTable.vue";
+import uploadImage from "./components/uploadImage.vue";
+import mittBus from "@/utils/mittBus";
 
 const store = useImageStore();
 
@@ -10,6 +12,8 @@ const multiple = ref<boolean>(true); // 非多个禁用
 const showSearch = ref<boolean>(true); // 默认显示搜索条件
 
 const handleUpload = () => {
+  console.log("handleUpload");
+  mittBus.emit("handleUploadConfig");
   // store.uploadImage();
 };
 const handleBatchDelete = () => {
@@ -57,6 +61,7 @@ onMounted(() => {
         {{ store.currentData.length }}/{{ store.filteredData.length }}
       </div>
       <ImageTable />
+      <uploadImage />
     </Card>
   </div>
 </template>

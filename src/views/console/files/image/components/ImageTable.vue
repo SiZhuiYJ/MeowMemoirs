@@ -2,8 +2,7 @@
 import { ref, onMounted, onUnmounted } from "vue";
 import { formatFileSize } from "@/utils/files";
 import { useImageStore } from "@/stores";
-import { useVirtualScroll } from "./useVirtualScroll";
-import type { ImageTable, options } from "@/utils/files";
+import type { ImageTable } from "@/utils/files";
 import useApiUrl from "@/libs/useApiUrl/index";
 const { getGalleryImgUrl } = useApiUrl();
 

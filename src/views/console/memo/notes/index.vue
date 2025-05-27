@@ -1,5 +1,6 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+</script>
 <template>
-  <div>notes</div>
+  <div class="main-content">notes</div>
 </template>
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

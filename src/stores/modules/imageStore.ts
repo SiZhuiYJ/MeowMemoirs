@@ -99,7 +99,6 @@ export const useImageStore = defineStore("image", () => {
         "1005": "内设",
       };
 
-
       const { type, createAddress, deviceName } = collectImageData(
         allData.value
       );
@@ -145,6 +144,7 @@ export const useImageStore = defineStore("image", () => {
 
   // 添加图片标签
   const addTag = (tag: string) => {
+    console.log(tag);
     // const index = allData.value.findIndex((item) => item.imageId === imageId);
     // if (index !== -1) {
     //   allData.value[index].tags.push(tag);

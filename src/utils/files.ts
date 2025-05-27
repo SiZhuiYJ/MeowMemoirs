@@ -54,15 +54,14 @@ export function isArrayIncluded<T>(a: T[], b: T[]): boolean {
  * @param size 文件大小
  * @returns 转换后的文件大小
  */
-export function formatFileSize(size: number) {
-  if (size < 1024) {
-    return size + "B";
-  } else if (size < 1024 * 1024) {
-    return (size / 1024).toFixed(2) + "KB";
-  } else if (size < 1024 * 1024 * 1024) {
-    return (size / (1024 * 1024)).toFixed(2) + "MB";
-  }
-}
+// 文件大小格式化过滤器
+export const formatFileSize = (bytes: number): string => {
+  if (bytes === 0) return "0 Bytes";
+  const k = 1024;
+  const sizes = ["Bytes", "KB", "MB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+};
 /**
  * 给一个数组转换返回各项出现的值的新对象
  * @param images 需要转换的数组

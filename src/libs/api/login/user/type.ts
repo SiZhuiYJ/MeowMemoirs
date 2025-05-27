@@ -1,8 +1,9 @@
 // @/libs/api/user/type.ts
 import type { ToUser } from "@/stores";
+export type handoverParams = "RainbowId" | "userPhone" | "userEmail";
 // 登录参数
 export interface ILoginParams {
-  Type: string;
+  Type: handoverParams;
   Identifier: string;
   Password: string;
 }
