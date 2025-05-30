@@ -3,14 +3,8 @@ import { ref, computed } from "vue";
 import { collectImageData, isArrayIncluded } from "@/utils/files";
 import type { ImageTable, options } from "@/utils/files";
 
-import { galleryApi } from "@/libs/api/gallery";
-import type { item } from "@/libs/api/gallery/type";
-// 截取下划线到点之间的字符串
-const getName = (path: string) => {
-  const newName = path.split("/")[2];
-  const endIndex = newName.indexOf(".");
-  return newName.substring(0, endIndex);
-};
+import { imageApi } from "@/libs/api/files/image";
+import type { image } from "@/libs/api/files/image/type";
 
 interface metaType {
   tags: options[];
@@ -22,7 +16,7 @@ interface metaType {
 interface searchType {
   imageName: string;
   type: string;
-  tags: string[];
+  tags: number[];
   createAddress: string;
   deviceName: string;
   dateCreate: string[];
@@ -35,6 +29,8 @@ export const useImageStore = defineStore("image", () => {
   const currentPage = ref(1);
   const pageSize = ref(20);
   const loading = ref(false);
+  // 当前展示
+  const currentShow = ref<ImageTable>();
 
   // 搜索相关状态
   const searchParams = ref<searchType>({
@@ -68,36 +64,32 @@ export const useImageStore = defineStore("image", () => {
     try {
       loading.value = true;
       // 这里替换实际的API调用
-      // allData.value = /* res.data */ [];
-      const { data } = await galleryApi.MMGetImageList();
-      allData.value = data.items.map((item: item, index: number) => {
-        return {
-          imageId: index,
-          url: item.path,
-          name: getName(item.path),
-          tags: ["1001", "1003", "1002"],
-          size: item.size,
-          createTime: "",
-          uploadTime: item.modified,
-          createAddress: [""],
-          deviceName: "string",
-          type: item.type,
-        };
+      const apiImg = await imageApi.MMPostImagedataList();
+      console.log("data", apiImg.data);
+      allData.value = apiImg.data.images.map((item: image) => ({
+        imageId: item.imageId,
+        url: item.url,
+        tags: item.tags.split(",").map((tag) => parseInt(tag, 10)),
+        size: item.size,
+        createTime: item.createTime,
+        uploadTime: item.uploadTime,
+        createAddress: {
+          longitude: item.Longitude,
+          latitude: item.Latitude,
+          address: item.createAddress,
+        },
+        deviceName: item.deviceName,
+        name: item.url.split("/").pop()?.split(".")[0] || "",
+        type: item.url.split(".").pop() || "",
+      }));
+      currentShow.value = allData.value[0];
+      const apiTag = await imageApi.MMPostImageTagList();
+      const initialTags: options[] = [];
+      const imageType: { [key: string]: string } = {};
+      apiTag.data.tags.forEach((tag) => {
+        initialTags.push({ label: tag.tagName, value: tag.tagId });
+        imageType[tag.tagId] = tag.tagName;
       });
-      const initialTags: options[] = [
-        { label: "做爱", value: "1001" },
-        { label: "旅游", value: "1002" },
-        { label: "吃饭", value: "1003" },
-        { label: "做饭", value: "1004" },
-        { label: "内设", value: "1005" },
-      ];
-      const imageType: { [key: string]: string } = {
-        "1001": "做爱",
-        "1002": "旅游",
-        "1003": "吃饭",
-        "1004": "做饭",
-        "1005": "内设",
-      };
 
       const { type, createAddress, deviceName } = collectImageData(
         allData.value
@@ -127,7 +119,9 @@ export const useImageStore = defineStore("image", () => {
         (searchParams.value.tags.length === 0 ||
           isArrayIncluded(item.tags, searchParams.value.tags)) &&
         (searchParams.value.createAddress.length === 0 ||
-          searchParams.value.createAddress.includes(item.createAddress[2])) &&
+          searchParams.value.createAddress.includes(
+            item.createAddress.address
+          )) &&
         (searchParams.value.deviceName.length === 0 ||
           searchParams.value.deviceName.includes(item.deviceName)) &&
         (!searchParams.value.dateCreate ||
@@ -140,6 +134,12 @@ export const useImageStore = defineStore("image", () => {
             item.uploadTime <= searchParams.value.dateUpload[1]))
     );
     currentPage.value = 1;
+  };
+
+  // 选中图片
+  const selectImage = (item: ImageTable) => {
+    if (item.imageId === currentShow.value?.imageId) return;
+    currentShow.value = item;
   };
 
   // 添加图片标签
@@ -170,8 +170,10 @@ export const useImageStore = defineStore("image", () => {
     metaData,
     searchParams,
     loading,
+    currentShow,
     initializeData,
     applyFilters,
+    selectImage,
     addTag,
     uploadImage,
     deleteImage,

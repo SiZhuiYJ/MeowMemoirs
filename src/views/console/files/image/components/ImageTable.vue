@@ -1,19 +1,15 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue";
 import { formatFileSize } from "@/utils/files";
-import { useImageStore } from "@/stores";
+import { useImageStore, useAuthStore } from "@/stores";
 import type { ImageTable } from "@/utils/files";
-import useApiUrl from "@/libs/useApiUrl/index";
-const { getGalleryImgUrl } = useApiUrl();
+import { imageApi } from "@/libs/api/files/image";
+const { authStore } = useAuthStore();
 
 const store = useImageStore();
-// const { startObserver, stopObserver } = useVirtualScroll();
 
 const tableElement = ref<Element | null | undefined>();
 const handleScroll = () => {
-  // const table = document
-  //   .querySelector(".el-table__body-wrapper")
-  //   ?.querySelector(".el-scrollbar__wrap");
   if (tableElement.value) {
     const { scrollTop, scrollHeight, clientHeight } = tableElement.value;
     if (scrollTop + clientHeight >= scrollHeight - 10) {
@@ -22,18 +18,13 @@ const handleScroll = () => {
   }
 };
 
-const ids = ref<number[]>([]); // 选择数组
-const single = ref<boolean>(true); // 非单个禁用
-const multiple = ref<boolean>(true); // 非多个禁用
 const loading = ref<boolean>(false);
-/** 是否多选 */
-const handleSelectionChange = (selection: ImageTable[]) => {
-  console.log(selection);
 
-  ids.value = selection.map((item: ImageTable) => item.imageId);
-  console.log("ids", ids.value);
-  single.value = selection.length != 1; // 单选
-  multiple.value = !selection.length; // 多选
+/**
+ * 获取图片列表
+ */
+const handleCurrentChange = async (image: ImageTable) => {
+  store.selectImage(image);
 };
 onMounted(() => {
   const table = document
@@ -43,12 +34,10 @@ onMounted(() => {
     tableElement.value = table;
     tableElement.value.addEventListener("scroll", handleScroll);
   }
-  // startObserver(handleScroll);
 });
 
 onUnmounted(() => {
   tableElement.value?.removeEventListener("scroll", handleScroll);
-  // stopObserver();
 });
 </script>
 
@@ -59,9 +48,9 @@ onUnmounted(() => {
     border
     :data="store.currentData"
     empty-text="暂时没有数据哟🌻"
-    @selection-change="handleSelectionChange"
+    highlight-current-row
+    @current-change="handleCurrentChange"
   >
-    <el-table-column type="selection" width="55" align="center" />
     <el-table-column
       label="序号"
       prop="imageId"
@@ -72,7 +61,7 @@ onUnmounted(() => {
     <el-table-column label="图片" prop="path" width="65px" align="center">
       <template #default="scope">
         <img
-          v-lazy="getGalleryImgUrl(scope.row.url)"
+          v-lazy="imageApi.getImgSmallUrl(authStore.loginUser.rainbowId, scope.row.url)"
           style="height: 40px; width: 40px; object-fit: cover"
         />
       </template>
@@ -136,6 +125,9 @@ onUnmounted(() => {
       align="center"
       :show-overflow-tooltip="true"
     >
+      <template #default="{ row }">
+        {{ row.createAddress.address }}
+      </template>
     </el-table-column>
     <el-table-column
       label="设备名称"

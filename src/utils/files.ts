@@ -14,7 +14,7 @@ export interface ImageTable {
   // 图片名称"
   name: string;
   // 标签"
-  tags: string[];
+  tags: number[];
   // 大小"
   size: number;
   // 图片类型
@@ -24,7 +24,11 @@ export interface ImageTable {
   // 上传时间"
   uploadTime: string;
   // 拍照地点"
-  createAddress: string[];
+  createAddress: {
+    longitude: number;
+    latitude: number;
+    address: string;
+  };
   // 设备名称"
   deviceName: string;
 }
@@ -83,7 +87,7 @@ export function collectImageData(images: ImageTable[]): searchType {
     typeSet.add(image.type);
 
     // 收集拍摄地点（处理数组字段）
-    image.createAddress.forEach((address) => createAddressSet.add(address));
+    createAddressSet.add(image.createAddress.address);
 
     // 收集设备名称（处理单值字段）
     deviceNameSet.add(image.deviceName);

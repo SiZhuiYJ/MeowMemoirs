@@ -4,7 +4,7 @@ import { useTheme } from "@/utils/theme.ts";
 import { storeToRefs } from "pinia";
 import mittBus from "@/utils/mittBus";
 import { useGlobalStore } from "@/stores";
-import Drawer from "@/components/Drawer/Index.vue";
+import Drawer from "@/components/Drawer/index.vue";
 
 import { meowMsgWarning } from "@/utils/message";
 

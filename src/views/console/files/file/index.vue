@@ -1,6 +1,34 @@
 <template>
-  <div class="main-content">
-    <Card>
+  <div
+    class="main-content"
+    style="height: 100%; display: flex; flex: 1 1 0%; flex-direction: row"
+  >
+    <Card style="max-width: 40px; padding: 10px">
+      <el-button @click="handleDialog()">
+        <el-icon><View /></el-icon>
+      </el-button>
+      <el-button @click="handleDialog()"
+        ><el-icon><Upload /></el-icon>
+      </el-button>
+      <Dialog
+        ref="DialogRef"
+        :title="title"
+        @Confirm="handleConfirm"
+        @Cancel="handleCancel"
+        :loading="confirmLoading"
+      >
+        <template #content>
+          <el-upload class="upload-demo" drag action="" multiple>
+            <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+            <div class="el-upload__text">Drop file here or <em>click to upload</em></div>
+            <template #tip>
+              <div class="el-upload__tip">jpg/png files with a size less than 500kb</div>
+            </template>
+          </el-upload>
+        </template>
+      </Dialog>
+    </Card>
+    <Card style="margin-left: 5px">
       <el-select
         v-model="value"
         placeholder="标签"
@@ -51,6 +79,29 @@
 <script lang="ts" setup>
 import { ref, watch } from "vue";
 import type { CheckboxValueType } from "element-plus";
+import Dialog from "@/components/Dialog/index.vue";
+// 添加 OR 修改对话框Ref
+const DialogRef = ref();
+// const formRef = ref();
+const title = ref("");
+/** 打开Dialog */
+const handleDialog = () => {
+  // 标题
+  title.value = "二次封装Dialog模版";
+  DialogRef.value.Open();
+};
+// 确定按钮是否显示Loading
+const confirmLoading = ref(false);
+
+/** 确定  */
+const handleConfirm = () => {
+  // if (!formRef.value) return;
+  confirmLoading.value = true;
+};
+/** 取消 */
+const handleCancel = () => {
+  DialogRef.value.Close();
+};
 
 const checkAll = ref(false);
 const indeterminate = ref(false);
