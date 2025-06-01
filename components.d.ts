@@ -8,6 +8,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    1: typeof import('./src/components/1/index.vue')['default']
     Card: typeof import('./src/components/Card/index.vue')['default']
     Dialog: typeof import('./src/components/Dialog/index.vue')['default']
     Drawer: typeof import('./src/components/Drawer/index.vue')['default']
@@ -16,7 +17,6 @@ declare module 'vue' {
     ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
     ElBreadcrumbItem: typeof import('element-plus/es')['ElBreadcrumbItem']
     ElButton: typeof import('element-plus/es')['ElButton']
-    ElCard: typeof import('element-plus/es')['ElCard']
     ElCarousel: typeof import('element-plus/es')['ElCarousel']
     ElCarouselItem: typeof import('element-plus/es')['ElCarouselItem']
     ElCheckbox: typeof import('element-plus/es')['ElCheckbox']
@@ -58,7 +58,11 @@ declare module 'vue' {
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     GlobalIcon: typeof import('./src/components/GlobalIcon/index.vue')['default']
-    Index: typeof import('./src/components/Drawer/Index.vue')['default']
+    ImageTable: typeof import('./src/components/MediaTable/ImageTable.vue')['default']
+    ImageViewer: typeof import('./src/components/1/ImageViewer.vue')['default']
+    'Index.vue': typeof import('./src/components/1/index.vue.vue')['default']
+    MediaTable: typeof import('./src/components/MediaTable/index.vue')['default']
+    MediaViewer: typeof import('./src/components/MediaViewer/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Select: typeof import('./src/components/Select/index.vue')['default']

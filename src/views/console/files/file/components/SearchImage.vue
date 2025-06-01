@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useImageStore } from "@/stores";
+import { useMediaStore } from "@/stores";
 
-const store = useImageStore();
+const store = useMediaStore();
 const emit = defineEmits(["search", "reset"]);
 
 const handleSearch = () => {
@@ -11,7 +11,7 @@ const handleSearch = () => {
 
 const handleReset = () => {
   store.searchParams = {
-    imageName: "",
+    name: "",
     type: "",
     tags: [],
     createAddress: "",
@@ -27,10 +27,7 @@ const handleReset = () => {
   <el-form :inline="true">
     <!-- 各表单项 -->
     <el-form-item label="图片名称">
-      <el-input
-        v-model="store.searchParams.imageName"
-        @keyup.enter.native="handleSearch"
-      />
+      <el-input v-model="store.searchParams.name" @keyup.enter.native="handleSearch" />
     </el-form-item>
 
     <el-form-item label="图片类型">
@@ -80,7 +77,7 @@ const handleReset = () => {
         @change="handleSearch"
       />
     </el-form-item>
-    <el-form-item label="拍照时间" prop="uploadTime">
+    <el-form-item label="上传时间" prop="uploadTime">
       <el-date-picker
         v-model="store.searchParams.dateUpload"
         type="datetimerange"

@@ -1,12 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount, useTemplateRef } from "vue";
-
 import WaterfallFlow from "@/components/WaterfallFlow/index.vue";
-
-import { useImageStore, useAuthStore } from "@/stores";
-import { imageApi } from "@/libs/api/files/image";
-const { authStore } = useAuthStore();
-const store = useImageStore();
+const emits = defineEmits(["loadMore"]);
 
 const listElement = useTemplateRef("list");
 
@@ -16,12 +11,12 @@ const handleScroll = () => {
     listElement.value!.scrollTop + listElement.value!.clientHeight >=
     listElement.value!.scrollHeight - 50
   ) {
-    store.loadMore();
+    emits("loadMore");
   }
 };
 
 onMounted(async () => {
-  store.loadMore();
+  emits("loadMore");
   listElement.value!.addEventListener("scroll", handleScroll);
 });
 
@@ -33,13 +28,7 @@ onBeforeUnmount(() => {
 <template>
   <div id="list" ref="list">
     <WaterfallFlow :columnWidth="200" :gap="6">
-      <div v-for="(item, index) in store.currentData" :key="index" class="waterfall-item">
-        <img
-          v-lazy="imageApi.getImgLargeUrl(authStore.loginUser.rainbowId, item.url)"
-          class="item-image"
-        />
-        <div class="item-content">{{ item.name }}</div>
-      </div>
+      <slot></slot>
     </WaterfallFlow>
   </div>
 </template>
@@ -81,27 +70,6 @@ onBeforeUnmount(() => {
   }
 }
 
-/* 用户自定义项样式 */
-.waterfall-item {
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  margin: 3px;
-
-  .item-image {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-
-  .item-content {
-    padding: 6px;
-    color: #000;
-    font-size: 13px;
-  }
-}
-
 .loading {
   text-align: center;
   padding: 20px;
@@ -113,11 +81,6 @@ onBeforeUnmount(() => {
 @media (max-width: 768px) {
   .waterfall-item {
     width: 100%;
-  }
-
-  .item-image {
-    height: auto;
-    display: block;
   }
 }
 </style>

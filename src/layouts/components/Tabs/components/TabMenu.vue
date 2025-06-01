@@ -173,7 +173,12 @@ defineExpose({
   color: #333639;
   padding: 2px;
 }
-
+.dark .tabs-card {
+  --un-bg-opacity: 1;
+  background-color: rgb(0 0 0 / var(--un-bg-opacity));
+  --un-text-opacity: 1;
+  color: rgb(229 234 243 / var(--un-text-opacity));
+}
 .tab-menu-item {
   display: flex;
   align-items: center;

@@ -1,30 +1,57 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue";
 import { formatFileSize } from "@/utils/files";
-import { useImageStore, useAuthStore } from "@/stores";
-import type { ImageTable } from "@/utils/files";
-import { imageApi } from "@/libs/api/files/image";
-const { authStore } = useAuthStore();
+import type { MediaTable } from "@/libs/api/files/type";
+import { MediaApi } from "@/libs/api/files/media";
+import { useAuthStore } from "@/stores";
+const { rainbowId } = useAuthStore().authStore.loginUser;
+interface IMediaProps {
+  data: MediaTable[];
+  tagsMap: { [key: string]: string };
+}
 
-const store = useImageStore();
+// 子组件接收父组件的值
+// withDefaults：设置默认值  defineProps：接收父组件的参数
+// @ts-ignore
+const props = withDefaults(defineProps<IMediaProps>(), {
+  data: () => [],
+  tagsMap: () => ({}),
+});
+const emits = defineEmits<{
+  (e: "loadMore"): void;
+  (e: "selectMedia", Media: MediaTable): void;
+  (e: "deleteMedia", Media: MediaTable): void;
+}>();
 
 const tableElement = ref<Element | null | undefined>();
-const handleScroll = () => {
-  if (tableElement.value) {
-    const { scrollTop, scrollHeight, clientHeight } = tableElement.value;
-    if (scrollTop + clientHeight >= scrollHeight - 10) {
-      store.loadMore();
-    }
-  }
-};
 
 const loading = ref<boolean>(false);
 
 /**
- * 获取图片列表
+ * 获取
  */
-const handleCurrentChange = async (image: ImageTable) => {
-  store.selectImage(image);
+const handleCurrentChange = async (Media: MediaTable) => {
+  emits("selectMedia", Media);
+};
+/**
+ *  删除
+ */
+const handleDelete = async (Media: MediaTable) => {
+  emits("deleteMedia", Media);
+};
+
+const handleScroll = () => {
+  if (tableElement.value) {
+    const { scrollTop, scrollHeight, clientHeight } = tableElement.value;
+    if (scrollTop + clientHeight >= scrollHeight - 10) {
+      emits("loadMore");
+    }
+  }
+};
+const getMediaUrl = (url: string) => {
+  return url.split(".")[1] === "mp4"
+    ? MediaApi.getVideoCover(rainbowId, url)
+    : MediaApi.getImgSmallUrl(rainbowId, url);
 };
 onMounted(() => {
   const table = document
@@ -42,11 +69,10 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <!-- :data="store.filteredData" -->
   <el-table
     v-loading="loading"
     border
-    :data="store.currentData"
+    :data="props.data"
     empty-text="暂时没有数据哟🌻"
     highlight-current-row
     @current-change="handleCurrentChange"
@@ -59,9 +85,9 @@ onUnmounted(() => {
       type="index"
     ></el-table-column>
     <el-table-column label="图片" prop="path" width="65px" align="center">
-      <template #default="scope">
+      <template #default="{ row }">
         <img
-          v-lazy="imageApi.getImgSmallUrl(authStore.loginUser.rainbowId, scope.row.url)"
+          v-lazy="getMediaUrl(row.url)"
           style="height: 40px; width: 40px; object-fit: cover"
         />
       </template>
@@ -82,7 +108,7 @@ onUnmounted(() => {
     >
       <template #default="{ row }">
         <el-tag v-for="tag in row.tags" :key="tag" class="tag-item" type="primary">
-          {{ store.metaData.tagsMap[tag] }}
+          {{ tagsMap[tag] }}
         </el-tag>
       </template>
     </el-table-column>
@@ -111,13 +137,7 @@ onUnmounted(() => {
       align="center"
       :show-overflow-tooltip="true"
     ></el-table-column>
-    <el-table-column
-      label="上传时间"
-      prop="uploadTime"
-      width="180px"
-      align="center"
-      :show-overflow-tooltip="true"
-    ></el-table-column>
+
     <el-table-column
       label="拍照地点"
       prop="createAddress"
@@ -136,6 +156,13 @@ onUnmounted(() => {
       align="center"
       :show-overflow-tooltip="true"
     ></el-table-column>
+    <el-table-column
+      label="上传时间"
+      prop="uploadTime"
+      width="180px"
+      align="center"
+      :show-overflow-tooltip="true"
+    ></el-table-column>
     <el-table-column label="操作" align="center" width="120" fixed="right">
       <template #default="{ row }">
         <el-tooltip content="删除🌻" placement="top">
@@ -144,7 +171,7 @@ onUnmounted(() => {
             icon="Delete"
             circle
             plain
-            @click="store.deleteImage(row)"
+            @click="handleDelete(row)"
             v-auth="['system:role:delete']"
           ></el-button>
         </el-tooltip>

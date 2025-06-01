@@ -1,48 +1,4 @@
-export interface ImageItem {
-  imageId: number;
-  name: string;
-  path: string;
-  type: string;
-  size: number;
-  modified: string;
-}
-export interface ImageTable {
-  // 序号"
-  imageId: number;
-  // 图片"
-  url: string;
-  // 图片名称"
-  name: string;
-  // 标签"
-  tags: number[];
-  // 大小"
-  size: number;
-  // 图片类型
-  type: string;
-  // 拍照时间"
-  createTime: string;
-  // 上传时间"
-  uploadTime: string;
-  // 拍照地点"
-  createAddress: {
-    longitude: number;
-    latitude: number;
-    address: string;
-  };
-  // 设备名称"
-  deviceName: string;
-}
-export interface searchType {
-  // tags: string[];
-  type: string[];
-  createAddress: string[];
-  deviceName: string[];
-}
-export interface options {
-  label: string;
-  value: string;
-}
-
+import type { MediaTable, searchType } from "@/libs/api/files/type";
 /**
  * 判断两个数组是否包含相同的元素
  * @param a 数组A
@@ -71,7 +27,11 @@ export const formatFileSize = (bytes: number): string => {
  * @param images 需要转换的数组
  * @returns 转换后的对象
  */
-export function collectImageData(images: ImageTable[]): searchType {
+export function collectData(images: MediaTable[]): {
+  type: string[];
+  createAddress: string[];
+  deviceName: string[];
+} {
   // 使用Set进行自动去重
   // const tagsSet = new Set<string>();
   const typeSet = new Set<string>();
@@ -100,4 +60,28 @@ export function collectImageData(images: ImageTable[]): searchType {
     createAddress: Array.from(createAddressSet),
     deviceName: Array.from(deviceNameSet),
   };
+}
+
+export function MediaFilters(
+  item: MediaTable[],
+  search: searchType
+): MediaTable[] {
+  return item.filter(
+    (item) =>
+      item.name.toLowerCase().includes(search.name.toLowerCase()) &&
+      (search.type.length === 0 || search.type.includes(item.type)) &&
+      (search.tags.length === 0 || isArrayIncluded(item.tags, search.tags)) &&
+      (search.createAddress.length === 0 ||
+        search.createAddress.includes(item.createAddress.address)) &&
+      (search.deviceName.length === 0 ||
+        search.deviceName.includes(item.deviceName)) &&
+      (!search.dateCreate ||
+        search.dateCreate.length === 0 ||
+        (item.createTime >= search.dateCreate[0] &&
+          item.createTime <= search.dateCreate[1])) &&
+      (!search.dateUpload ||
+        search.dateUpload.length === 0 ||
+        (item.uploadTime >= search.dateUpload[0] &&
+          item.uploadTime <= search.dateUpload[1]))
+  );
 }

@@ -9,6 +9,7 @@ import throttleInput from "./modules/throttleInput";
 import adaptive from "./modules/adaptive";
 import adaptiveTree from "./modules/adaptiveTree";
 import copy from "./modules/copy";
+import videoObserver from "./modules/videoObserver";
 
 const directivesList: any = {
   auth,
@@ -21,6 +22,7 @@ const directivesList: any = {
   adaptive,
   adaptiveTree,
   copy,
+  videoObserver,
 };
 
 const directives = {

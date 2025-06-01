@@ -84,7 +84,7 @@ onMounted(async () => {});
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
 .el-radio-button__inner:hover {
   color: #a262ad;
 }
@@ -144,7 +144,8 @@ input:focus::placeholder,
 .el-input__inner:focus::placeholder {
   opacity: 0;
 }
-
+</style>
+<style scoped lang="scss">
 button {
   width: 70%;
   margin-top: 35px;

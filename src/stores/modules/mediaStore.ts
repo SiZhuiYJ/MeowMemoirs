@@ -1,10 +1,15 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-import { collectImageData, isArrayIncluded } from "@/utils/files";
-import type { ImageTable, options } from "@/utils/files";
+import { collectData } from "@/utils/files";
+import type {
+  MediaTable,
+  options,
+  searchType,
+  Media,
+} from "@/libs/api/files/type";
+import { MediaFilters } from "@/utils/files";
 
-import { imageApi } from "@/libs/api/files/image";
-import type { image } from "@/libs/api/files/image/type";
+import { MediaApi } from "@/libs/api/files/media";
 
 interface metaType {
   tags: options[];
@@ -13,28 +18,19 @@ interface metaType {
   createAddress: options[];
   deviceName: options[];
 }
-interface searchType {
-  imageName: string;
-  type: string;
-  tags: number[];
-  createAddress: string;
-  deviceName: string;
-  dateCreate: string[];
-  dateUpload: string[];
-}
 
-export const useImageStore = defineStore("image", () => {
-  const allData = ref<ImageTable[]>([]);
-  const filteredData = ref<ImageTable[]>([]);
+export const useMediaStore = defineStore("media", () => {
+  const allData = ref<MediaTable[]>([]);
+  const filteredData = ref<MediaTable[]>([]);
   const currentPage = ref(1);
   const pageSize = ref(20);
   const loading = ref(false);
   // 当前展示
-  const currentShow = ref<ImageTable>();
+  const currentShow = ref<MediaTable>();
 
   // 搜索相关状态
   const searchParams = ref<searchType>({
-    imageName: "",
+    name: "",
     type: "",
     tags: [],
     createAddress: "",
@@ -64,10 +60,10 @@ export const useImageStore = defineStore("image", () => {
     try {
       loading.value = true;
       // 这里替换实际的API调用
-      const apiImg = await imageApi.MMPostImagedataList();
-      console.log("data", apiImg.data);
-      allData.value = apiImg.data.images.map((item: image) => ({
-        imageId: item.imageId,
+      const { data } = await MediaApi.MMPostMediaList();
+      console.log("data", data);
+      allData.value = data.medias.map((item: Media) => ({
+        id: item.mediaId,
         url: item.url,
         tags: item.tags.split(",").map((tag) => parseInt(tag, 10)),
         size: item.size,
@@ -83,24 +79,25 @@ export const useImageStore = defineStore("image", () => {
         type: item.url.split(".").pop() || "",
       }));
       currentShow.value = allData.value[0];
-      const apiTag = await imageApi.MMPostImageTagList();
+      const apiTag = await MediaApi.MMPostImageTagList();
       const initialTags: options[] = [];
-      const imageType: { [key: string]: string } = {};
+      const MediaType: { [key: string]: string } = {};
       apiTag.data.tags.forEach((tag) => {
         initialTags.push({ label: tag.tagName, value: tag.tagId });
-        imageType[tag.tagId] = tag.tagName;
+        MediaType[tag.tagId] = tag.tagName;
       });
 
-      const { type, createAddress, deviceName } = collectImageData(
-        allData.value
-      );
+      const { type, createAddress, deviceName } = collectData(allData.value);
       metaData.value = {
         type: type.map((v) => ({ label: v, value: v })),
         createAddress: createAddress.map((v) => ({ label: v, value: v })),
         deviceName: deviceName.map((v) => ({ label: v, value: v })),
         tags: initialTags,
-        tagsMap: imageType,
+        tagsMap: MediaType,
       };
+      console.log( "metaData", metaData.value)
+      console.log( "allData", allData.value)
+
       applyFilters();
     } finally {
       loading.value = false;
@@ -109,51 +106,28 @@ export const useImageStore = defineStore("image", () => {
 
   // 应用过滤条件
   const applyFilters = () => {
-    filteredData.value = allData.value.filter(
-      (item) =>
-        item.name
-          .toLowerCase()
-          .includes(searchParams.value.imageName.toLowerCase()) &&
-        (searchParams.value.type.length === 0 ||
-          searchParams.value.type.includes(item.type)) &&
-        (searchParams.value.tags.length === 0 ||
-          isArrayIncluded(item.tags, searchParams.value.tags)) &&
-        (searchParams.value.createAddress.length === 0 ||
-          searchParams.value.createAddress.includes(
-            item.createAddress.address
-          )) &&
-        (searchParams.value.deviceName.length === 0 ||
-          searchParams.value.deviceName.includes(item.deviceName)) &&
-        (!searchParams.value.dateCreate ||
-          searchParams.value.dateCreate.length === 0 ||
-          (item.createTime >= searchParams.value.dateCreate[0] &&
-            item.createTime <= searchParams.value.dateCreate[1])) &&
-        (!searchParams.value.dateUpload ||
-          searchParams.value.dateUpload.length === 0 ||
-          (item.uploadTime >= searchParams.value.dateUpload[0] &&
-            item.uploadTime <= searchParams.value.dateUpload[1]))
-    );
+    filteredData.value = MediaFilters(allData.value, searchParams.value);
     currentPage.value = 1;
   };
 
   // 选中图片
-  const selectImage = (item: ImageTable) => {
-    if (item.imageId === currentShow.value?.imageId) return;
+  const selectMedia = (item: MediaTable) => {
+    if (item.id === currentShow.value?.id) return;
     currentShow.value = item;
   };
 
   // 添加图片标签
   const addTag = (tag: string) => {
     console.log(tag);
-    // const index = allData.value.findIndex((item) => item.imageId === imageId);
+    // const index = allData.value.findIndex((item) => item.MediaId === MediaId);
     // if (index !== -1) {
     //   allData.value[index].tags.push(tag);
     // }
   };
   // 上传图片
-  const uploadImage = () => {};
+  const uploadMedia = () => {};
   // 删除图片
-  const deleteImage = (row: ImageTable) => {
+  const deleteMedia = (row: MediaTable) => {
     console.log(row);
   };
   // 加载更多数据
@@ -173,10 +147,10 @@ export const useImageStore = defineStore("image", () => {
     currentShow,
     initializeData,
     applyFilters,
-    selectImage,
+    selectMedia,
     addTag,
-    uploadImage,
-    deleteImage,
+    uploadMedia,
+    deleteMedia,
     loadMore,
   };
 });

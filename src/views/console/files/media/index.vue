@@ -105,6 +105,7 @@ onMounted(() => {
       <video
         id="myVideo"
         controls
+        v-video-observer
         v-if="store.currentShow && isMedia(store.currentShow?.url)"
         :poster="MediaApi.getVideoCover(rainbowId, store.currentShow?.url)"
         style="width: 100%; height: 100%"

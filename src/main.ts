@@ -21,6 +21,11 @@ import directives from "./directives";
 import "virtual:svg-icons-register";
 
 const app = createApp(App);
+// 注册pinia
+app.use(pinia);
+
+// 注册路由
+app.use(router);
 const { getLocalImgUrl } = useApiUrl();
 app.use(VueLazyload, {
   preLoad: 1.3,
@@ -35,11 +40,6 @@ app.use(ElementPlus);
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component);
 }
-// 注册pinia
-app.use(pinia);
-
-// 注册路由
-app.use(router);
 
 // 注册全局自定义指令
 app.use(directives);

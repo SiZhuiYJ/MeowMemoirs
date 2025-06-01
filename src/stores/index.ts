@@ -21,5 +21,5 @@ export * from "./modules/globalStore";
 export * from "./modules/keepAliveStore";
 // 导出 TabsStore 模块
 export * from "./modules/tabStore";
-// 导出 ImageStore 模块
-export * from "./modules/imageStore";
+// 导出 MediaStore 模块
+export * from "./modules/mediaStore";
