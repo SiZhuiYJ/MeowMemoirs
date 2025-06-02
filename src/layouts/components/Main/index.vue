@@ -83,15 +83,14 @@ onBeforeUnmount(() => {
 <style lang="scss" scoped>
 @use "../../../styles/transition.scss";
 
-.layout {
+.layout-main {
   display: flex;
   flex-direction: column;
+  flex: 1;
   padding: 5px 6px;
   overflow-x: hidden;
-}
-.layout-main {
   flex: 1;
-  background-color: rgb(246, 249, 254);
+  background-color: #f6f9fe;
 }
 .dark .layout-main {
   --un-bg-opacity: 1;

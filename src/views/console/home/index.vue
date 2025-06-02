@@ -1,11 +1,7 @@
-<script setup lang="ts">
-
-</script>
+<script setup lang="ts"></script>
 <template>
-    <div>
-        <div>waterfallFlow</div>
-    </div>
+  <div class="main-content">
+    <MeowCard> waterfallFlow</MeowCard>
+  </div>
 </template>
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

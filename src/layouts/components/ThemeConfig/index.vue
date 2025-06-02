@@ -4,7 +4,6 @@ import { useTheme } from "@/utils/theme.ts";
 import { storeToRefs } from "pinia";
 import mittBus from "@/utils/mittBus";
 import { useGlobalStore } from "@/stores";
-import Drawer from "@/components/Drawer/index.vue";
 
 import { meowMsgWarning } from "@/utils/message";
 
@@ -62,7 +61,7 @@ mittBus.on("handleThemeConfig", () => {
 
 <template>
   <!-- 主题配置 -->
-  <Drawer ref="DrawerRef" title="主题配置" :footerHidden="true">
+  <MeowDrawer ref="DrawerRef" title="主题配置" :footerHidden="true">
     <template #content>
       <el-row>
         <el-col :sm="{ span: 24 }" :xs="{ span: 24 }">
@@ -347,7 +346,7 @@ mittBus.on("handleThemeConfig", () => {
         </el-row>
       </el-form>
     </template>
-  </Drawer>
+  </MeowDrawer>
 </template>
 
 <style lang="scss" scoped>

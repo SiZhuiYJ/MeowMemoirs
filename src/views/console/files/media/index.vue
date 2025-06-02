@@ -30,111 +30,110 @@ onMounted(() => {
 
 <template>
   <div class="main-content">
-    <Card>
-      <SearchImage
-        v-show="showSearch"
-        @search="store.applyFilters"
-        @reset="store.applyFilters"
-      />
+    <div style="height: 100%; display: flex;">
+      <MeowCard>
+        <SearchImage
+          v-show="showSearch"
+          @search="store.applyFilters"
+          @reset="store.applyFilters"
+        />
 
-      <!-- 操作按钮 -->
-      <el-row :gutter="10">
-        <!-- 上传 -->
-        <el-col :span="1.5" v-auth="['system:role:add']">
-          <el-button type="primary" icon="upload" plain @click="handleUpload">
-            上传
-          </el-button>
-        </el-col>
-        <el-col :span="1.5" v-auth="['system:role:delete']">
-          <el-button
-            type="danger"
-            icon="delete"
-            plain
-            @click="handleBatchDelete()"
-            :disabled="multiple"
-          >
-            删除
-          </el-button>
-        </el-col>
-        <Toolbar
-          v-model:showSearch="showSearch"
-          v-model:showView="showView"
-          @refreshTable="store.initializeData"
-        ></Toolbar>
-      </el-row>
-      <div style="height: 20px">
-        {{ store.currentData.length }}/{{ store.filteredData.length }}
-      </div>
-      <!-- <ImageTable v-show="showView" /> -->
-      <MediaTable
-        v-show="showView"
-        :data="store.currentData"
-        :tagsMap="store.metaData.tagsMap"
-        @loadMore="store.loadMore()"
-        @selectMedia="store.selectMedia($event)"
-        @deleteMedia="store.deleteMedia($event)"
-      />
-      <!-- 大图模式 -->
-      <!-- <ImageViewer v-show="!showView"></ImageViewer> -->
-      <MediaViewer v-show="!showView" @loadMore="store.loadMore()">
-        <div
-          v-for="(item, index) in store.currentData"
-          :key="index"
-          class="waterfall-item"
-        >
-          <video
-            v-video-observer
-            id="myVideo"
-            controls
-            v-if="isMedia(item.url)"
-            :poster="MediaApi.getVideoCover(rainbowId, item.url)"
-            class="item-medias"
-            preload="none"
-            :src="MediaApi.getVideoUrl(rainbowId, item.url)"
-          ></video>
-          <img
-            v-else
-            v-lazy="MediaApi.getImgLargeUrl(rainbowId, item.url)"
-            class="item-medias"
-          />
-          <div class="item-content">{{ item.name }}</div>
+        <!-- 操作按钮 -->
+        <el-row :gutter="10">
+          <!-- 上传 -->
+          <el-col :span="1.5" v-auth="['system:role:add']">
+            <el-button type="primary" icon="upload" plain @click="handleUpload">
+              上传
+            </el-button>
+          </el-col>
+          <el-col :span="1.5" v-auth="['system:role:delete']">
+            <el-button
+              type="danger"
+              icon="delete"
+              plain
+              @click="handleBatchDelete()"
+              :disabled="multiple"
+            >
+              删除
+            </el-button>
+          </el-col>
+          <Toolbar
+            v-model:showSearch="showSearch"
+            v-model:showView="showView"
+            @refreshTable="store.initializeData"
+          ></Toolbar>
+        </el-row>
+        <div style="height: 20px">
+          {{ store.currentData.length }}/{{ store.filteredData.length }}
         </div>
-      </MediaViewer>
-    </Card>
-    <Card v-show="showView" style="padding: 10px; margin-left: 5px; max-width: 200px">
-      <video
-        id="myVideo"
-        controls
-        v-video-observer
-        v-if="store.currentShow && isMedia(store.currentShow?.url)"
-        :poster="MediaApi.getVideoCover(rainbowId, store.currentShow?.url)"
-        style="width: 100%; height: 100%"
-        preload="none"
-        :src="MediaApi.getVideoUrl(rainbowId, store.currentShow?.url)"
-      ></video
-      ><el-image
-        style="width: 100%; height: 100%"
-        :zoom-rate="1.2"
-        :max-scale="7"
-        :min-scale="0.2"
-        show-progress
-        :initial-index="0"
-        fit="scale-down"
-        v-else-if="store.currentShow && !isMedia(store.currentShow?.url)"
-        :src="MediaApi.getImgMediumUrl(rainbowId, store.currentShow?.url)"
-        :preview-src-list="[MediaApi.getImgLargeUrl(rainbowId, store.currentShow?.url)]"
-      />
-    </Card>
+        <!-- <ImageTable v-show="showView" /> -->
+        <MediaTable
+          v-show="showView"
+          :data="store.currentData"
+          :tagsMap="store.metaData.tagsMap"
+          @loadMore="store.loadMore()"
+          @selectMedia="store.selectMedia($event)"
+          @deleteMedia="store.deleteMedia($event)"
+        />
+        <!-- 大图模式 -->
+        <!-- <ImageViewer v-show="!showView"></ImageViewer> -->
+        <MediaViewer v-show="!showView" @loadMore="store.loadMore()">
+          <div
+            v-for="(item, index) in store.currentData"
+            :key="index"
+            class="waterfall-item"
+          >
+            <video
+              v-video-observer
+              id="myVideo"
+              controls
+              v-if="isMedia(item.url)"
+              :poster="MediaApi.getVideoCover(rainbowId, item.url)"
+              class="item-medias"
+              preload="none"
+              :src="MediaApi.getVideoUrl(rainbowId, item.url)"
+            ></video>
+            <img
+              v-else
+              v-lazy="MediaApi.getImgLargeUrl(rainbowId, item.url)"
+              class="item-medias"
+            />
+            <div class="item-content">{{ item.name }}</div>
+          </div>
+        </MediaViewer>
+      </MeowCard>
+      <MeowCard
+        v-show="showView"
+        style="padding: 10px; margin-left: 5px; max-width: 200px"
+      >
+        <video
+          id="myVideo"
+          controls
+          v-video-observer
+          v-if="store.currentShow && isMedia(store.currentShow?.url)"
+          :poster="MediaApi.getVideoCover(rainbowId, store.currentShow?.url)"
+          style="width: 100%; height: 100%"
+          preload="none"
+          :src="MediaApi.getVideoUrl(rainbowId, store.currentShow?.url)"
+        ></video
+        ><el-image
+          style="width: 100%; height: 100%"
+          :zoom-rate="1.2"
+          :max-scale="7"
+          :min-scale="0.2"
+          show-progress
+          :initial-index="0"
+          fit="scale-down"
+          v-else-if="store.currentShow && !isMedia(store.currentShow?.url)"
+          :src="MediaApi.getImgMediumUrl(rainbowId, store.currentShow?.url)"
+          :preview-src-list="[MediaApi.getImgLargeUrl(rainbowId, store.currentShow?.url)]"
+        />
+      </MeowCard>
+    </div>
   </div>
 </template>
 
 <style scoped lang="scss">
-.main-content {
-  height: 100%;
-  display: flex;
-  flex: 1 1 0%;
-  flex-direction: row;
-}
 /* 用户自定义项样式 */
 .waterfall-item {
   background: #fff;

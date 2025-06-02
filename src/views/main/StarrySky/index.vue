@@ -10,6 +10,8 @@
   </div>
 </template>
 <style scoped lang="scss">
+@use "sass:math"; // 顶部导入模块
+@use "sass:string";
 .title {
   position: absolute;
   top: 50%;
@@ -21,11 +23,11 @@
     0 0;
 }
 @function star($n) {
-  $result: "#{random(100)}vw #{random(100)}vh #fff";
+  $result: "#{math.random(100)}vw #{math.random(100)}vh #fff";
   @for $i from 2 through $n {
-    $result: "#{$result},#{random(100)}vw #{random(100)}vh #fff";
+    $result: "#{$result},#{math.random(100)}vw #{math.random(100)}vh #fff";
   }
-  @return unquote($result);
+  @return string.unquote($result); // 使用模块化函数
 }
 .starry-sky {
   width: 100%;
@@ -39,8 +41,9 @@
   $duration: 400s;
   $count: 1000;
   @for $i from 1 through $n {
-    $duration: floor($duration / $n);
-    $count: floor($count / $n);
+    $duration: math.floor(math.div($duration, $n));
+    $count: math.floor(math.div($count, $n));
+
     .layer#{$i} {
       position: fixed;
       width: #{$i}px;

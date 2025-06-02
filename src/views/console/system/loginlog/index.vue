@@ -1,8 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-// @ts-ignore name="loginlogPage"
-import Card from "@/components/Card/index.vue";
-import Toolbar from "@/components/Toolbar/index.vue";
 import {
   meowNoticeSuccess,
   meowNoticeError,
@@ -235,7 +232,7 @@ const handleBatchDelete = () => {
 <template>
   <!-- 内容 -->
   <div class="main-content">
-    <Card>
+    <MeowCard>
       <!-- 搜索条件 -->
       <el-form v-show="showSearch" :inline="true">
         <el-form-item label="用户名称" prop="loginName">
@@ -454,7 +451,7 @@ const handleBatchDelete = () => {
         @size-change="handleListPage"
         @current-change="handleListPage"
       />
-    </Card>
+    </MeowCard>
   </div>
 </template>
 

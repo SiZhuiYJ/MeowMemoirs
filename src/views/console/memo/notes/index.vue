@@ -1,6 +1,7 @@
-<script setup lang="ts">
-</script>
+<script setup lang="ts"></script>
 <template>
-  <div class="main-content">notes</div>
+  <div class="main-content">
+    <MeowCard>notes</MeowCard>
+  </div>
 </template>
 <style lang="scss" scoped></style>

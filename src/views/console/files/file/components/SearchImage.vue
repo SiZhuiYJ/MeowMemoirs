@@ -31,7 +31,7 @@ const handleReset = () => {
     </el-form-item>
 
     <el-form-item label="图片类型">
-      <Select
+      <MeowSelect
         v-model="store.searchParams.type"
         :options="store.metaData.type"
         multiple
@@ -40,7 +40,7 @@ const handleReset = () => {
     </el-form-item>
 
     <el-form-item label="图片标签" prop="tags">
-      <Select
+      <MeowSelect
         v-model="store.searchParams.tags"
         :options="store.metaData.tags"
         multiple
@@ -51,10 +51,10 @@ const handleReset = () => {
         @add="store.addTag"
         @change="handleSearch"
       >
-      </Select>
+      </MeowSelect>
     </el-form-item>
     <el-form-item label="拍摄地址" prop="createAddress">
-      <Select
+      <MeowSelect
         v-model="store.searchParams.createAddress"
         :options="store.metaData.createAddress"
         multiple
@@ -63,7 +63,7 @@ const handleReset = () => {
         placeholder="请选择拍摄地址"
         @change="handleSearch"
       >
-      </Select>
+      </MeowSelect>
     </el-form-item>
     <el-form-item label="拍照时间" prop="createTime">
       <el-date-picker
@@ -91,7 +91,7 @@ const handleReset = () => {
     </el-form-item>
 
     <el-form-item label="设备名称" prop="deviceName">
-      <Select
+      <MeowSelect
         v-model="store.searchParams.deviceName"
         :options="store.metaData.deviceName"
         multiple
@@ -100,7 +100,7 @@ const handleReset = () => {
         placeholder="请选择设备名称"
         @change="handleSearch"
       >
-      </Select>
+      </MeowSelect>
     </el-form-item>
 
     <el-form-item>

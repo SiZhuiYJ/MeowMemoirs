@@ -1,6 +1,6 @@
 <template>
   <div class="main-content">
-    <Card>
+    <MeowCard>
       <input type="file" accept="image/*" @change="handleFileUpload" />
 
       <!-- 加载状态 -->
@@ -30,7 +30,7 @@
       <div v-if="errorMessage" class="error-message">
         {{ errorMessage }}
       </div>
-    </Card>
+    </MeowCard>
   </div>
 </template>
 

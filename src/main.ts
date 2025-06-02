@@ -6,8 +6,8 @@ import useApiUrl from "@/libs/useApiUrl/index";
 // 懒加载
 import VueLazyload from "vue-lazyload";
 // element-plus
-import ElementPlus from "element-plus";
-import "element-plus/dist/index.css";
+// import ElementPlus from "element-plus";
+// import "element-plus/dist/index.css";
 import "element-plus/theme-chalk/dark/css-vars.css";
 // element-plus图标
 import * as ElementPlusIconsVue from "@element-plus/icons-vue";
@@ -35,7 +35,7 @@ app.use(VueLazyload, {
 });
 
 // 挂载
-app.use(ElementPlus);
+// app.use(ElementPlus);
 
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component);

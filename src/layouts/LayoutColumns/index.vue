@@ -108,15 +108,15 @@ const activeMenu = computed(
     </div>
     <el-aside
       class="layout-aside"
-      :style="{ width: !globalStore.isCollapse ? globalStore.menuWidth + 'px' : '56px' }"
+      :style="{ width: globalStore.isCollapse ? globalStore.menuWidth + 'px' : '56px' }"
       v-if="subMenuList?.length != 0"
     >
-      <Logo :isCollapse="globalStore.isCollapse" :layout="globalStore.layout"></Logo>
+      <Logo :isCollapse="!globalStore.isCollapse" :layout="globalStore.layout"></Logo>
       <el-scrollbar class="layout-scrollbar">
         <!-- :unique-opened="true" 子菜单不能同时展开 -->
         <el-menu
           :default-active="activeMenu"
-          :collapse="globalStore.isCollapse"
+          :collapse="!globalStore.isCollapse"
           :collapse-transition="false"
           :uniqueOpened="globalStore.uniqueOpened"
           :router="false"
