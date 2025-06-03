@@ -40,12 +40,13 @@ const login = async () => {
       Password: password.value,
     })
     .then(() => {
+      loading.close();
       meowMsgSuccess("登录成功");
     })
     .catch((err) => {
+      loading.close();
       meowMsgError(err.message);
     });
-  loading.close();
 };
 onMounted(async () => {});
 </script>

@@ -9,6 +9,7 @@ import VueLazyload from "vue-lazyload";
 // import ElementPlus from "element-plus";
 // import "element-plus/dist/index.css";
 import "element-plus/theme-chalk/dark/css-vars.css";
+import "element-plus/theme-chalk/src/loading.scss";
 // element-plus图标
 import * as ElementPlusIconsVue from "@element-plus/icons-vue";
 // 状态

@@ -7,10 +7,15 @@ import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 import { visualizer } from "rollup-plugin-visualizer";
+
 // https://vite.dev/config/
+import tsconfigPaths from "vite-tsconfig-paths"; //npm uninstall vite-tsconfig-paths
+import cssAnalyzer from "./plugins/vite-plugin-css-analyzer";
 export default defineConfig({
   plugins: [
     vue(),
+    tsconfigPaths(), //  配置tsconfig.json路径
+    cssAnalyzer(), //  配置css分析插件
     createSvgIconsPlugin({
       iconDirs: [path.resolve(process.cwd(), "src/assets/icons")],
       symbolId: "icon-[dir]-[name]",
@@ -24,7 +29,8 @@ export default defineConfig({
     visualizer({ open: true }),
   ],
   server: {
-    host: "0.0.0.0",
+    host: "catsdiary.com", //服务器主机名
+    // host: "0.0.0.0", //本地测试时使用
     port: 2345, //端口号
     open: false, //启动后是否自动打开浏览器
     https: {
@@ -33,17 +39,46 @@ export default defineConfig({
     },
   },
   build: {
+    assetsDir: "assets",
     rollupOptions: {
       output: {
-        manualChunks: function (id: string) {
-          if (
-            id.includes("node_modules") &&
-            (id.endsWith(".js") || id.endsWith(".ts"))
-          ) {
-            return "vendor";
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            // 让每个插件都打包成独立的文件
+            return id
+              .toString()
+              .split("node_modules/")[1]
+              .split("/")[0]
+              .toString();
           }
         },
       },
+      // output: {
+      //   manualChunks: function (id: string) {
+      //     if (
+      //       id.includes("node_modules") &&
+      //       (id.endsWith(".js") || id.endsWith(".ts"))
+      //     ) {
+      //       return "vendor";
+      //     }
+      //   },
+      // },
+    },
+    minify: "terser",
+    // 清除所有console和debugger
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
+  },
+  assetsInclude: ["**/*.ani"], // 添加 ANI 格式支持
+  css: {
+    // 确保所有样式都被处理
+    devSourcemap: true,
+    postcss: {
+      // 其他 PostCSS 插件可以在这里添加
     },
   },
   //路径别名

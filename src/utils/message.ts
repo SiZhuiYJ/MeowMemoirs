@@ -1,5 +1,8 @@
 // 工具类提示信息
 import { ElNotification, ElMessageBox, ElMessage } from "element-plus";
+import "element-plus/theme-chalk/src/message-box.scss";
+import "element-plus/theme-chalk/src/message.scss";
+import "element-plus/theme-chalk/src/notification.scss";
 import { emoji } from "@/utils/emoji";
 
 type MessageType = "info" | "success" | "error" | "warning";
