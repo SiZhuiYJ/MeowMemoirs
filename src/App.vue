@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // import { meowMsgError } from '@/utils/message'
-import { onMounted, nextTick, computed, onUnmounted } from "vue";
+import { ref, onMounted, nextTick, computed, onUnmounted } from "vue";
 import { setCursor } from "@/utils/cursor";
 import { useTheme } from "@/utils/theme.ts";
 import { useGlobalStore } from "@/stores";
@@ -9,42 +9,6 @@ const { globalStore } = useGlobalStore();
 const dimension = computed(() => globalStore.dimension);
 const { initThemeConfig } = useTheme();
 setCursor();
-onMounted(() => {
-  // 初始化主题配置
-  handleThemeConfig();
-  // 自动检测更新
-  // handleAutoUpdate();
-  // 开发环境打印项目名称
-  console.log(
-    "%c admin %c Herrscher_of_Human",
-    "padding: 2px 1px; border-radius: 3px 0 0 3px; color: #fff; background: #6169FF; font-weight: bold;",
-    "padding: 2px 1px; border-radius: 0 3px 3px 0; color: #fff; background: #ff0000; font-weight: bold;"
-  );
-  console.log(
-    "%c name %c weather",
-    "padding: 2px 1px; border-radius: 3px 0 0 3px; color: #fff; background: #6169FF; font-weight: bold;",
-    "padding: 2px 1px; border-radius: 0 3px 3px 0; color: #fff; background: #ff0000; font-weight: bold;"
-  );
-  console.log(
-    "%c key %c 3d349cedfb25241944fe21e4c6928367",
-    "padding: 2px 1px; border-radius: 3px 0 0 3px; color: #fff; background: #6169FF; font-weight: bold;",
-    "padding: 2px 1px; border-radius: 0 3px 3px 0; color: #fff; background: #ff0000; font-weight: bold;"
-  );
-  console.log(
-    "%c 密钥 %c 1848228ed988e26941c42415a1e5813a",
-    "padding: 2px 1px; border-radius: 3px 0 0 3px; color: #fff; background: #6169FF; font-weight: bold;",
-    "padding: 2px 1px; border-radius: 0 3px 3px 0; color: #fff; background: #ff0000; font-weight: bold;"
-  );
-  console.log(
-    `%c MeowMemoirs %c V1.0.0 `,
-    "padding: 2px 1px; border-radius: 3px 0 0 3px; color: #fff; background: #6169FF; font-weight: bold;",
-    "padding: 2px 1px; border-radius: 0 3px 3px 0; color: #fff; background: #42c02e; font-weight: bold;"
-  );
-  document.addEventListener("click", flowerOnClick);
-  onUnmounted(() => {
-    document.removeEventListener("click", flowerOnClick);
-  });
-});
 /** 初始化主题配置 */
 const handleThemeConfig = () => {
   nextTick(() => {
@@ -69,6 +33,97 @@ function flowerOnClick(event: { pageX: number; pageY: number }) {
   document.body.appendChild(v);
   setTimeout(() => document.body.removeChild(v), 1000);
 }
+
+const titles = [
+  "(ฅ^•ﻌ•^ฅ)✧ 欢迎回来喵！",
+  "(ฅ•ω•ฅ)ﾉ♨ 去哪里了喵？",
+  "(=｀ω´=)~zzZ 休息一下喵~",
+];
+
+// 状态管理
+const isActive = ref(true);
+const idleTimer = ref<number | null>(null);
+
+// 设置标题的辅助函数
+const setTitle = (index: number) => {
+  document.title = titles[index];
+};
+
+// 重置无操作计时器
+const resetIdleTimer = () => {
+  if (idleTimer.value) {
+    clearTimeout(idleTimer.value);
+  }
+  idleTimer.value = window.setTimeout(() => {
+    setTitle(2); // 无操作超过5分钟
+  }, 5 * 60 * 1000); // 5分钟
+};
+
+// 页面可见性变化处理
+const handleVisibilityChange = () => {
+  isActive.value = !document.hidden;
+  if (isActive.value) {
+    setTitle(0);
+    resetIdleTimer(); // 用户返回页面时重置计时器
+  } else {
+    setTitle(1);
+    if (idleTimer.value) {
+      clearTimeout(idleTimer.value); // 离开页面时清除计时器
+    }
+  }
+};
+
+// 用户操作事件监听
+const setupEventListeners = () => {
+  const events = ["mousemove", "keydown", "mousedown", "touchstart", "scroll"];
+  events.forEach((event) => {
+    window.addEventListener(event, () => {
+      if (isActive.value) {
+        setTitle(0); // 用户操作时恢复欢迎标题
+        resetIdleTimer(); // 重置无操作计时器
+      }
+    });
+  });
+};
+
+onMounted(() => {
+  // 初始化主题配置
+  handleThemeConfig();
+
+  // 自动检测更新
+  // handleAutoUpdate();
+
+  // 添加点击效果
+  document.addEventListener("click", flowerOnClick);
+
+  setTitle(0); // 初始设置欢迎标题
+
+  // 设置页面可见性监听
+  document.addEventListener("visibilitychange", handleVisibilityChange);
+
+  // 设置用户操作监听
+  setupEventListeners();
+
+  // 初始化无操作计时器
+  resetIdleTimer();
+});
+
+onUnmounted(() => {
+  // 移除点击效果
+  document.removeEventListener("click", flowerOnClick);
+
+  // 清理工作
+  document.removeEventListener("visibilitychange", handleVisibilityChange);
+  if (idleTimer.value) {
+    clearTimeout(idleTimer.value);
+  }
+
+  // 移除所有用户操作监听器
+  const events = ["mousemove", "keydown", "mousedown", "touchstart", "scroll"];
+  events.forEach((event) => {
+    window.removeEventListener(event, resetIdleTimer);
+  });
+});
 </script>
 
 <template>

@@ -26,4 +26,5 @@ export const ROUTER_WHITE_LIST: string[] = [
   "/home/index",
   "/main/TimeStyle",
   "/main/StarrySky",
+  "/main/banner",
 ];

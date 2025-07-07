@@ -58,6 +58,20 @@ export const layoutRouter: RouteRecordRaw[] = [
           isAffix: "0",
         },
       },
+      {
+        path: "/main/banner",
+        component: () => import("@/views/main/banner/index.vue"),
+        meta: {
+          title: "蛋糕",
+          enName: "banner",
+          icon: "IceTea",
+          isHide: "0",
+          isLink: "",
+          isKeepAlive: "0",
+          isFull: "1",
+          isAffix: "0",
+        },
+      },
     ],
   },
   {
