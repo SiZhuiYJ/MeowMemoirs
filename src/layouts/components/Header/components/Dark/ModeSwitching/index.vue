@@ -63,33 +63,35 @@ const handleSwitchDark = async (event: MouseEvent) => {
       </mask>
       <circle class="sunMoon" cx="10" cy="10" r="8" mask="url(#moon-mask)"></circle>
       <g>
-        <circle class="sunRay sunRay1" cx="18" cy="10" r="1.5"></circle>
-        <circle class="sunRay sunRay2" cx="14" cy="16.928" r="1.5"></circle>
-        <circle class="sunRay sunRay3" cx="6" cy="16.928" r="1.5"></circle>
-        <circle class="sunRay sunRay4" cx="2" cy="10" r="1.5"></circle>
-        <circle class="sunRay sunRay5" cx="6" cy="3.1718" r="1.5"></circle>
-        <circle class="sunRay sunRay6" cx="14" cy="3.1718" r="1.5"></circle>
+        <circle class="sunRay sunRay1" cx="18" cy="10" r="1.2"></circle>
+        <circle class="sunRay sunRay2" cx="14" cy="16.928" r="1.2"></circle>
+        <circle class="sunRay sunRay3" cx="6" cy="16.928" r="1.2"></circle>
+        <circle class="sunRay sunRay4" cx="2" cy="10" r="1.2"></circle>
+        <circle class="sunRay sunRay5" cx="6" cy="3.1718" r="1.2"></circle>
+        <circle class="sunRay sunRay6" cx="14" cy="3.1718" r="1.2"></circle>
       </g>
     </svg>
   </label>
 </template>
 
 <style scoped>
-/* 主要修改点：容器尺寸缩小到2em */
+/* 主要修改点：容器尺寸缩小到1.5em */
 .themeToggle {
   color: #bbb;
-  width: 2em; /* 从3em缩小到2em */
+  width: 1.5em; /* 再次缩小 */
 }
 
 .st-sunMoonThemeToggleBtn {
   position: relative;
   cursor: pointer;
+  display: inline-flex; /* 确保正确对齐 */
 }
 
 .st-sunMoonThemeToggleBtn .themeToggleInput {
   opacity: 0;
   width: 100%;
   aspect-ratio: 1;
+  margin: 0; /* 移除默认边距 */
 }
 
 .st-sunMoonThemeToggleBtn svg {
@@ -114,7 +116,6 @@ const handleSwitchDark = async (event: MouseEvent) => {
 }
 
 .st-sunMoonThemeToggleBtn svg mask > circle {
-  /* 按比例调整动画位移 */
   transition: transform 0.64s cubic-bezier(0.41, 0.64, 0.32, 1.575);
   transform: translate(0px, 0px);
 }
@@ -124,8 +125,8 @@ const handleSwitchDark = async (event: MouseEvent) => {
 }
 
 .st-sunMoonThemeToggleBtn .themeToggleInput:checked + svg mask > circle {
-  /* 按比例缩小位移量 (原16px->10.5px, -3px->-2px) */
-  transform: translate(10.5px, -2px);
+  /* 按比例缩小位移量 */
+  transform: translate(8px, -1.5px);
 }
 
 .st-sunMoonThemeToggleBtn .themeToggleInput:checked + svg .sunMoon {

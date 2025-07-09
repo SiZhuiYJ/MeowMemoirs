@@ -40,8 +40,9 @@ const globalStore = useGlobalStore();
     align-items: center;
     color: var(--el-header-text-color-regular);
     font-weight: bold;
+    font-size: 20px;
     span {
-      padding: 3px;
+      padding: 3px 1.5px;
       background-color: var(--el-color-primary);
       border-radius: 5px;
     }
