@@ -7,7 +7,7 @@ import type { RouterItem } from "@/routers/type";
 // const modules = import.meta.glob("@/views/**/*.vue");
 
 export const initDynamicRouter = async () => {
-  const authStore = useAuthStore().authStore;
+  const authStore = useAuthStore();
 
   try {
     // 1、获取菜单列表 && 按钮权限列表 && 递归菜单数据

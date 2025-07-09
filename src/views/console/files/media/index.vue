@@ -5,7 +5,7 @@ import SearchImage from "./components/SearchImage.vue";
 import MediaViewer from "@/components/MediaViewer/index.vue";
 import mittBus from "@/utils/mittBus";
 import { MediaApi } from "@/libs/api/files/media";
-const { rainbowId } = useAuthStore().authStore.loginUser;
+const { rainbowId } = useAuthStore().loginUser;
 const store = useMediaStore();
 
 const multiple = ref<boolean>(true); // 非多个禁用
@@ -30,7 +30,7 @@ onMounted(() => {
 
 <template>
   <div class="main-content">
-    <div style="height: 100%; display: flex;">
+    <div style="height: 100%; display: flex">
       <MeowCard>
         <SearchImage
           v-show="showSearch"

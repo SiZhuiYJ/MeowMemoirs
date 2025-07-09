@@ -4,7 +4,7 @@ import { formatFileSize } from "@/utils/files";
 import type { MediaTable } from "@/libs/api/files/type";
 import { MediaApi } from "@/libs/api/files/media";
 import { useAuthStore } from "@/stores";
-const { rainbowId } = useAuthStore().authStore.loginUser;
+const { rainbowId } = useAuthStore().loginUser;
 interface IMediaProps {
   data: MediaTable[];
   tagsMap: { [key: string]: string };

@@ -8,7 +8,7 @@ import type { Directive, DirectiveBinding } from "vue";
 const auth: Directive = {
   mounted(el: HTMLElement, binding: DirectiveBinding) {
     const { value } = binding;
-    const userStore = useAuthStore().authStore;
+    const userStore = useAuthStore();
     const adminButtons = ["*"];
     if (
       (Array.isArray(value) &&

@@ -18,11 +18,13 @@ import commonHeader from "@/layouts/components/Header/index.vue";
   color: var(--foreground-color);
   background-color: var(--el-header-bg-color);
   border-bottom: 1px solid var(--el-border-color-light);
+  padding: 0 10px !important;
 }
 .main {
   flex: 1;
   background-color: rgb(246, 249, 254);
   height: 100%;
+  padding: 0 !important;
 }
 .dark .main {
   background-color: rgb(33, 33, 33);

@@ -23,7 +23,7 @@
 import { useTheme } from "@/utils/theme.ts";
 import { useGlobalStore } from "@/stores";
 
-const globalStore = useGlobalStore().globalStore;
+const globalStore = useGlobalStore();
 const { switchDark } = useTheme();
 
 defineProps({

@@ -4,7 +4,7 @@ import { ref, onMounted, nextTick, computed, onUnmounted } from "vue";
 import { setCursor } from "@/utils/cursor";
 import { useTheme } from "@/utils/theme.ts";
 import { useGlobalStore } from "@/stores";
-const { globalStore } = useGlobalStore();
+const globalStore = useGlobalStore();
 
 const dimension = computed(() => globalStore.dimension);
 const { initThemeConfig } = useTheme();
@@ -33,12 +33,14 @@ function flowerOnClick(event: { pageX: number; pageY: number }) {
   document.body.appendChild(v);
   setTimeout(() => document.body.removeChild(v), 1000);
 }
-
+// 标题数组
 const titles = [
   "(ฅ^•ﻌ•^ฅ)✧ 欢迎回来喵！",
   "(ฅ•ω•ฅ)ﾉ♨ 去哪里了喵？",
   "(=｀ω´=)~zzZ 休息一下喵~",
 ];
+// 需要监听的事件
+const events = ["mousemove", "keydown", "mousedown", "touchstart", "scroll"];
 
 // 状态管理
 const isActive = ref(true);
@@ -56,7 +58,7 @@ const resetIdleTimer = () => {
   }
   idleTimer.value = window.setTimeout(() => {
     setTitle(2); // 无操作超过5分钟
-  }, 5 * 60 * 1000); // 5分钟
+  }, 1 * 60 * 1000); // 5分钟
 };
 
 // 页面可见性变化处理
@@ -75,7 +77,6 @@ const handleVisibilityChange = () => {
 
 // 用户操作事件监听
 const setupEventListeners = () => {
-  const events = ["mousemove", "keydown", "mousedown", "touchstart", "scroll"];
   events.forEach((event) => {
     window.addEventListener(event, () => {
       if (isActive.value) {
@@ -119,7 +120,7 @@ onUnmounted(() => {
   }
 
   // 移除所有用户操作监听器
-  const events = ["mousemove", "keydown", "mousedown", "touchstart", "scroll"];
+
   events.forEach((event) => {
     window.removeEventListener(event, resetIdleTimer);
   });

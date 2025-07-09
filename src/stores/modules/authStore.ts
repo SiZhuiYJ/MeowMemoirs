@@ -11,72 +11,143 @@ import {
 import { staticRouter } from "@/routers/modules/staticRouter";
 import type { AppRouteRecordRaw } from "@/routers/type";
 
-export interface Auth {
-  // 扁平化路由数据
-  menuList: AppRouteRecordRaw[];
-  // 递归之后的菜单数据
-  recursiveMenuList: AppRouteRecordRaw[];
-  // 面包屑数据
-  breadcrumbList: [];
-  // 用户角色
-  roleList: string[];
-  // 按钮权限列表
-  buttonList: string[];
-  // 用户信息
-  loginUser: UserInfo;
-}
+// export interface Auth {
+//   // 扁平化路由数据
+//   menuList: AppRouteRecordRaw[];
+//   // 递归之后的菜单数据
+//   recursiveMenuList: AppRouteRecordRaw[];
+//   // 面包屑数据
+//   breadcrumbList: [];
+//   // 用户角色
+//   roleList: string[];
+//   // 按钮权限列表
+//   buttonList: string[];
+//   // 用户信息
+//   loginUser: UserInfo;
+// }
 
-const infoAuth: Auth = {
+// const infoAuth: Auth = {
+//   // 扁平化路由数据
+//   menuList: [],
+//   // 递归之后的菜单数据
+//   recursiveMenuList: [],
+//   // 面包屑数据
+//   breadcrumbList: [],
+//   // 用户角色
+//   roleList: [],
+//   // 按钮权限列表
+//   buttonList: [],
+//   // 用户信息
+//   loginUser: {
+//     rainbowId: "",
+//     userImg: "",
+//     userName: "",
+//   },
+// };
+// export const useAuthStore = defineStore("auth", () => {
+//   const authStore = ref<Auth>(infoAuth);
+//   // 扁平化路由数据
+//   const menuList = ref<AppRouteRecordRaw[]>();
+//   // 递归之后的菜单数据
+//   const recursiveMenuList = ref<AppRouteRecordRaw[]>();
+//   // 面包屑数据
+//   const breadcrumbList = ref<[]>();
+//   // 用户角色
+//   const roleList = ref<string[]>();
+//   // 按钮权限列表
+//   const buttonList = ref<string[]>();
+//   // 用户信息
+//   const loginUser = ref<UserInfo>();
+//   async function listRouters() {
+//     const { data } = await userApi.MMPostRouter();
+//     menuList = generateFlattenRoutes(data.menuList);
+//     recursiveMenuList = generateRoutes(
+//       getShowStaticAndDynamicMenuList(data.menuList),
+//       0
+//     );
+//     breadcrumbList = staticRouter.concat(
+//       generateRoutes(data.menuList, 0)
+//     );
+//   }
+//   async function getLoginUserInfo() {
+//     const { data } = await userApi.MMPostUser();
+//     loginUser = data.userInfo;
+//     buttonList = data.buttonList;
+//     roleList = data.roleList;
+//   }
+
+//   const getMenuList = computed(() => menuList);
+//   const getButtonList = computed(() => buttonList);
+//   const getRoleList = computed(() => roleList);
+//   // 菜单权限列表 ==> 左侧菜单栏渲染，这里的菜单将后端数据进行递归，需要将动态路由 isHide == 0 的隐藏菜单剔除, 将静态路由 isHide == 0 的隐藏菜单剔除
+//   const showMenuList = computed(
+//     () => recursiveMenuList[0].children
+//   );
+//   const getBreadcrumbList = computed(() =>
+//     getAllBreadcrumbList(breadcrumbList)
+//   );
+//   return {
+//     authStore,
+//     listRouters,
+//     getLoginUserInfo,
+//     getMenuList,
+//     getButtonList,
+//     getRoleList,
+//     showMenuList,
+//     getBreadcrumbList,
+//   };
+// });
+
+export const useAuthStore = defineStore("auth", () => {
   // 扁平化路由数据
-  menuList: [],
+  const menuList = ref<AppRouteRecordRaw[]>([]);
   // 递归之后的菜单数据
-  recursiveMenuList: [],
+  const recursiveMenuList = ref<AppRouteRecordRaw[]>([]);
   // 面包屑数据
-  breadcrumbList: [],
+  const breadcrumbList = ref<[]>([]);
   // 用户角色
-  roleList: [],
+  const roleList = ref<string[]>([]);
   // 按钮权限列表
-  buttonList: [],
+  const buttonList = ref<string[]>([]);
   // 用户信息
-  loginUser: {
+  const loginUser = ref<UserInfo>({
     rainbowId: "",
     userImg: "",
     userName: "",
-  },
-};
-export const useAuthStore = defineStore("auth", () => {
-  const authStore = ref<Auth>(infoAuth);
-
+  });
   async function listRouters() {
     const { data } = await userApi.MMPostRouter();
-    authStore.value.menuList = generateFlattenRoutes(data.menuList);
-    authStore.value.recursiveMenuList = generateRoutes(
+    menuList.value = generateFlattenRoutes(data.menuList);
+    recursiveMenuList.value = generateRoutes(
       getShowStaticAndDynamicMenuList(data.menuList),
       0
     );
-    authStore.value.breadcrumbList = staticRouter.concat(
+    breadcrumbList.value = staticRouter.concat(
       generateRoutes(data.menuList, 0)
-    );;
+    );
   }
   async function getLoginUserInfo() {
     const { data } = await userApi.MMPostUser();
-    authStore.value.loginUser = data.userInfo;
-    authStore.value.buttonList = data.buttonList;
-    authStore.value.roleList = data.roleList;
+    loginUser.value = data.userInfo;
+    buttonList.value = data.buttonList;
+    roleList.value = data.roleList;
   }
 
-  const getMenuList = computed(() => authStore.value.menuList);
-  const getButtonList = computed(() => authStore.value.buttonList);
-  const getRoleList = computed(() => authStore.value.roleList);
+  const getMenuList = computed(() => menuList.value);
+  const getButtonList = computed(() => buttonList.value);
+  const getRoleList = computed(() => roleList.value);
   // 菜单权限列表 ==> 左侧菜单栏渲染，这里的菜单将后端数据进行递归，需要将动态路由 isHide == 0 的隐藏菜单剔除, 将静态路由 isHide == 0 的隐藏菜单剔除
-  const showMenuList = computed(
-    () => authStore.value.recursiveMenuList[0].children
-  );
+  const showMenuList = computed(() => recursiveMenuList.value[0].children);
   const getBreadcrumbList = computed(() =>
-    getAllBreadcrumbList(authStore.value.breadcrumbList)
+    getAllBreadcrumbList(breadcrumbList.value)
   );
   return {
-    authStore,
+    menuList,
+    recursiveMenuList,
+    breadcrumbList,
+    roleList,
+    buttonList,
+    loginUser,
     listRouters,
     getLoginUserInfo,
     getMenuList,

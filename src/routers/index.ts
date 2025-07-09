@@ -56,12 +56,12 @@ router.beforeEach(
 
     // 2、标题切换，没有防止后置路由，是因为页面路径不存在，title会变成undefined
     // document.title为随机显示三个颜文字中的其中一个："(ฅ^•ﻌ•^ฅ)✧ 欢迎回来喵！"or"(ฅ•﹏•ฅ)ﾉ♨ 去哪里了喵？"or"(=｀ω´=)~zzZ 休息一下喵~"
-    const title = [
-      "(ฅ^•ﻌ•^ฅ)✧ 欢迎回来喵！",
-      "(ฅ•ω•ฅ)ﾉ♨ 去哪里了喵？",
-      "(=｀ω´=)~zzZ 休息一下喵~",
-    ];
-    document.title = title[Math.floor(Math.random() * 3)];
+    // const title = [
+    //   "(ฅ^•ﻌ•^ฅ)✧ 欢迎回来喵！",
+    //   "(ฅ•ω•ฅ)ﾉ♨ 去哪里了喵？",
+    //   "(=｀ω´=)~zzZ 休息一下喵~",
+    // ];
+    // document.title = title[Math.floor(Math.random() * 3)];
     // (to.meta.title || import.meta.env.VITE_WEB_TITLE) + "|喵咪记事簿";
 
     // 3、判断是访问登陆页，有Token访问当前页面，token过期访问接口，axios封装则自动跳转登录页面，没有Token重置路由到登陆页。

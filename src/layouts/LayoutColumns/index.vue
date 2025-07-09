@@ -2,7 +2,7 @@
 import commonHeader from "@/layouts/components/HeaderBackstage/index.vue";
 import { useGlobalStore, useAuthStore } from "@/stores";
 import type { AppRouteRecordRaw } from "@/routers/type";
-const { globalStore } = useGlobalStore();
+const globalStore = useGlobalStore();
 import { SVG_PREFIX } from "@/config/index.ts";
 import Logo from "@/layouts/components/Logo/index.vue";
 import Main from "@/layouts/components/Main/index.vue";

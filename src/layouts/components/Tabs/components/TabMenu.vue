@@ -84,7 +84,7 @@ const handleRefresh = () => {
 const handleMaximize = () => {
   // 切换哪个，先跳转哪个
   router.push(choosePath.value);
-  useGlobalStore().setGlobal("maximize", !useGlobalStore().globalStore.maximize);
+  useGlobalStore().setGlobal("maximize", !useGlobalStore().maximize);
 };
 
 /** 关闭左边 OR 右边选项卡 */
@@ -167,7 +167,6 @@ defineExpose({
   display: none;
   // cursor: pointer;
   background-color: #ffffff;
-  @apply dark:bg-black dark:text-#E5EAF3;
   border-radius: var(--el-border-radius-base);
   box-shadow: var(--el-box-shadow-light);
   color: #333639;

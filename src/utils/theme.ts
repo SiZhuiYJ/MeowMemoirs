@@ -75,15 +75,23 @@ export function getLightColor(color: string, level: number) {
  * @description 全局主题配置
  * */
 export const useTheme = () => {
-  const { globalStore } = storeToRefs(useGlobalStore());
+  const {
+    themeColor,
+    layout,
+    isWeak,
+    isGrey,
+    headerInverted,
+    asideInverted,
+    isDark,
+  } = storeToRefs(useGlobalStore());
 
   // 切换暗黑模式 ==> 同时修改主题颜色、侧边栏、头部颜色
   const switchDark = () => {
     // 获取HTML根节点
     const html = document.documentElement as HTMLElement;
-    if (globalStore.value.isDark) html.setAttribute("class", "dark");
+    if (isDark.value) html.setAttribute("class", "dark");
     else html.setAttribute("class", "");
-    changeThemeColor(globalStore.value.themeColor);
+    changeThemeColor(themeColor.value);
     setAsideTheme();
     setHeaderTheme();
     setOptimumHeaderTheme();
@@ -99,12 +107,10 @@ export const useTheme = () => {
     document.documentElement.style.setProperty("--el-color-primary", val);
     document.documentElement.style.setProperty(
       "--el-color-primary-dark-2",
-      globalStore.value.isDark
-        ? `${getLightColor(val, 0.2)}`
-        : `${getDarkColor(val, 0.3)}`
+      isDark.value ? `${getLightColor(val, 0.2)}` : `${getDarkColor(val, 0.3)}`
     );
     for (let i = 1; i <= 9; i++) {
-      const primaryColor = globalStore.value.isDark
+      const primaryColor = isDark.value
         ? `${getDarkColor(val, i / 10)}`
         : `${getLightColor(val, i / 10)}`;
       document.documentElement.style.setProperty(
@@ -132,19 +138,12 @@ export const useTheme = () => {
   const setMenuTheme = () => {
     let type = "light";
     // 如果布局为横向 && 头部反转
-    if (
-      globalStore.value.layout === "horizontal" &&
-      globalStore.value.headerInverted
-    )
+    if (layout.value === "horizontal" && headerInverted.value)
       type = "inverted";
     // 如果布局不为横向 && 侧边反转
-    if (
-      globalStore.value.layout !== "horizontal" &&
-      globalStore.value.asideInverted
-    )
-      type = "inverted";
+    if (layout.value !== "horizontal" && asideInverted.value) type = "inverted";
     // 如果是黑色主题，直接为黑色
-    if (globalStore.value.isDark) type = "dark";
+    if (isDark.value) type = "dark";
     const theme = menuTheme[type!];
     for (const [key, value] of Object.entries(theme)) {
       document.documentElement.style.setProperty(key, value as string | null);
@@ -154,8 +153,8 @@ export const useTheme = () => {
   // 设置侧边栏样式
   const setAsideTheme = () => {
     let type = "light";
-    if (globalStore.value.asideInverted) type = "inverted";
-    if (globalStore.value.isDark) type = "dark";
+    if (asideInverted.value) type = "inverted";
+    if (isDark.value) type = "dark";
     const theme = asideTheme[type!];
     for (const [key, value] of Object.entries(theme)) {
       document.documentElement.style.setProperty(key, value as string | null);
@@ -166,8 +165,8 @@ export const useTheme = () => {
   // 设置头部样式
   const setHeaderTheme = () => {
     let type = "light";
-    if (globalStore.value.headerInverted) type = "inverted";
-    if (globalStore.value.isDark) type = "dark";
+    if (headerInverted.value) type = "inverted";
+    if (isDark.value) type = "dark";
     const theme = headerTheme[type!];
     for (const [key, value] of Object.entries(theme)) {
       document.documentElement.style.setProperty(key, value as string | null);
@@ -179,8 +178,8 @@ export const useTheme = () => {
   // 设置混合模式头部样式
   const setOptimumHeaderTheme = () => {
     let type = "light";
-    if (globalStore.value.headerInverted) type = "inverted";
-    if (globalStore.value.isDark) type = "dark";
+    if (headerInverted.value) type = "inverted";
+    if (isDark.value) type = "dark";
     const theme = optimumHeaderTheme[type!];
     for (const [key, value] of Object.entries(theme)) {
       document.documentElement.style.setProperty(key, value as string | null);
@@ -191,8 +190,8 @@ export const useTheme = () => {
   // 初始化主题配置
   const initThemeConfig = () => {
     switchDark();
-    if (globalStore.value.isGrey) changeGreyOrWeak("grey", true);
-    if (globalStore.value.isWeak) changeGreyOrWeak("weak", true);
+    if (isGrey.value) changeGreyOrWeak("grey", true);
+    if (isWeak.value) changeGreyOrWeak("weak", true);
   };
 
   return {

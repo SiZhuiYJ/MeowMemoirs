@@ -8,8 +8,8 @@
   <el-dropdown class="m-l-10px" :hide-on-click="false" @command="handleCommand">
     <div class="dropdown">
       <div class="avatar-name">
-        {{ useAuthStore().authStore.loginUser.userName }}
-        ({{ useAuthStore().authStore.roleList[0] }})
+        {{ useAuthStore().loginUser.userName }}
+        ({{ useAuthStore().roleList[0] }})
       </div>
       <el-icon><arrow-down /></el-icon>
     </div>
@@ -46,8 +46,8 @@ const handleLayout = () => {
 // 用户头像
 const avatar = ref(
   getUserImgUrl({
-    RainbowID: useAuthStore().authStore.loginUser.rainbowId,
-    imageName: useAuthStore().authStore.loginUser.userImg,
+    RainbowID: useAuthStore().loginUser.rainbowId,
+    imageName: useAuthStore().loginUser.userImg,
   })
 );
 const errorAvatar = getUserImgUrl({ RainbowID: "indigenous", imageName: "Erorr.jpg," });

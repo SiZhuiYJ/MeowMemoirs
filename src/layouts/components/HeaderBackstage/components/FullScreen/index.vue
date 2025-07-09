@@ -15,7 +15,7 @@ import { useFullscreen } from "@vueuse/core";
 import { watch } from "vue";
 import { useGlobalStore } from "@/stores";
 
-const globalStore = useGlobalStore().globalStore;
+const globalStore = useGlobalStore();
 // @vueuse/core 处理是否全屏
 const { isFullscreen, toggle } = useFullscreen();
 

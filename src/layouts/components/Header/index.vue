@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { STATIC_URL } from "@/config/index.ts";
 import { layoutRouter } from "@/routers/modules/staticRouter";
 import { useRoute, useRouter } from "vue-router";
+import Toolbar from "./components/Toolbar/index.vue";
+import Logo from "./components/Logo/index.vue";
 const route = useRoute();
 const router = useRouter();
 import { ref } from "vue";
@@ -10,13 +11,10 @@ const handleSubMenu = (path: string) => {
   columnActive.value = path;
   router.push(path);
 };
-const toSystem = () => {
-  router.push(STATIC_URL);
-};
 </script>
 <template>
   <div class="common-header">
-    <div class="logo">logo</div>
+    <Logo></Logo>
     <el-menu
       class="el-menu-popper-demo"
       mode="horizontal"
@@ -37,7 +35,7 @@ const toSystem = () => {
         >{{ item.meta?.title }}</el-menu-item
       >
     </el-menu>
-    <div @click="toSystem"></div>
+    <Toolbar></Toolbar>
   </div>
 </template>
 <style scoped lang="scss">
@@ -46,21 +44,8 @@ const toSystem = () => {
   justify-content: space-between;
   align-items: center;
   height: 40px;
-  padding: 0 20px;
   background-color: var(--el-header-bg-color);
   border-bottom: 1px solid var(--el-border-color-light);
-
-  div {
-    // cursor: pointer;
-
-    &:hover {
-      color: var(--el-color-primary);
-    }
-
-    width: 120px;
-    height: 30px;
-    background-color: var(--el-color-primary);
-  }
 }
 .is-active {
   border-top: 2px solid var(--el-menu-active-color);

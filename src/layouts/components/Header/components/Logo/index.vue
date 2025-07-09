@@ -1,0 +1,54 @@
+<template>
+  <div class="header-left">
+    <img
+      class="logo"
+      :src="globalStore.isDark ? '/favicon-dark.ico' : '/favicon.ico'"
+      alt=""
+      srcset=""
+    />
+    <div class="logo-text">
+      Meow
+      <span :style="{ color: globalStore.isDark ? '#000' : '#fff' }">Memoirs</span>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { useGlobalStore } from "@/stores";
+
+const globalStore = useGlobalStore();
+</script>
+
+<style lang="scss" scoped>
+.header-left {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--el-header-text-color-regular);
+  border-radius: 5px;
+  padding-right: 3px;
+  .logo {
+    height: 26px;
+    width: 50px;
+    padding: 0 2px;
+    object-fit: cover;
+    //边框黑色
+  }
+  .logo-text {
+    display: flex;
+    align-items: center;
+    color: var(--el-header-text-color-regular);
+    font-weight: bold;
+    span {
+      padding: 3px;
+      background-color: var(--el-color-primary);
+      border-radius: 5px;
+    }
+  }
+
+  &:hover {
+    color: var(--el-color-primary);
+  }
+}
+</style>

@@ -31,7 +31,18 @@ const colorList: ColorItem[] = [
 ];
 
 const { changeThemeColor, changeGreyOrWeak, setAsideTheme, setHeaderTheme } = useTheme();
-const { globalStore } = storeToRefs(useGlobalStore());
+const {
+  themeColor,
+  layout,
+  transition,
+  menuWidth,
+  uniqueOpened,
+  isCollapse,
+  isWeak,
+  isGrey,
+  headerInverted,
+  asideInverted,
+} = storeToRefs(useGlobalStore());
 
 const DrawerRef = ref();
 /** 打开主题配置 */
@@ -81,7 +92,7 @@ mittBus.on("handleThemeConfig", () => {
             class="color-item"
             @click="changeThemeColor(item.color)"
             :style="{
-              'border-color': globalStore.themeColor === item.color ? item.color : '',
+              'border-color': themeColor === item.color ? item.color : '',
             }"
           >
             <div class="color-plate" :style="{ 'background-color': item.color }"></div>
@@ -106,7 +117,7 @@ mittBus.on("handleThemeConfig", () => {
           <div
             :class="[
               'layout-item layout-vertical',
-              { 'is-active': globalStore.layout == 'vertical' },
+              { 'is-active': layout == 'vertical' },
             ]"
             @click="setLayout('vertical')"
           >
@@ -115,33 +126,27 @@ mittBus.on("handleThemeConfig", () => {
               <div class="layout-light"></div>
               <div class="layout-content"></div>
             </div>
-            <el-icon v-if="globalStore.layout == 'vertical'">
+            <el-icon v-if="layout == 'vertical'">
               <CircleCheckFilled />
             </el-icon>
           </div>
         </el-tooltip>
         <el-tooltip content="分栏" placement="top" :show-after="200">
           <div
-            :class="[
-              'layout-item layout-columns',
-              { 'is-active': globalStore.layout == 'columns' },
-            ]"
+            :class="['layout-item layout-columns', { 'is-active': layout == 'columns' }]"
             @click="setLayout('columns')"
           >
             <div class="layout-dark"></div>
             <div class="layout-light"></div>
             <div class="layout-content"></div>
-            <el-icon v-if="globalStore.layout == 'columns'">
+            <el-icon v-if="layout == 'columns'">
               <CircleCheckFilled />
             </el-icon>
           </div>
         </el-tooltip>
         <el-tooltip content="经典" placement="top" :show-after="200">
           <div
-            :class="[
-              'layout-item layout-classic',
-              { 'is-active': globalStore.layout == 'classic' },
-            ]"
+            :class="['layout-item layout-classic', { 'is-active': layout == 'classic' }]"
             @click="setLayout('classic')"
           >
             <div class="layout-dark"></div>
@@ -149,17 +154,14 @@ mittBus.on("handleThemeConfig", () => {
               <div class="layout-light"></div>
               <div class="layout-content"></div>
             </div>
-            <el-icon v-if="globalStore.layout == 'classic'">
+            <el-icon v-if="layout == 'classic'">
               <CircleCheckFilled />
             </el-icon>
           </div>
         </el-tooltip>
         <el-tooltip content="混合" placement="top" :show-after="200">
           <div
-            :class="[
-              'layout-item layout-optimum',
-              { 'is-active': globalStore.layout == 'optimum' },
-            ]"
+            :class="['layout-item layout-optimum', { 'is-active': layout == 'optimum' }]"
             @click="setLayout('optimum')"
           >
             <div class="layout-dark"></div>
@@ -167,7 +169,7 @@ mittBus.on("handleThemeConfig", () => {
               <div class="layout-light"></div>
               <div class="layout-content"></div>
             </div>
-            <el-icon v-if="globalStore.layout == 'optimum'">
+            <el-icon v-if="layout == 'optimum'">
               <CircleCheckFilled />
             </el-icon>
           </div>
@@ -176,13 +178,13 @@ mittBus.on("handleThemeConfig", () => {
           <div
             :class="[
               'layout-item layout-horizontal',
-              { 'is-active': globalStore.layout == 'horizontal' },
+              { 'is-active': layout == 'horizontal' },
             ]"
             @click="setLayout('horizontal')"
           >
             <div class="layout-dark"></div>
             <div class="layout-content"></div>
-            <el-icon v-if="globalStore.layout == 'horizontal'">
+            <el-icon v-if="layout == 'horizontal'">
               <CircleCheckFilled />
             </el-icon>
           </div>
@@ -220,7 +222,7 @@ mittBus.on("handleThemeConfig", () => {
               </div>
               <el-select
                 placeholder="请选择路由动画"
-                v-model="globalStore.transition"
+                v-model="transition"
                 clearable
                 style="width: 200px"
               >
@@ -240,7 +242,7 @@ mittBus.on("handleThemeConfig", () => {
                 :min="200"
                 :max="260"
                 :step="2"
-                v-model="globalStore.menuWidth"
+                v-model="menuWidth"
               ></el-input-number>
             </el-form-item>
           </el-col>
@@ -267,7 +269,7 @@ mittBus.on("handleThemeConfig", () => {
                 :active-value="true"
                 :inactive-value="false"
                 :inline-prompt="true"
-                v-model="globalStore.uniqueOpened"
+                v-model="uniqueOpened"
               >
               </el-switch>
             </el-form-item>
@@ -280,7 +282,7 @@ mittBus.on("handleThemeConfig", () => {
                 :active-value="true"
                 :inactive-value="false"
                 :inline-prompt="true"
-                v-model="globalStore.asideInverted"
+                v-model="asideInverted"
                 @change="setAsideTheme"
               >
               </el-switch>
@@ -294,7 +296,7 @@ mittBus.on("handleThemeConfig", () => {
                 :active-value="true"
                 :inactive-value="false"
                 :inline-prompt="true"
-                v-model="globalStore.headerInverted"
+                v-model="headerInverted"
                 @change="setHeaderTheme"
               >
               </el-switch>
@@ -308,7 +310,7 @@ mittBus.on("handleThemeConfig", () => {
                 :active-value="true"
                 :inactive-value="false"
                 :inline-prompt="true"
-                v-model="globalStore.isGrey"
+                v-model="isGrey"
                 @change="changeGreyOrWeak('grey', !!$event)"
               >
               </el-switch>
@@ -322,7 +324,7 @@ mittBus.on("handleThemeConfig", () => {
                 :active-value="true"
                 :inactive-value="false"
                 :inline-prompt="true"
-                v-model="globalStore.isWeak"
+                v-model="isWeak"
                 @change="changeGreyOrWeak('weak', !!$event)"
               >
               </el-switch>
@@ -332,7 +334,7 @@ mittBus.on("handleThemeConfig", () => {
             <el-form-item label="折叠菜单">
               <el-form-item>
                 <el-switch
-                  v-model="globalStore.isCollapse"
+                  v-model="isCollapse"
                   active-text="展开"
                   inactive-text="折叠"
                   :active-value="true"
