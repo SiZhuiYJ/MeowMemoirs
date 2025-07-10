@@ -59,13 +59,22 @@ export default function cssAnalyzerPlugin(): Plugin {
             b.list.length - a.list.length || a.name.localeCompare(b.name)
         );
       // 步骤4: 确保输出目录存在
-      const outDir = "dist";
+      const outDir = "dist"; // 网站打包结果路径
+      const outObj = "public"; // 网站静态资源路径
       const outputPath = path.join(outDir, "cursor-styles.json");
+      const outputObj = path.join(outObj, "cursor-styles.json");
 
       try {
         await fs.mkdir(outDir, { recursive: true });
         await fs.writeFile(outputPath, JSON.stringify(groupedCursors, null, 2));
         console.log(`Cursor styles saved to: ${outputPath}`);
+      } catch (error) {
+        console.error("Failed to write cursor styles:", error);
+      }
+      try {
+        await fs.mkdir(outObj, { recursive: true });
+        await fs.writeFile(outputObj, JSON.stringify(groupedCursors, null, 2));
+        console.log(`Cursor styles saved to: ${outputObj}`);
       } catch (error) {
         console.error("Failed to write cursor styles:", error);
       }
