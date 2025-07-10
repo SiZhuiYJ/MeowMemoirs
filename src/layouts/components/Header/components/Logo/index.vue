@@ -2,7 +2,7 @@
   <div class="header-left">
     <img
       class="logo"
-      :src="globalStore.isDark ? '/favicon-dark.ico' : '/favicon.ico'"
+      :src="globalStore.isDark ? logoUrlDark : logoUrl"
       alt=""
       srcset=""
     />
@@ -14,6 +14,8 @@
 </template>
 
 <script setup lang="ts">
+import logoUrl from "@/assets/image/catsdiary.webp";
+import logoUrlDark from "@/assets/image/catsdiary-dark.webp";
 import { useGlobalStore } from "@/stores";
 
 const globalStore = useGlobalStore();

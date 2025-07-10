@@ -2,6 +2,7 @@
 import Login from "./components/Login.vue";
 import Register from "./components/Register.vue";
 import useApiUrl from "@/libs/useApiUrl/index";
+import logoUrl from "@/assets/image/catsdiary.webp";
 import { useRouter } from "vue-router";
 import { useScreenStore } from "@/utils/screen";
 import { computed, ref } from "vue";
@@ -34,7 +35,7 @@ const background = computed(() => {
       @click="router.push('/home/index')"
       title="暂不登录,前往首页"
     >
-      <img :src="getLocalImgUrl('favicon.ico')" alt="" />
+      <img :src="logoUrl" alt="" />
       <span>喵咪记事簿</span>
     </div>
     <div class="container" :style="{ width: isMobile ? '350px' : '650px' }">
