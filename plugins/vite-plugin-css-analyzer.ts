@@ -38,7 +38,6 @@ export default function cssAnalyzerPlugin(): Plugin {
           selectorCursorMap.set(rule.selector, cursor);
         }
       }
-
       // 步骤2: 按 cursor 分组
       const cursorGroupMap = new Map<string, string[]>();
       for (const [selector, cursor] of selectorCursorMap) {

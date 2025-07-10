@@ -60,6 +60,8 @@
       ".el-time-spinner__arrow",
       ".el-time-spinner__item:hover:not(.is-disabled):not(.is-active)",
       ".el-year-table td",
+      ".plane-switch",
+      ".st-sunMoonThemeToggleBtn",
       "button"
     ]
   },

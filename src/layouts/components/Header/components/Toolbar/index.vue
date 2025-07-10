@@ -1,5 +1,7 @@
 <template>
   <div class="header-right">
+    <!-- 飞行模式 -->
+    <FlightMode></FlightMode>
     <!-- 明亮/暗黑模式图标 -->
     <Dark></Dark>
     <!-- 控制台 -->
@@ -10,6 +12,7 @@
 <script setup lang="ts">
 import Dark from "@/layouts/components/Header/components/Dark/index.vue";
 import ToSystem from "@/layouts/components/Header/components/ToSystem/index.vue";
+import FlightMode from "@/layouts/components/Header/components/FlightMode/index.vue";
 </script>
 
 <style lang="scss" scoped>

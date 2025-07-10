@@ -15,7 +15,7 @@ export default defineConfig({
   plugins: [
     vue(),
     tsconfigPaths(), //  配置tsconfig.json路径
-    cssAnalyzer(), //  配置css分析插件
+    cssAnalyzer(), //  配置css分析插件 鼠标
     createSvgIconsPlugin({
       iconDirs: [path.resolve(process.cwd(), "src/assets/icons")],
       symbolId: "icon-[dir]-[name]",

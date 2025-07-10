@@ -32,7 +32,7 @@ export const layoutRouter: RouteRecordRaw[] = [
       },
       {
         path: "/main/TimeStyle",
-        component: () => import("@/views/main/TimeStyle/index.vue"),
+        component: () => import("@/views/main/timeStyle/index.vue"),
         meta: {
           title: "时间",
           enName: "TimeStyle",
@@ -46,11 +46,26 @@ export const layoutRouter: RouteRecordRaw[] = [
       },
       {
         path: "/main/StarrySky",
-        component: () => import("@/views/main/StarrySky/index.vue"),
+        component: () => import("@/views/main/starrySky/index.vue"),
         meta: {
           title: "星空",
           enName: "StarrySky",
-          icon: "Clock",
+          icon: "Star",
+          isHide: "0",
+          isLink: "",
+          isKeepAlive: "0",
+          isFull: "1",
+          isAffix: "0",
+        },
+      },
+
+      {
+        path: "/main/banner",
+        component: () => import("@/views/main/banner/index.vue"),
+        meta: {
+          title: "蛋糕",
+          enName: "banner",
+          icon: "IceTea",
           isHide: "0",
           isLink: "",
           isKeepAlive: "0",
@@ -59,12 +74,12 @@ export const layoutRouter: RouteRecordRaw[] = [
         },
       },
       {
-        path: "/main/banner",
-        component: () => import("@/views/main/banner/index.vue"),
+        path: "/main/love",
+        component: () => import("@/views/main/love/index.vue"),
         meta: {
-          title: "蛋糕",
-          enName: "banner",
-          icon: "IceTea",
+          title: "爱心",
+          enName: "love",
+          icon: "Present",
           isHide: "0",
           isLink: "",
           isKeepAlive: "0",

@@ -155,13 +155,15 @@ onUnmounted(() => {
   animation: -snowflake-animate 1s linear forwards;
   z-index: 999;
   &::before {
-    content: "\1F338";
+    //content: "\1F338";
+    content: "🐾";
   }
 }
 
 @keyframes -snowflake-animate {
   0% {
-    transform: translateY(0) rotate(0deg);
+    // transform: translateY(0) rotate(0deg);
+    transform: translateY(0);
     opacity: 0.6;
   }
 
@@ -170,7 +172,8 @@ onUnmounted(() => {
   }
 
   100% {
-    transform: translateY(10vh) rotate(90deg) rotateY(30deg);
+    // transform: translateY(10vh) rotate(90deg) rotateY(30deg);
+    transform: translateY(9vh);
     opacity: 0;
   }
 }

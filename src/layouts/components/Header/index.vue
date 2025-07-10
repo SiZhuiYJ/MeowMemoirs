@@ -19,7 +19,7 @@ const handleSubMenu = (path: string) => {
       class="el-menu-popper-demo"
       mode="horizontal"
       :popper-offset="16"
-      style="max-width: 600px; height: 40px"
+      style="max-width: 600px; height: 40px; border-bottom: none"
       :ellipsis="false"
     >
       <el-menu-item
