@@ -1,14 +1,27 @@
 <script setup lang="ts">
 import { useUserStore } from "@/stores";
-import router from "@/routers";
+import { useRouter } from "vue-router";
+const router = useRouter();
 const outLogin = () => {
   useUserStore().setToken(null);
 };
 const login = () => {
   router.push("/login");
 };
+import ProgressiveImage from "@/components/ProgressiveImage/index.vue";
 </script>
+
 <template>
+  <div class="container">
+    <ProgressiveImage
+      class="img-box"
+      placeholder-src="https://catsdiary.com:4567/MeowMemoirs/File/MediaFile/indigenous/MapStorage?path=_1.webp"
+      full-src="https://catsdiary.com:4567/MeowMemoirs/File/MediaFile/indigenous/MapStorage?path=_1-4k.webp"
+      alt="Description of the image"
+      :transition-duration="600"
+    />
+  </div>
+
   <div class="btn-box">
     <button @click="outLogin">退出登录</button>
     <button @click="login">登录</button>
@@ -19,7 +32,18 @@ const login = () => {
   </div>
 </template>
 <style scoped lang="scss">
+.container {
+  width: 100%;
+  .img-box {
+    height: 0;
+    padding-top: calc(5760 / 10240 * 100%);
+  }
+}
 .btn-box {
+  position: absolute;
+  left: 50%;
+  bottom: 10%;
+  transform: translate(-50%, -50%);
   width: 100%;
   height: 10%;
   display: flex;
@@ -27,11 +51,10 @@ const login = () => {
   justify-content: center;
 }
 .login-box {
-  width: 100%;
-  height: 90%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   .glitch {
     position: relative;
     font-size: 60px;

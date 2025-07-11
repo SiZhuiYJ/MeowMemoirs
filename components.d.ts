@@ -59,6 +59,7 @@ declare module 'vue' {
     MeowDialog: typeof import('./src/components/MeowDialog/index.vue')['default']
     MeowDrawer: typeof import('./src/components/MeowDrawer/index.vue')['default']
     MeowSelect: typeof import('./src/components/MeowSelect/index.vue')['default']
+    ProgressiveImage: typeof import('./src/components/ProgressiveImage/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ShowDetails: typeof import('./src/components/ShowDetails/index.vue')['default']

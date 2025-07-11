@@ -25,6 +25,7 @@ import commonHeader from "@/layouts/components/Header/index.vue";
   background-color: rgb(246, 249, 254);
   height: 100%;
   padding: 0 !important;
+  overflow: hidden;
 }
 .dark .main {
   background-color: rgb(33, 33, 33);

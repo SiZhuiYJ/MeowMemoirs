@@ -64,22 +64,22 @@ router.beforeEach(
     // document.title = title[Math.floor(Math.random() * 3)];
     // (to.meta.title || import.meta.env.VITE_WEB_TITLE) + "|喵咪记事簿";
 
-    // 3、判断是访问登陆页，有Token访问当前页面，token过期访问接口，axios封装则自动跳转登录页面，没有Token重置路由到登陆页。
+    // 3、判断访问页面是否在路由白名单地址[静态路由]中，如果存在直接放行。
+    // console.log("路由白名单", ROUTER_WHITE_LIST, to.path);
+    if (ROUTER_WHITE_LIST.includes(to.path)) return next();
+
+    // 4、判断是访问登陆页，有Token访问当前页面，token过期访问接口，axios封装则自动跳转登录页面，没有Token重置路由到登陆页。
     if (to.path.toLocaleLowerCase() === LOGIN_URL) {
       // 有Token访问当前页面
       if (userStore.token) {
         return next(from.fullPath);
       } else {
+        // 没有Token重置路由到登陆页。
         meowMsgWarning("账号身份已过期，请重新登录");
+        resetRouter();
+        return next();
       }
-      // 没有Token重置路由到登陆页。
-      resetRouter();
-      return next();
     }
-
-    // 4、判断访问页面是否在路由白名单地址[静态路由]中，如果存在直接放行。
-    // console.log("路由白名单", ROUTER_WHITE_LIST, to.path);
-    if (ROUTER_WHITE_LIST.includes(to.path)) return next();
     // 5、判断是否有 Token，没有重定向到 login 页面。
     if (!userStore.token && to.path !== LOGIN_URL)
       return next({ path: LOGIN_URL, replace: true });
