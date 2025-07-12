@@ -10,6 +10,8 @@
     <ThemeSetting></ThemeSetting>
     <!-- 头像 AND 下拉折叠 -->
     <User></User>
+    <!-- 网络 -->
+    <loadlistener></loadlistener>
   </div>
 </template>
 
@@ -19,6 +21,7 @@ import FullScreen from "@/layouts/components/HeaderBackstage/components/FullScre
 import Dark from "@/layouts/components/HeaderBackstage/components/Dark/index.vue";
 import ThemeSetting from "@/layouts/components/HeaderBackstage/components/ThemeSetting/index.vue";
 import Refresh from "@/layouts/components/HeaderBackstage/components/Refresh/index.vue";
+import loadlistener from "@/layouts/components/HeaderBackstage/components/LoadListener/index.vue";
 </script>
 
 <style lang="scss" scoped>

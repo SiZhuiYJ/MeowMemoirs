@@ -38,8 +38,12 @@
   --light-2: rgba(255, 233, 0, 0.3);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-
-  padding: 0 2px;
+  border-radius: 15px;
+  padding: 2px;
+  &:hover {
+    border: 1px solid var(--el-color-primary-light-7);
+    box-shadow: 0 0 4px 2px var(--el-color-primary-light-7);
+  }
 }
 
 .plane-switch input {

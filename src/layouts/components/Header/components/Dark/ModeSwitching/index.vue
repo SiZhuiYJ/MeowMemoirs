@@ -74,11 +74,13 @@ const handleSwitchDark = async (event: MouseEvent) => {
   </label>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 /* 主要修改点：容器尺寸缩小到1.5em */
 .themeToggle {
   color: #bbb;
   width: 1.5em; /* 再次缩小 */
+  height: 1.5em;
+  border-radius: 50%;
 }
 
 .st-sunMoonThemeToggleBtn {

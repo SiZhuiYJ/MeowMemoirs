@@ -4,8 +4,10 @@
     style="color: var(--el-header-text-color-regular); width: 32px; border-radius: 50%"
   >
     <el-tooltip :content="!globalStore.isDark ? '明亮模式' : '暗夜模式'">
-      <ModeSwitching> </ModeSwitching
-    ></el-tooltip>
+      <div class="mode-hover">
+        <ModeSwitching />
+      </div>
+    </el-tooltip>
   </div>
 </template>
 
@@ -23,7 +25,18 @@ defineProps({
 });
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.mode-hover {
+  height: 24px;
+  width: 24px;
+  padding: 2px;
+  border-radius: 50%;
+  &:hover {
+    border: 1px solid var(--el-color-primary-light-7);
+    box-shadow: 0 0 4px 2px var(--el-color-primary-light-7);
+  }
+}
+</style>
 <style lang="scss">
 ::view-transition-old(root),
 ::view-transition-new(root) {

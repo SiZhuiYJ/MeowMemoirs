@@ -219,6 +219,7 @@ const activeMenu = computed(
     height: 40px;
     background-color: var(--el-header-bg-color);
     border-bottom: 1px solid var(--el-border-color-light);
+    --el-header-padding: 0 !important;
   }
 
   .layout-main {

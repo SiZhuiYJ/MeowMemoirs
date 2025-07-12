@@ -6,6 +6,8 @@
     <Dark></Dark>
     <!-- 控制台 -->
     <ToSystem></ToSystem>
+    <!-- 网络 -->
+    <loadlistener></loadlistener>
   </div>
 </template>
 
@@ -13,6 +15,7 @@
 import Dark from "@/layouts/components/Header/components/Dark/index.vue";
 import ToSystem from "@/layouts/components/Header/components/ToSystem/index.vue";
 import FlightMode from "@/layouts/components/Header/components/FlightMode/index.vue";
+import loadlistener from "@/layouts/components/HeaderBackstage/components/LoadListener/index.vue";
 </script>
 
 <style lang="scss" scoped>
@@ -32,9 +35,5 @@ import FlightMode from "@/layouts/components/Header/components/FlightMode/index.
   display: flex;
   justify-content: center;
   align-items: center;
-
-  &:hover {
-    background: rgba(0, 0, 0, 0.06);
-  }
 }
 </style>
