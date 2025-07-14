@@ -26,6 +26,25 @@ import commonHeader from "@/layouts/components/Header/index.vue";
   height: 100%;
   padding: 0 !important;
   overflow: hidden;
+  // 为webkit浏览器设置纵向和横向滚动条
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 为滚动条轨道设置 */
+  ::-webkit-scrollbar-track {
+    display: none;
+  }
+
+  /* 为滚动条设置滑块 */
+  ::-webkit-scrollbar-thumb {
+    display: none;
+  }
+
+  /* 悬浮在滑块上时为滑块设置 */
+  ::-webkit-scrollbar-thumb:hover {
+    display: none;
+  }
 }
 .dark .main {
   background-color: rgb(33, 33, 33);

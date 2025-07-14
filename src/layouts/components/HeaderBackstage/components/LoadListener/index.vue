@@ -1,8 +1,37 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import Signal from "@/layouts/components/HeaderBackstage/components/Signal/index.vue";
+import Signal from "./Signal/index.vue";
+import Folding from "./Folding/index.vue";
+import { getRandomColor } from "@/utils/color";
 const Level = ref(0);
 const Loading = ref(false);
+// 名次个位
+const rankNum = ref(0);
+// 名次十位
+const rankTen = ref(0);
+// 评分
+const score = ref(["菜狗", "死菜", "奇菜", "菜", "小菜", "微菜", "还行", "不错", "能看"]);
+const score_color = ref([
+  "red",
+  "red",
+  "red",
+  "red",
+  "red",
+  "red",
+  "#ffcc00",
+  "#ffcc00",
+  "#86DC46",
+]);
+const COLUMN_COLORS = ["red", "red", "red", "#ffcc00", "#ffcc00", "#86DC46"];
+const serverMessage = [
+  "服务器丢失",
+  "连接信号弱",
+  "信号不稳定",
+  "信号较弱",
+  "信号波动",
+  "已连接",
+];
+
 // 声明全局性能API类型
 declare const PerformanceObserver:
   | {
@@ -27,7 +56,6 @@ interface PerformanceMetrics {
 
 const metrics = ref<Partial<PerformanceMetrics>>({});
 const isModernAPISupported = ref(false);
-const showDetails = ref(false);
 const totalLoadTime = ref("");
 
 const calculateMetrics = () => {
@@ -95,9 +123,6 @@ function convertMsToSeconds(msString: string | undefined): string {
     return "N/A";
   }
 }
-const toggleDetails = () => {
-  showDetails.value = !showDetails.value;
-};
 onMounted(() => {
   if (window.performance) {
     // 检查现代API支持情况
@@ -116,9 +141,11 @@ onMounted(() => {
     }
   }
   Loading.value = true;
-  Level.value = Math.floor(Math.random() * 5) + 1;
+  Level.value = Math.floor(Math.random() * 6);
+  // 排名为1到9之间的随机数
+  rankNum.value = Math.floor(Math.random() * 9) + 1;
+  rankTen.value = Math.floor(Math.random() * 9) + 1;
   setTimeout(() => {
-    // 产生一个随机数1~5
     Loading.value = false;
   }, 10000);
 });
@@ -126,22 +153,36 @@ onMounted(() => {
 
 <template>
   <div class="performance-monitor">
-    <el-popover class="box-item" placement="bottom-end" :width="200">
+    <el-popover class="box-item" placement="bottom-end" :width="230">
       <template #reference>
         <button class="article" style="">
           <Signal :Level="Level" :size="14" :Loading="Loading" />
         </button>
       </template>
-      <div class="summary" @click="toggleDetails">
-        <span class="label font-class">页面加载时间:</span>
-        <span class="value font-class">{{
-          convertMsToSeconds(totalLoadTime) || "计算中..."
-        }}</span>
-        <span class="toggle-icon">{{ showDetails ? "▲" : "▼" }}</span>
-      </div>
 
-      <transition name="fade">
-        <div v-if="showDetails" class="details">
+      <Folding>
+        <span class="label font-class">主服务器状态:</span>
+        <template #toggle>
+          <span :style="{ color: COLUMN_COLORS[Level] }">
+            {{ serverMessage[Level] }}
+          </span>
+        </template>
+        <template #container>
+          <h3>服务器连接详情</h3>
+          <div class="metrics-container">
+            服务器未开放！连接失败均为正常现象，请耐心等待后续公告通知喵~
+          </div>
+        </template>
+      </Folding>
+
+      <div style="background-color: rgb(194 194 194); width: 100%; height: 1px"></div>
+
+      <Folding>
+        <span class="label font-class">页面加载时间:</span>
+        <template #toggle>
+          {{ convertMsToSeconds(totalLoadTime) || "计算中..." }}
+        </template>
+        <template #container>
           <h3>详细性能指标</h3>
           <div v-if="Object.keys(metrics).length > 0" class="metrics-container">
             <div v-for="(value, key) in metrics" :key="key" class="metric-item">
@@ -155,8 +196,40 @@ onMounted(() => {
               (您的浏览器不支持最新性能API)
             </div>
           </div>
-        </div>
-      </transition>
+        </template>
+      </Folding>
+
+      <div style="background-color: rgb(194 194 194); width: 100%; height: 1px"></div>
+
+      <Folding>
+        <span class="label font-class">性能测试结果:</span>
+        <template #toggle>
+          <span :style="{ color: score_color[rankNum] }">
+            {{ score[rankTen] }}
+          </span>
+        </template>
+        <template #container>
+          <h3>详细性能测试数据</h3>
+          <div>
+            本次打开网页的速度击败全世界<span
+              style="font-size: 16px; font-weight: bold"
+              :style="{ color: getRandomColor() }"
+              >{{ rankNum }}</span
+            >
+            <span
+              style="font-size: 16px; font-weight: bold"
+              :style="{ color: getRandomColor() }"
+              >{{ rankTen }}</span
+            >
+            <span
+              style="font-size: 16px; font-weight: bold"
+              :style="{ color: getRandomColor() }"
+              >%</span
+            >
+            的人
+          </div>
+        </template>
+      </Folding>
     </el-popover>
   </div>
 </template>
@@ -186,79 +259,62 @@ onMounted(() => {
     outline: none;
   }
 }
-.summary {
-  padding: 0;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  transition: background-color 0.2s;
-
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-  }
-
-  .label {
-    font-weight: 500;
-    margin-right: 8px;
-  }
-
-  .value {
-    color: #ffcc00;
-    font-family: "Roboto Mono", monospace;
-    margin-right: 8px;
-  }
-
-  .toggle-icon {
-    margin-left: auto;
-    font-size: 12px;
-  }
+.label {
+  font-weight: 500;
+  margin-right: 8px;
 }
-.details {
-  padding: 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
 
-  h3 {
-    margin: 12px 0 10px;
-    color: #42b983;
-    font-size: 15px;
-    font-weight: 600;
-  }
+.value {
+  color: #ffcc00;
+  font-family: "Roboto Mono", monospace;
+  margin-right: 8px;
+}
 
-  .metrics-container {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    font-size: 14px;
-  }
+.toggle-icon {
+  margin-left: auto;
+  font-size: 12px;
+}
+h3 {
+  margin: 6px 0 6px;
+  color: #42b983;
+  font-size: 15px;
+  font-weight: 600;
+}
 
-  .metric-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-  }
+.metrics-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+}
 
-  .metric-key {
-    font-weight: 500;
-    margin-right: 12px;
-    opacity: 0.9;
-  }
+.metric-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
 
-  .metric-value {
-    color: #ffcc00;
-    font-family: "Roboto Mono", monospace;
-    font-size: 13px;
-  }
+.metric-key {
+  font-weight: 500;
+  margin-right: 12px;
+  opacity: 0.9;
+}
 
-  .loading-message {
-    color: #aaa;
-    font-style: italic;
-    font-size: 14px;
+.metric-value {
+  color: #ffcc00;
+  font-family: "Roboto Mono", monospace;
+  font-size: 13px;
+}
 
-    .warning {
-      margin-top: 6px;
-      color: #ff6b6b;
-      font-size: 12px;
-    }
+.loading-message {
+  color: #aaa;
+  font-style: italic;
+  font-size: 14px;
+
+  .warning {
+    margin-top: 6px;
+    color: #ff6b6b;
+    font-size: 12px;
   }
 }
 .fade-enter-active,

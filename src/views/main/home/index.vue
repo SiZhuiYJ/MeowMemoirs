@@ -8,23 +8,55 @@ const outLogin = () => {
 const login = () => {
   router.push("/login");
 };
-import ProgressiveImage from "@/components/ProgressiveImage/index.vue";
+const imgList = [
+  {
+    progressive: "/img/_1-720p.webp",
+    src: "/img/_1-4k.webp",
+    alt: "Image 示例图片",
+  },
+  {
+    progressive: "/img/_2-720p.webp",
+    src: "/img/_2-4k.webp",
+    alt: "Image 示例图片",
+  },
+  {
+    progressive: "/img/_4-720p.webp",
+    src: "/img/_4-4k.webp",
+    alt: "Image 示例图片",
+  },
+  {
+    progressive: "/img/_8-720p.webp",
+    src: "/img/_8-4k.webp",
+    alt: "Image 示例图片",
+  },
+  {
+    progressive: "/img/_9-720p.webp",
+    src: "/img/_9-4k.webp",
+    alt: "Image 示例图片",
+  },
+];
 </script>
 
 <template>
-  <div class="container">
-    <ProgressiveImage
-      class="img-box"
-      placeholder-src="https://catsdiary.com:4567/MeowMemoirs/File/MediaFile/indigenous/MapStorage?path=_1.webp"
-      full-src="https://catsdiary.com:4567/MeowMemoirs/File/MediaFile/indigenous/MapStorage?path=_1-4k.webp"
-      alt="Description of the image"
-      :transition-duration="600"
-    />
-  </div>
-
-  <div class="btn-box">
-    <button @click="outLogin">退出登录</button>
-    <button @click="login">登录</button>
+  <div class="progressive-container">
+    <div class="progressive" v-for="(item, index) in imgList">
+      <img
+        class="preview"
+        v-progressive.lazy="item.progressive"
+        :src="item.src"
+        :alt="item.alt"
+        :key="index"
+      />
+    </div>
+    <div class="message">
+      <span>欢迎参观我的小破网站</span><button @click="outLogin">退出登录</button>
+      <button @click="login">登录</button>
+    </div>
+    <div class="info">
+      <p>
+        <a href="https://beian.miit.gov.cn/" target="_blank">渝ICP备2025063979号-1</a>
+      </p>
+    </div>
   </div>
 
   <div class="login-box">
@@ -32,23 +64,65 @@ import ProgressiveImage from "@/components/ProgressiveImage/index.vue";
   </div>
 </template>
 <style scoped lang="scss">
-.container {
+.progressive-container {
   width: 100%;
-  .img-box {
-    height: 0;
-    padding-top: calc(5760 / 10240 * 100%);
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  .progressive {
+    position: relative;
+    overflow: hidden;
+    background-color: #f5f5f5;
   }
-}
-.btn-box {
-  position: absolute;
-  left: 50%;
-  bottom: 10%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  height: 10%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  .info,
+  .message {
+    height: 80px;
+    width: 100%;
+    display: flex;
+    text-align: center;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+  .message {
+    span {
+      background: linear-gradient(to right, var(--el-color-primary), #61c454) no-repeat
+        right bottom;
+      background-size: 0 2px;
+      transition: background-size 1000ms;
+      &:hover {
+        background-position-x: left;
+        background-size: 100% 2px;
+      }
+    }
+  }
+  .info {
+    background-color: #000;
+    p {
+      a {
+        color: #fff;
+        font-family: "宋体";
+        position: relative;
+        text-decoration: none;
+
+        &:before {
+          content: "";
+          position: absolute;
+          left: 50%;
+          bottom: -2px;
+          width: 0;
+          height: 2px;
+          background: var(--el-color-primary);
+          transition: all 0.3s;
+        }
+        &:hover:before {
+          width: 100%;
+          left: 0;
+          right: 0;
+        }
+      }
+    }
+  }
 }
 .login-box {
   position: absolute;

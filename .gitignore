@@ -13,7 +13,7 @@ dist-ssr
 *.local
 # stats.html文件加入gitignore
 stats.html
-
+# img/
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

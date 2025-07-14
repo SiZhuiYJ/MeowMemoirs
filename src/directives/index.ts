@@ -11,6 +11,7 @@ import adaptiveTree from "./modules/adaptiveTree";
 import copy from "./modules/copy";
 import videoObserver from "./modules/videoObserver";
 import slideIn from "./modules/slideIn";
+import progressive from "./modules/progressive";
 
 const directivesList: any = {
   auth,
@@ -25,6 +26,7 @@ const directivesList: any = {
   copy,
   videoObserver,
   slideIn,
+  progressive,
 };
 
 const directives = {

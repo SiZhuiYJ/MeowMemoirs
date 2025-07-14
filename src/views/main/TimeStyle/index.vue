@@ -32,7 +32,6 @@ onMounted(() => {
 <template>
   <div class="container">
     <a class="switcher" href="#" @click.prevent="glitch"></a>
-    <!-- <div :class="{ 'screen glitch': isGlitch, 'clock is-off': !isClockVisible }"> -->
     <div class="screen" :class="{ glitch: isGlitch }">
       <div class="clock" :class="{ 'is-off': !isClockVisible }">
         <span :data-time="realTime" class="time">{{ realTime }}</span>
@@ -40,13 +39,10 @@ onMounted(() => {
       <div class="figure"></div>
       <div class="figure-mask"></div>
     </div>
-    <!-- </div> -->
   </div>
 </template>
 
 <style lang="scss" scoped>
-// @import url(https://fonts.googleapis.com/css?family=Lato:400,700);
-
 *,
 *:before,
 *:after {
@@ -118,7 +114,7 @@ a.switcher:before {
   bottom: 0;
   left: 0;
   margin: auto;
-  // cursor: default;
+  cursor: default;
 }
 
 .clock span {

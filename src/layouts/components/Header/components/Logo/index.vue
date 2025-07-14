@@ -35,7 +35,6 @@ const globalStore = useGlobalStore();
     width: 50px;
     padding: 0 2px;
     object-fit: cover;
-    //边框黑色
   }
   .logo-text {
     display: flex;
