@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from "vue";
-
+import { useScreenStore } from "@/utils/screen";
+// 获取当前为[移动端、IPad、PC端]仓库，阔以使用 watchEffect(() => {}) 进行监听。
+const { isMobile } = useScreenStore();
 // 定义粒子设置
 const settings = {
   particles: {
@@ -9,6 +11,7 @@ const settings = {
     velocity: 100, // 粒子速度(像素/秒)
     effect: -0.75, // 物理效果参数
     size: 30, // 粒子大小(像素)
+    scale: 1.5, // 缩放比例
   },
 };
 
@@ -251,8 +254,13 @@ const initAnimation = (canvas: HTMLCanvasElement) => {
   // 调整canvas大小
   const onResize = () => {
     if (!canvas) return;
-    canvas.width = canvas.clientWidth;
-    canvas.height = canvas.clientHeight;
+    const scale = Math.max(0.1, settings.particles.scale || 1); // 确保scale有合理最小值
+    canvas.width = !isMobile.value
+      ? Math.max(1, canvas.clientWidth) / scale
+      : Math.max(1, canvas.clientWidth) * scale;
+    canvas.height = !isMobile.value
+      ? Math.max(1, canvas.clientHeight) / scale
+      : Math.max(1, canvas.clientHeight) * scale;
   };
 
   // 使用ResizeObserver监听尺寸变化

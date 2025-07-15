@@ -87,6 +87,20 @@ export const layoutRouter: RouteRecordRaw[] = [
           isAffix: "0",
         },
       },
+      {
+        path: "/main/confession",
+        component: () => import("@/views/main/confession/index.vue"),
+        meta: {
+          title: "告白",
+          enName: "confession of love",
+          icon: "Promotion",
+          isHide: "0",
+          isLink: "",
+          isKeepAlive: "0",
+          isFull: "1",
+          isAffix: "0",
+        },
+      },
     ],
   },
   {

@@ -65,6 +65,7 @@ declare module 'vue' {
     ShowDetails: typeof import('./src/components/ShowDetails/index.vue')['default']
     SvgIcons: typeof import('./src/components/SvgIcons/index.vue')['default']
     Toolbar: typeof import('./src/components/Toolbar/index.vue')['default']
+    TypewriterEffect: typeof import('./src/components/TypewriterEffect/index.vue')['default']
     WaterfallFlow: typeof import('./src/components/WaterfallFlow/index.vue')['default']
   }
   export interface ComponentCustomProperties {

@@ -1,8 +1,10 @@
 import { createApp } from "vue";
 import App from "./App.vue";
 import "./styles/index.scss";
+import BeBitten from "./assets/image/BeBitten.webp";
+import CatLoad from "./assets/image/CatLoad.webp";
 // 链接组合
-import useApiUrl from "@/libs/useApiUrl/index";
+// import useApiUrl from "@/libs/useApiUrl/index";
 // 懒加载
 import VueLazyload from "vue-lazyload";
 // element-plus
@@ -27,14 +29,19 @@ app.use(pinia);
 
 // 注册路由
 app.use(router);
-const { getLocalImgUrl } = useApiUrl();
+// const { getLocalImgUrl } = useApiUrl();
+// app.use(VueLazyload, {
+//   preLoad: 1.3,
+//   error: getLocalImgUrl("BeBitten.webp"),
+//   loading: getLocalImgUrl("CatLoad.webp"),
+//   attempt: 1,
+// });
 app.use(VueLazyload, {
   preLoad: 1.3,
-  error: getLocalImgUrl("BeBitten.webp"),
-  loading: getLocalImgUrl("CatLoad.webp"),
+  error: BeBitten,
+  loading: CatLoad,
   attempt: 1,
 });
-
 // 挂载
 // app.use(ElementPlus);
 

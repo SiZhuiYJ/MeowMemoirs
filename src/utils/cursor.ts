@@ -16,7 +16,8 @@ let ZOOM_IN_CURSOR: string[] = []; // 放大光标
 let CONTEXT_MENU_CURSOR: string[] = []; // 鼠标右键光标
 // 鼠标样式
 const getAniUrl = (fileName: string): string => {
-  return `https://catsdiary.com:4567/MeowMemoirs/File/MediaFile/indigenous/MapStorage?path=mouse/${fileName}.ani`;
+  // return `https://catsdiary.com:4567/MeowMemoirs/File/MediaFile/indigenous/MapStorage?path=mouse/${fileName}.ani`;
+  return `/mouse/${fileName}.ani`;
 };
 export interface GroupedCursor {
   name: string;

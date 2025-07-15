@@ -52,6 +52,4 @@ Vue 3 + TypeScript + Vite + Vue Router + Vuex + Element Plus + Axios
 
 ## 项目截图
 
-<div style="display: flex; flex-wrap: wrap;">
-<img src="http://8.137.127.7/assets/catsdiary-BLg9_tNm.webp" alt="">
-</div>
+![image](https://github.com/LinMoQC/Memory-Blog/assets/59323207/161a71ab-6e47-4afd-a3eb-3669ee4a787a)
