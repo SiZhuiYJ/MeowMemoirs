@@ -2,6 +2,7 @@
   {
     "name": "pointer",
     "list": [
+      ".TopMao",
       ".btn",
       ".dropdown",
       ".el-breadcrumb__inner a:hover,.el-breadcrumb__inner.is-link:hover",
