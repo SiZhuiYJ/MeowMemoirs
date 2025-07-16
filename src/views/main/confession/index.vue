@@ -7,8 +7,9 @@ const { isMobile } = useScreenStore();
 import hug from "/img/love/hug.png";
 import crying from "/img/love/crying.png";
 
-const isConfession = ref(false);
-const confessionName = ref(route.query.name);
+const isConfession = ref<boolean>(false);
+const confessionName = ref<string>(route.query.name as string);
+const confessingName = ref<string>(route.query.confessing as string);
 const confessionImg = ref<string[]>([
   "/img/love/heart.png",
   "/img/love/shocked.png",
@@ -72,7 +73,7 @@ const handleNotConfession = () => {
 </script>
 <template>
   <div class="confession-container">
-    <div class="confession-danmu">
+    <div class="confession-tis">
       <TypewriterEffect
         :messages="loveTextList"
         :type-speed="80"
@@ -93,7 +94,7 @@ const handleNotConfession = () => {
           :delete-speed="40"
           :pause-duration="2000"
           :empty-pause="300"
-          :font-size="30"
+          :font-size="isMobile ? 25 : 30"
         />
       </div>
       <div class="confession-content">
@@ -120,6 +121,9 @@ const handleNotConfession = () => {
       <span class="love-content" :style="{ fontSize: !isMobile ? '25px' : '15px' }"
         >💕 从此以后，我们就是彼此最重要的人了 💕</span
       >
+      <span class="love-name" :style="{ fontSize: !isMobile ? '20px' : '10px' }">
+        {{ confessingName }} {{ confessingName ? "and" : "love" }} {{ confessionName }}
+      </span>
     </div>
   </div>
 </template>
@@ -133,7 +137,7 @@ const handleNotConfession = () => {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  .confession-danmu {
+  .confession-tis {
     position: absolute;
     padding: 5px;
     width: 100%;
@@ -172,7 +176,6 @@ const handleNotConfession = () => {
 
       .willing,
       .unwilling {
-        // width: 120px;
         text-align: center;
         height: 40px;
         color: #fff;
@@ -209,6 +212,32 @@ const handleNotConfession = () => {
       color: #68495b;
       font-size: 20px;
     }
+    .love-name {
+      background: linear-gradient(
+          to right,
+          red,
+          orange,
+          yellow,
+          lime,
+          aqua,
+          blue,
+          fuchsia
+        )
+        0 / 100%;
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: hue 2s linear infinite;
+      padding: 20px;
+    }
+  }
+}
+@keyframes hue {
+  from {
+    filter: hue-rotate(360deg);
+  }
+  to {
+    filter: hue-rotate(0deg);
   }
 }
 </style>

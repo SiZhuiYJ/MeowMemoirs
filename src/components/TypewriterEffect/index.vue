@@ -99,6 +99,8 @@ onBeforeUnmount(() => {
 .typewriter-container {
   min-height: 1.5em;
   display: inline-flex;
+  flex-direction: row;
+  flex-wrap: wrap;
   align-items: center;
   .typewriter-text {
     white-space: pre;
@@ -106,8 +108,11 @@ onBeforeUnmount(() => {
 }
 
 .cursor {
-  font-weight: 400;
-  margin-left: 2px;
+  font-weight: bold;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  font-family: "Courier New", Courier, monospace;
 }
 
 .blinking {

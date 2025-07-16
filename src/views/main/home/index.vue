@@ -49,7 +49,8 @@ const imgList = [
       />
     </div>
     <div class="message">
-      <span>欢迎参观我的小破网站</span><button @click="outLogin">退出登录</button>
+      <span>欢迎参观我的小破网站</span>
+      <button @click="outLogin">退出登录</button>
       <button @click="login">登录</button>
     </div>
     <div class="info">

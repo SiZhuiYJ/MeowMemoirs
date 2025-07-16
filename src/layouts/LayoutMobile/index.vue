@@ -10,31 +10,24 @@ import Refresh from "@/layouts/components/HeaderBackstage/components/Refresh/ind
           <div><Refresh></Refresh></div>
         </el-header>
         <el-breadcrumb separator="/" class="bread">
-          <el-breadcrumb-item :to="{ path: '/' }">
-            {{ $route.fullPath }}</el-breadcrumb-item
-          >
+          <el-breadcrumb-item :to="{ path: '/' }" class="bread-item">
+            {{ $route.fullPath }}
+          </el-breadcrumb-item>
         </el-breadcrumb>
         <el-container class="main-container">
           <el-main class="main">
             <router-view></router-view>
           </el-main>
-          <el-footer class="el-footer"> </el-footer>
         </el-container>
       </el-container>
     </el-container>
   </div>
 </template>
 <style scoped lang="scss">
-.el-header,
-.el-footer {
-  padding: 0;
-  margin: 0;
-  height: 40px;
-}
 .main-container {
   padding: 0;
   margin: 0;
-  height: calc(100vh - 14px - 40px);
+  height: calc(100vh - 14px - 32px);
   overflow-y: auto;
   // 隐藏滚动条
   &::-webkit-scrollbar {
@@ -54,10 +47,29 @@ import Refresh from "@/layouts/components/HeaderBackstage/components/Refresh/ind
     height: 0;
   }
 }
-.main {
-  padding: 3px;
+.el-header {
+  padding: 0;
   margin: 0;
-  // 隐藏滚动条
+  height: 32px;
+}
+
+.main {
+  padding: 0;
+  margin: 0;
   overflow: clip;
+}
+.el-footer {
+  background: #f5f5f5;
+}
+</style>
+<style lang="scss">
+.bread-item {
+  width: 100%;
+  span {
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 </style>
