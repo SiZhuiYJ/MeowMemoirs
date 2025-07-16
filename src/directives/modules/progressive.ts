@@ -13,7 +13,6 @@ const ProgressiveDirective: Directive = {
   mounted(el: HTMLImageElement, binding: ProgressiveImageBinding) {
     const { value: previewUrl, modifiers } = binding;
     const mainUrl = el.src;
-
     // 如果已经是预览图，不需要处理
     if (el.src === previewUrl) return;
 
@@ -64,26 +63,25 @@ function setupLazyLoad(el: HTMLImageElement, mainUrl: string) {
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
-        // 当元素进入视口时加载主图
         if (entry.isIntersecting) {
+          // 当图片进入可视区域时加载主图
           loadMainImage(el, mainUrl);
-          observer.unobserve(el); // 加载后停止观察
+          // 加载完成后停止观察
+          observer.unobserve(el);
         }
       });
     },
     {
-      rootMargin: "100px", // 提前100px加载
-      threshold: 0.01, // 只要有1%可见就触发
+      rootMargin: "0px",
+      threshold: 0.1,
     }
   );
 
+  // 开始观察元素
   observer.observe(el);
 
-  // 组件卸载时清除观察者
-  //   const vm = getCurrentInstance();
-  //   vm?.proxy?.$on("hook:unmounted", () => {
-  //     observer.unobserve(el);
-  //   });
+  // 在组件卸载时停止观察(可选)
+  // 如果需要在Vue组件中使用，可以通过指令的unmounted钩子实现
 }
 
 export default ProgressiveDirective;

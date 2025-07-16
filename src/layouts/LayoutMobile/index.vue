@@ -16,7 +16,9 @@ import Refresh from "@/layouts/components/HeaderBackstage/components/Refresh/ind
         </el-breadcrumb>
         <el-container class="main-container">
           <el-main class="main">
-            <router-view></router-view>
+            <div class="main-scroll" ref="mainScroll">
+              <router-view></router-view>
+            </div>
           </el-main>
         </el-container>
       </el-container>
@@ -28,24 +30,6 @@ import Refresh from "@/layouts/components/HeaderBackstage/components/Refresh/ind
   padding: 0;
   margin: 0;
   height: calc(100vh - 14px - 32px);
-  overflow-y: auto;
-  // 隐藏滚动条
-  &::-webkit-scrollbar {
-    width: 0;
-    height: 0;
-  }
-  // 滚动条轨道
-  &::-webkit-scrollbar-track {
-    background: transparent;
-    width: 0;
-    height: 0;
-  }
-  // 滚动条滑块
-  &::-webkit-scrollbar-thumb {
-    background: transparent;
-    width: 0;
-    height: 0;
-  }
 }
 .el-header {
   padding: 0;
@@ -56,7 +40,37 @@ import Refresh from "@/layouts/components/HeaderBackstage/components/Refresh/ind
 .main {
   padding: 0;
   margin: 0;
+  width: 100%;
+  height: calc(100vh - 46px);
+
   overflow: clip;
+  position: absolute;
+  .main-scroll {
+    width: 100%;
+    height: 100%;
+    // height: calc(100vh - 50px);
+    overflow-x: hidden;
+    overflow-y: auto; // 隐藏滚动条
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+    }
+    // 滚动条轨道
+    &::-webkit-scrollbar-track {
+      background: transparent;
+      width: 0;
+      height: 0;
+    }
+    // 滚动条滑块
+    &::-webkit-scrollbar-thumb {
+      background: transparent;
+      width: 0;
+      height: 0;
+    }
+  }
 }
 .el-footer {
   background: #f5f5f5;

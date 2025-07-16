@@ -248,7 +248,7 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   transition: box-shadow 0.2s ease-in-out;
-  background-color: var(--el-header-bg-color);
+  background-color: initial;
   border-radius: 5px;
   border: 0;
   &:hover {

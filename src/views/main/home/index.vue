@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { useUserStore } from "@/stores";
 import { useRouter } from "vue-router";
+import { useScreenStore } from "@/utils/screen";
+import PersonalDataCard from "./PersonalDataCard/index.vue";
+const { isMobile } = useScreenStore();
 const router = useRouter();
 const outLogin = () => {
   useUserStore().setToken(null);
@@ -10,28 +13,23 @@ const login = () => {
 };
 const imgList = [
   {
-    progressive: "/img/_1-720p.webp",
-    src: "/img/_1-4k.webp",
+    progressive: "/img/home/_2-720p.webp",
+    src: "/img/home/_2-4k.webp",
     alt: "Image 示例图片",
   },
   {
-    progressive: "/img/_2-720p.webp",
-    src: "/img/_2-4k.webp",
+    progressive: "/img/home/_4-720p.webp",
+    src: "/img/home/_4-4k.webp",
     alt: "Image 示例图片",
   },
   {
-    progressive: "/img/_4-720p.webp",
-    src: "/img/_4-4k.webp",
+    progressive: "/img/home/_8-720p.webp",
+    src: "/img/home/_8-4k.webp",
     alt: "Image 示例图片",
   },
   {
-    progressive: "/img/_8-720p.webp",
-    src: "/img/_8-4k.webp",
-    alt: "Image 示例图片",
-  },
-  {
-    progressive: "/img/_9-720p.webp",
-    src: "/img/_9-4k.webp",
+    progressive: "/img/home/_9-720p.webp",
+    src: "/img/home/_9-4k.webp",
     alt: "Image 示例图片",
   },
 ];
@@ -39,6 +37,25 @@ const imgList = [
 
 <template>
   <div class="progressive-container">
+    <!-- 封面 -->
+
+    <div class="cover">
+      <img
+        class="preview"
+        src="/img/home/_1-4k.webp"
+        v-progressive.lazy="'/img/home/_1-4k.webp'"
+        alt="Image 示例图片"
+      />
+      <div :class="isMobile ? 'mobile-box' : 'login-box'">
+        <div
+          class="glitch"
+          data-text="喵咪记事簿"
+          :style="{ writingMode: isMobile ? 'vertical-rl' : 'horizontal-tb' }"
+        >
+          喵咪记事簿
+        </div>
+      </div>
+    </div>
     <div class="progressive" v-for="(item, index) in imgList">
       <img
         class="preview"
@@ -52,6 +69,7 @@ const imgList = [
       <span>欢迎参观我的小破网站</span>
       <button @click="outLogin">退出登录</button>
       <button @click="login">登录</button>
+      <PersonalDataCard />
     </div>
     <div class="info">
       <p>
@@ -59,25 +77,75 @@ const imgList = [
       </p>
     </div>
   </div>
-
-  <div class="login-box">
-    <div class="glitch" data-text="喵咪记事簿">喵咪记事簿</div>
-  </div>
 </template>
 <style scoped lang="scss">
 .progressive-container {
   width: 100%;
   height: 100%;
-  overflow-x: hidden;
-  overflow-y: auto;
+  .cover {
+    width: 100%;
+    position: relative;
+    height: 100%;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .login-box,
+    .mobile-box {
+      position: absolute;
+
+      .glitch {
+        position: relative;
+        font-size: 60px;
+        font-weight: bold;
+        color: #ffffff;
+        letter-spacing: 3px;
+        z-index: 1;
+
+        &:before,
+        &:after {
+          display: block;
+          content: attr(data-text);
+          position: absolute;
+          top: 0;
+          left: 0;
+          opacity: 0.8;
+        }
+
+        &:before {
+          animation: glitch-it 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+          color: #00ffff;
+          z-index: -1;
+        }
+
+        &:after {
+          animation: glitch-it 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) reverse both
+            infinite;
+          color: #ff00ff;
+          z-index: -2;
+        }
+      }
+    }
+    .login-box {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .mobile-box {
+      top: 0;
+      left: 0;
+    }
+  }
   .progressive {
     position: relative;
     overflow: hidden;
     background-color: #f5f5f5;
+
+    padding: 10px 10px 0;
   }
   .info,
   .message {
-    height: 80px;
     width: 100%;
     display: flex;
     text-align: center;
@@ -86,6 +154,7 @@ const imgList = [
     align-items: center;
   }
   .message {
+    height: 400px;
     span {
       background: linear-gradient(to right, var(--el-color-primary), #61c454) no-repeat
         right bottom;
@@ -98,6 +167,7 @@ const imgList = [
     }
   }
   .info {
+    height: 80px;
     background-color: #000;
     p {
       a {
@@ -122,41 +192,6 @@ const imgList = [
           right: 0;
         }
       }
-    }
-  }
-}
-.login-box {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  .glitch {
-    position: relative;
-    font-size: 60px;
-    font-weight: bold;
-    color: #ffffff;
-    letter-spacing: 3px;
-    z-index: 1;
-    &:before,
-    &:after {
-      display: block;
-      content: attr(data-text);
-      position: absolute;
-      top: 0;
-      left: 0;
-      opacity: 0.8;
-    }
-
-    &:before {
-      animation: glitch-it 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
-      color: #00ffff;
-      z-index: -1;
-    }
-
-    &:after {
-      animation: glitch-it 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) reverse both infinite;
-      color: #ff00ff;
-      z-index: -2;
     }
   }
 }

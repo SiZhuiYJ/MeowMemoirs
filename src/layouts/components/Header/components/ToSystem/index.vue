@@ -1,10 +1,10 @@
 <template>
-  <div
-    @click="toSystem"
-    class="toolbar"
-    style="color: var(--el-header-text-color-regular); width: 60px"
-  >
-    <span class="to-system">控制台</span>
+  <div @click="toSystem" class="toolbar" style="color: var(--el-header-text-color)">
+    <el-tooltip content="控制台">
+      <el-icon class="to-system" style="font-size: 20px">
+        <Monitor />
+      </el-icon>
+    </el-tooltip>
   </div>
 </template>
 

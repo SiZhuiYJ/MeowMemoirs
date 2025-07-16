@@ -1,8 +1,13 @@
 <script setup lang="ts">
 import { layoutRouter } from "@/routers/modules/staticRouter";
 import { useRoute, useRouter } from "vue-router";
+import { useGlobalStore } from "@/stores";
+const globalStore = useGlobalStore();
 import Toolbar from "./components/Toolbar/index.vue";
 import Logo from "./components/Logo/index.vue";
+defineProps<{
+  scrollHeight: number;
+}>();
 const route = useRoute();
 const router = useRouter();
 import { ref } from "vue";
@@ -13,13 +18,21 @@ const handleSubMenu = (path: string) => {
 };
 </script>
 <template>
-  <div class="common-header">
+  <div
+    class="common-header"
+    :class="{ scrolled: scrollHeight > 50 }"
+    :style="{
+      background: scrollHeight > 50 ? 'var(--el-header-bg-color)' : 'transparent',
+      '--el-header-text-color':
+        scrollHeight > 50 ? (globalStore.isDark ? '#fff' : '#000') : '#fff',
+    }"
+  >
     <Logo></Logo>
     <el-menu
       class="el-menu-popper-demo"
       mode="horizontal"
       :popper-offset="16"
-      style="max-width: 600px; height: 40px; border-bottom: none"
+      style="max-width: 600px; height: 40px; border-bottom: none; background: none"
       :ellipsis="false"
     >
       <el-menu-item
@@ -29,7 +42,7 @@ const handleSubMenu = (path: string) => {
         :class="{
           'is-active': columnActive === item.path,
         }"
-        style="border-bottom: none !important"
+        style="border-bottom: none !important; color: var(--el-header-text-color)"
         :icon="item.meta?.icon"
         @click="handleSubMenu(item.path)"
         >{{ item.meta?.title }}</el-menu-item
@@ -44,8 +57,25 @@ const handleSubMenu = (path: string) => {
   justify-content: space-between;
   align-items: center;
   height: 40px;
-  background-color: var(--el-header-bg-color);
-  border-bottom: 1px solid var(--el-border-color-light);
+  padding: 0 5px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: calc(100% - 30px);
+  border-radius: 10px;
+  margin: 10px;
+  transition: all 0.3s ease;
+  color: var(--el-header-text-color);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  color: #000;
+  backdrop-filter: blur(1px);
+
+  &.scrolled {
+    margin: 0;
+    border-radius: 0;
+    width: calc(100% - 10px);
+    backdrop-filter: blur(0);
+  }
 }
 .is-active {
   border-top: 2px solid var(--el-menu-active-color);

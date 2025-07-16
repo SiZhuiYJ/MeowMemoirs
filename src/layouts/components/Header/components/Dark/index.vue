@@ -1,7 +1,7 @@
 <template>
   <div
     class="toolbar"
-    style="color: var(--el-header-text-color-regular); width: 32px; border-radius: 50%"
+    style="color: var(--el-header-text-color); width: 32px; border-radius: 50%"
   >
     <el-tooltip :content="!globalStore.isDark ? '明亮模式' : '暗夜模式'">
       <div class="mode-hover">

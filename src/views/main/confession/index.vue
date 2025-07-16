@@ -141,7 +141,7 @@ const handleNotConfession = () => {
     position: absolute;
     padding: 5px;
     width: 100%;
-    top: 0;
+    top: 50px;
     left: 0;
   }
   .confession {
