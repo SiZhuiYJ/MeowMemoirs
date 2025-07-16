@@ -27,23 +27,29 @@ const imgList = [
     src: "/img/home/_8-4k.webp",
     alt: "Image 示例图片",
   },
-  {
-    progressive: "/img/home/_9-720p.webp",
-    src: "/img/home/_9-4k.webp",
-    alt: "Image 示例图片",
-  },
+];
+const TextList = [
+  "🐾「爪印轻点，心事成册——喵咪记事簿，记录你的每一份柔软」",
+  "📸「毛茸茸的时光机，一键收藏与主子的独家记忆」",
+  "🌙「深夜emo时，翻开和TA的暖心备忘录」",
+  "🎨「涂鸦、便签、喵星语翻译——你的撸猫日常，我们承包了！」",
+  "📅「喵生大事提醒：绝育？驱虫？打疫苗？本簿替你记牢！」",
+  "✨「比猫肚皮更软的，是这里存下的温柔时光」",
+  "💌「给未来的一封信：当TA老去，这里还有年轻的模样」",
+  "🚀「懒人福音！语音记事+自动生成喵星日记」",
+  "🌸「每一页都是猫薄荷——让记录变成享受」",
+  "👫「独居青年的云养猫搭子，社恐的秘密树洞」",
 ];
 </script>
 
 <template>
   <div class="progressive-container">
     <!-- 封面 -->
-
     <div class="cover">
       <img
         class="preview"
-        src="/img/home/_1-4k.webp"
-        v-progressive.lazy="'/img/home/_1-4k.webp'"
+        :src="`/img/home/_${isMobile ? '9' : '1'}-4k.webp`"
+        v-progressive.lazy="`/img/home/_${isMobile ? '9' : '1'}-720p.webp`"
         alt="Image 示例图片"
       />
       <div :class="isMobile ? 'mobile-box' : 'login-box'">
@@ -55,6 +61,21 @@ const imgList = [
           喵咪记事簿
         </div>
       </div>
+      <!-- 打字机宣传语 -->
+      <div class="typing">
+        <div class="typing-title">
+          欢迎来到<span style="font-size: 30px; color: #e3c0df">喵咪记事簿</span>
+        </div>
+        <TypewriterEffect
+          :messages="TextList"
+          :type-speed="80"
+          :delete-speed="40"
+          :pause-duration="2000"
+          :empty-pause="300"
+          :font-size="isMobile ? 25 : 30"
+          style="color: #fff"
+        />
+      </div>
     </div>
     <div class="progressive" v-for="(item, index) in imgList">
       <img
@@ -63,6 +84,15 @@ const imgList = [
         :src="item.src"
         :alt="item.alt"
         :key="index"
+      />
+    </div>
+    <!-- 封页 -->
+    <div class="page-break">
+      <img
+        class="preview"
+        :src="`/img/home/_${isMobile ? '1' : '9'}-4k.webp`"
+        v-progressive.lazy="`/img/home/_${isMobile ? '1' : '9'}-720p.webp`"
+        alt="Image 示例图片"
       />
     </div>
     <div class="message">
@@ -92,12 +122,13 @@ const imgList = [
       object-fit: cover;
     }
     .login-box,
-    .mobile-box {
+    .mobile-box,
+    .typing {
       position: absolute;
 
       .glitch {
         position: relative;
-        font-size: 60px;
+        font-size: 50px;
         font-weight: bold;
         color: #ffffff;
         letter-spacing: 3px;
@@ -127,6 +158,19 @@ const imgList = [
         }
       }
     }
+    .typing {
+      left: 50%;
+      bottom: 20%;
+      transform: translate(-50%, 0);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #fff;
+      font-size: 20px;
+      .typing-title {
+        padding: 0 0 20px;
+      }
+    }
     .login-box {
       top: 50%;
       left: 50%;
@@ -150,8 +194,8 @@ const imgList = [
     display: flex;
     text-align: center;
     flex-direction: row;
-    justify-content: center;
     align-items: center;
+    justify-content: space-around;
   }
   .message {
     height: 400px;

@@ -26,6 +26,8 @@ import loadlistener from "@/layouts/components/HeaderBackstage/components/LoadLi
   // 间隔
   gap: 6px;
   height: 100%;
+  z-index: 10;
+  height: 100%;
 }
 </style>
 <style lang="scss">

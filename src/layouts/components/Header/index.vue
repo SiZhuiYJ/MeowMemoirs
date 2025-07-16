@@ -5,9 +5,16 @@ import { useGlobalStore } from "@/stores";
 const globalStore = useGlobalStore();
 import Toolbar from "./components/Toolbar/index.vue";
 import Logo from "./components/Logo/index.vue";
+import Top from "./components/Top/index.vue";
 defineProps<{
   scrollHeight: number;
 }>();
+const emit = defineEmits<{
+  (e: "backToTop"): void;
+}>();
+const handBackToTop = () => {
+  emit("backToTop");
+};
 const route = useRoute();
 const router = useRouter();
 import { ref } from "vue";
@@ -48,7 +55,13 @@ const handleSubMenu = (path: string) => {
         >{{ item.meta?.title }}</el-menu-item
       >
     </el-menu>
-    <Toolbar></Toolbar>
+    <Top :scrollHeight="scrollHeight" @click="handBackToTop()" />
+    <Toolbar
+      :style="{
+        background: scrollHeight > 50 ? 'var(--el-header-bg-color)' : 'transparent',
+      }"
+      style="transition: all 0.3s ease"
+    ></Toolbar>
   </div>
 </template>
 <style scoped lang="scss">

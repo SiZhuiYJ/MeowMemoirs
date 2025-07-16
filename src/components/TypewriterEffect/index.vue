@@ -1,41 +1,50 @@
 <template>
   <div class="typewriter-container">
-    <span
-      ref="textElement"
-      class="typewriter-text"
-      :style="{ fontSize: fontSize + 'px' }"
-    >
+    <span ref="textElement" class="typewriter-text" :style="textStyle">
       {{ displayText }}
-    </span>
-    <span
-      class="cursor"
-      :class="{ blinking: isTyping }"
-      :style="{ fontSize: fontSize + 'px' }"
-    >
-      |
+      <span class="cursor" :class="{ blinking: isTyping }">|</span>
     </span>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 
-const props = defineProps<{
+interface TypewriterProps {
   messages: string[];
-  typeSpeed?: number; // 打字速度（毫秒）
-  deleteSpeed?: number; // 删除速度（毫秒）
-  pauseDuration?: number; // 显示完成后的暂停时间（毫秒）
-  emptyPause?: number; // 清空后的暂停时间（毫秒）
-  fontSize?: number; // 字体大小
-}>();
+  typeSpeed?: number;
+  deleteSpeed?: number;
+  pauseDuration?: number;
+  emptyPause?: number;
+  fontSize?: number;
+  cursorColor?: string;
+  textColor?: string;
+}
+
+const props = withDefaults(defineProps<TypewriterProps>(), {
+  typeSpeed: 100,
+  deleteSpeed: 50,
+  pauseDuration: 1500,
+  emptyPause: 500,
+  fontSize: 16,
+  cursorColor: "currentColor",
+  textColor: "currentColor",
+});
 
 const textElement = ref<HTMLElement | null>(null);
 const displayText = ref("");
 const isTyping = ref(true);
-let timer: number | null = null;
+let timer: ReturnType<typeof setTimeout> | null = null;
 let currentIndex = 0;
 let currentMessage = "";
 let isDeleting = false;
+
+// 使用CSS变量
+const textStyle = computed(() => ({
+  "--font-size": `${props.fontSize}px`,
+  "--text-color": props.textColor,
+  "--cursor-color": props.cursorColor,
+}));
 
 // 获取随机消息（避免连续重复）
 const getRandomMessage = () => {
@@ -50,18 +59,16 @@ const getRandomMessage = () => {
 const typeWriter = () => {
   if (timer) clearTimeout(timer);
 
-  const typeDelay = isDeleting ? props.deleteSpeed || 50 : props.typeSpeed || 100;
+  const typeDelay = isDeleting ? props.deleteSpeed : props.typeSpeed;
 
-  // 当前文本处理状态
   if (!isDeleting) {
     // 打字模式
     displayText.value = currentMessage.substring(0, currentIndex + 1);
     currentIndex++;
 
-    // 检查是否完成打字
     if (currentIndex === currentMessage.length) {
       isDeleting = true;
-      timer = (setTimeout(typeWriter, props.pauseDuration || 1500) as unknown) as number;
+      timer = setTimeout(typeWriter, props.pauseDuration);
       return;
     }
   } else {
@@ -69,27 +76,39 @@ const typeWriter = () => {
     displayText.value = currentMessage.substring(0, currentIndex - 1);
     currentIndex--;
 
-    // 检查是否完成删除
     if (currentIndex === 0) {
       isDeleting = false;
       currentMessage = getRandomMessage();
-      timer = (setTimeout(typeWriter, props.emptyPause || 500) as unknown) as number;
+      timer = setTimeout(typeWriter, props.emptyPause);
       return;
     }
   }
 
-  timer = (setTimeout(typeWriter, typeDelay) as unknown) as number;
+  timer = setTimeout(typeWriter, typeDelay);
 };
 
-// 初始化
+// 监听消息变化
+watch(
+  () => props.messages,
+  (newMessages) => {
+    if (newMessages.length > 0) {
+      currentMessage = getRandomMessage();
+      if (timer) clearTimeout(timer);
+      displayText.value = "";
+      currentIndex = 0;
+      isDeleting = false;
+      timer = setTimeout(typeWriter, props.emptyPause);
+    }
+  }
+);
+
 onMounted(() => {
   if (props.messages.length > 0) {
     currentMessage = getRandomMessage();
-    timer = (setTimeout(typeWriter, props.emptyPause || 500) as unknown) as number;
+    timer = setTimeout(typeWriter, props.emptyPause);
   }
 });
 
-// 清理定时器
 onBeforeUnmount(() => {
   if (timer) clearTimeout(timer);
 });
@@ -97,26 +116,30 @@ onBeforeUnmount(() => {
 
 <style scoped lang="scss">
 .typewriter-container {
-  min-height: 1.5em;
-  display: inline-flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
-  .typewriter-text {
-    white-space: pre;
+  display: inline-block;
+  min-height: calc(var(--font-size) * 1.5);
+  line-height: 1.5;
+}
+
+.typewriter-text {
+  font-size: var(--font-size);
+  color: var(--text-color);
+  white-space: pre-wrap;
+  word-break: break-word;
+
+  .cursor {
+    display: inline-block;
+    color: var(--cursor-color);
+    font-weight: bold;
+    margin-left: -0.05em; // 消除光标与文本间的间隙
+    vertical-align: baseline;
+    position: relative;
+    top: 0.05em; // 微调垂直位置
   }
 }
 
-.cursor {
-  font-weight: bold;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  font-family: "Courier New", Courier, monospace;
-}
-
 .blinking {
-  animation: blink 1s infinite;
+  animation: blink 1s step-end infinite;
 }
 
 @keyframes blink {

@@ -2,24 +2,30 @@
 import commonHeader from "@/layouts/components/Header/index.vue";
 import { useTemplateRef } from "vue";
 import { ref, onMounted, onBeforeUnmount } from "vue";
-const mainScroll = useTemplateRef<HTMLElement>("mainScroll");
+const mainScrollRef = useTemplateRef<HTMLDivElement>("mainScrollRef");
 const scrollHeight = ref(0);
 
 const handleScroll = () => {
-  if (!mainScroll.value) return;
-  scrollHeight.value = mainScroll.value?.scrollTop || 0;
-  console.log(mainScroll.value);
-  console.log(scrollHeight.value);
+  if (!mainScrollRef.value) return;
+  scrollHeight.value = mainScrollRef.value?.scrollTop || 0;
+};
+// 返回顶部
+const backToTop = () => {
+  if (!mainScrollRef.value) return;
+  mainScrollRef.value.scrollTo({
+    top: 0,
+    behavior: "smooth", // 平滑滚动
+  });
 };
 onMounted(() => {
-  if (mainScroll.value) {
-    mainScroll.value.addEventListener("scroll", handleScroll);
+  if (mainScrollRef.value) {
+    mainScrollRef.value.addEventListener("scroll", handleScroll);
   }
 });
 
 onBeforeUnmount(() => {
-  if (mainScroll.value) {
-    mainScroll.value.removeEventListener("scroll", handleScroll);
+  if (mainScrollRef.value) {
+    mainScrollRef.value.removeEventListener("scroll", handleScroll);
   }
 });
 </script>
@@ -27,10 +33,13 @@ onBeforeUnmount(() => {
   <div class="common-layout">
     <el-container style="height: 100vh">
       <el-header class="header" height="40px">
-        <common-header :scrollHeight="scrollHeight"></common-header>
+        <common-header
+          :scrollHeight="scrollHeight"
+          @backToTop="backToTop()"
+        ></common-header>
       </el-header>
       <el-main class="main">
-        <div class="main-scroll" ref="mainScroll">
+        <div class="main-scroll" ref="mainScrollRef">
           <router-view></router-view>
         </div>
       </el-main>
@@ -58,6 +67,7 @@ onBeforeUnmount(() => {
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.3s;
     &::-webkit-scrollbar {
       width: 0;
       height: 0;

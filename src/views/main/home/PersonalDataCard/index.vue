@@ -83,15 +83,6 @@ const openEmail = () => {
   transition: all 0.5s ease-in-out;
 }
 
-/* .cont {
-	text-align: center;
-	line-height: 280px;
-	font-size: 14px;
-	color: #fff;
-	position: relative;
-	z-index: 2;
-} */
-
 .card .mail {
   position: absolute;
   right: 2rem;
@@ -120,7 +111,7 @@ const openEmail = () => {
   border: 0px solid #fbb9b6;
   overflow: hidden;
   transition: all 0.5s ease-in-out 0.2s, z-index 0.5s ease-in-out 0.2s;
-  background-image: url("/img/home/_2-720p.webp");
+  background-image: url("/img/user/Avatar.webp");
   /* 背景图垂直、水平均居中 */
   background-position: center center;
   /* 背景图不平铺 */
