@@ -16,11 +16,14 @@
   position: absolute;
   top: 50%;
   left: 50%;
+  width: calc(100vw - 10%);
   transform: translate(-50%, -50%);
   font-size: 50px;
   color: white;
   text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #fff, 0 0 50px #fff,
     0 0;
+  display: flex;
+  justify-content: center;
 }
 @function star($n) {
   $result: "#{math.random(100)}vw #{math.random(100)}vh #fff";
@@ -30,8 +33,8 @@
   @return string.unquote($result); // 使用模块化函数
 }
 .starry-sky {
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   left: 0;
   top: 0;
   padding: 0;

@@ -3,6 +3,7 @@ import { useUserStore } from "@/stores";
 import { useRouter } from "vue-router";
 import { useScreenStore } from "@/utils/screen";
 import PersonalDataCard from "./PersonalDataCard/index.vue";
+import ToHome from "./ToHome/index.vue";
 const { isMobile } = useScreenStore();
 const router = useRouter();
 const outLogin = () => {
@@ -52,29 +53,48 @@ const TextList = [
         v-progressive.lazy="`/img/home/_${isMobile ? '9' : '1'}-720p.webp`"
         alt="Image 示例图片"
       />
-      <div :class="isMobile ? 'mobile-box' : 'login-box'">
-        <div
-          class="glitch"
-          data-text="喵咪记事簿"
-          :style="{ writingMode: isMobile ? 'vertical-rl' : 'horizontal-tb' }"
-        >
-          喵咪记事簿
-        </div>
-      </div>
+
       <!-- 打字机宣传语 -->
-      <div class="typing">
+      <div
+        class="typing"
+        :style="{ left: isMobile ? '5%' : '20%', width: isMobile ? '' : 'auto' }"
+      >
         <div class="typing-title">
           欢迎来到<span style="font-size: 30px; color: #e3c0df">喵咪记事簿</span>
         </div>
+        <ToHome class="typing-btn" />
         <TypewriterEffect
           :messages="TextList"
           :type-speed="80"
           :delete-speed="40"
-          :pause-duration="2000"
+          :pause-duration="3000"
           :empty-pause="300"
           :font-size="isMobile ? 25 : 30"
           style="color: #fff"
         />
+      </div>
+      <!-- 向下标 -->
+      <div class="down-arrow">
+        <span class="arrow-title">逝去的人会永远活在我们的回忆里</span>
+        <div class="arrow-down">
+          <svg
+            t="1752727759925"
+            class="icon"
+            viewBox="0 0 1024 1024"
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            p-id="4445"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+            width="40"
+            height="40"
+          >
+            <path
+              d="M512 817.664l264.832-264.832-60.330667-60.330667L512 697.002667l-204.501333-204.501334-60.330667 60.330667L512 817.664z m0-241.066667l264.832-264.832-60.330667-60.330666L512 455.936 307.498667 251.434667 247.168 311.765333 512 576.597333z"
+              fill="#FFF"
+              p-id="4446"
+            ></path>
+          </svg>
+        </div>
       </div>
     </div>
     <div class="progressive" v-for="(item, index) in imgList">
@@ -95,11 +115,23 @@ const TextList = [
         alt="Image 示例图片"
       />
     </div>
-    <div class="message">
-      <span>欢迎参观我的小破网站</span>
-      <button @click="outLogin">退出登录</button>
-      <button @click="login">登录</button>
+    <div :class="isMobile ? 'mobile' : 'message'">
+      <div class="message-btn">
+        <span>欢迎参观我的小破网站</span>
+        <button @click="outLogin">退出登录</button>
+        <button @click="login">登录</button>
+      </div>
+
       <PersonalDataCard />
+      <div :class="isMobile ? 'mobile-box' : 'login-box'">
+        <div
+          class="glitch"
+          data-text="喵咪记事簿"
+          :style="{ writingMode: isMobile ? 'vertical-rl' : 'horizontal-tb' }"
+        >
+          喵咪记事簿
+        </div>
+      </div>
     </div>
     <div class="info">
       <p>
@@ -110,20 +142,90 @@ const TextList = [
 </template>
 <style scoped lang="scss">
 .progressive-container {
-  width: 100%;
-  height: 100%;
+  width: 100vw;
   .cover {
     width: 100%;
     position: relative;
-    height: 100%;
+    height: 100vh;
     img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
-    .login-box,
-    .mobile-box,
+
     .typing {
+      position: absolute;
+      top: 50%;
+      transform: translate(-150%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      color: #fff;
+      font-size: 20px;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(2px);
+      border-radius: 20px;
+      animation: center-to 1s forwards ease-in-out;
+      width: calc(100vw - 10% - 20px);
+      .typing-title {
+        font-size: 30px;
+        padding: 0 10px;
+      }
+      .typing-btn {
+        padding: 20px 0;
+      }
+    }
+    .down-arrow {
+      position: absolute;
+      left: 50%;
+      bottom: -200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: bottom-to 1s forwards ease-in-out;
+      .arrow-title {
+        width: calc(100vw - 10%);
+        color: #fff;
+        display: flex;
+        justify-content: center;
+      }
+      .arrow-down {
+        width: 40px;
+        height: 40px;
+      }
+    }
+  }
+  .page-break,
+  .progressive {
+    background-color: #f5f5f5;
+    width: calc(100vw - 20px);
+    padding: 10px 10px 0;
+    img {
+      width: 100%;
+    }
+  }
+
+  .message {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+  }
+  .mobile {
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+  }
+  .info,
+  .mobile,
+  .message {
+    width: 100%;
+    display: flex;
+    text-align: center;
+    position: relative;
+    height: 400px;
+    .login-box,
+    .mobile-box {
       position: absolute;
 
       .glitch {
@@ -158,19 +260,6 @@ const TextList = [
         }
       }
     }
-    .typing {
-      left: 50%;
-      bottom: 20%;
-      transform: translate(-50%, 0);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      color: #fff;
-      font-size: 20px;
-      .typing-title {
-        padding: 0 0 20px;
-      }
-    }
     .login-box {
       top: 50%;
       left: 50%;
@@ -180,37 +269,22 @@ const TextList = [
       top: 0;
       left: 0;
     }
-  }
-  .progressive {
-    position: relative;
-    overflow: hidden;
-    background-color: #f5f5f5;
-
-    padding: 10px 10px 0;
-  }
-  .info,
-  .message {
-    width: 100%;
-    display: flex;
-    text-align: center;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-around;
-  }
-  .message {
-    height: 400px;
-    span {
-      background: linear-gradient(to right, var(--el-color-primary), #61c454) no-repeat
-        right bottom;
-      background-size: 0 2px;
-      transition: background-size 1000ms;
-      &:hover {
-        background-position-x: left;
-        background-size: 100% 2px;
+    .message-btn {
+      span {
+        background: linear-gradient(to right, var(--el-color-primary), #61c454) no-repeat
+          right bottom;
+        background-size: 0 2px;
+        transition: background-size 1000ms;
+        &:hover {
+          background-position-x: left;
+          background-size: 100% 2px;
+        }
       }
     }
   }
   .info {
+    align-items: center;
+    justify-content: center;
     height: 80px;
     background-color: #000;
     p {
@@ -239,7 +313,20 @@ const TextList = [
     }
   }
 }
-
+@keyframes center-to {
+  100% {
+    transform: translate(0, -50%);
+  }
+}
+@keyframes bottom-to {
+  0% {
+    transform: translate(-50%, 0);
+  }
+  100% {
+    // 向上移200px
+    transform: translate(-50%, -200px);
+  }
+}
 @keyframes glitch-it {
   0% {
     transform: translate(0);

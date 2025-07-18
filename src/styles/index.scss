@@ -2,18 +2,18 @@
 @use './progressive.scss';
 
 /* 小可奶酪体 */
-@font-face {
-  font-family: "MyFont";
-  src: url("../assets//fonts//XKNNL.ttf") format('truetype');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
+// @font-face {
+//   font-family: "MyFont";
+//   src: url("../assets//fonts//XKNNL.ttf") format('truetype');
+//   font-weight: normal;
+//   font-style: normal;
+//   font-display: swap;
+// }
 
 * {
   margin: 0;
   padding: 0;
-  font-family: "MyFont", Inter, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+  // font-family: "MyFont", Inter, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
   /* cursor: url("@/assets/mouse/Work.ani"), default; */
   word-break: break-word;
 }
@@ -91,10 +91,36 @@
   background-color: var(--foreground-color);
   width: 100vw;
   height: 100vh;
+
+
 }
 
 .el-menu--horizontal {
   --el-menu-horizontal-height: 100px;
+}
+
+html {
+
+  body {
+    padding: 0;
+    margin: 0;
+
+    &::-webkit-scrollbar {
+      display: none;
+
+    }
+
+    // 滚动条轨道
+    &::-webkit-scrollbar-track {
+      display: none;
+
+    }
+
+    // 滚动条滑块
+    &::-webkit-scrollbar-thumb {
+      display: none;
+    }
+  }
 }
 
 /* 为webkit浏览器设置纵向和横向滚动条宽度和高度 */

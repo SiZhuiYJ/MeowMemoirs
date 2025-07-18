@@ -129,8 +129,8 @@ const handleNotConfession = () => {
 </template>
 <style scoped lang="scss">
 .confession-container {
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   background-color: #f1d5da;
   position: relative;
   display: flex;

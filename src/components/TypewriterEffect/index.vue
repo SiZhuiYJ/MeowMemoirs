@@ -11,14 +11,14 @@
 import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 
 interface TypewriterProps {
-  messages: string[];
-  typeSpeed?: number;
-  deleteSpeed?: number;
-  pauseDuration?: number;
-  emptyPause?: number;
-  fontSize?: number;
-  cursorColor?: string;
-  textColor?: string;
+  messages: string[]; // 打字文本列表
+  typeSpeed?: number; // 打字速度（毫秒）
+  deleteSpeed?: number; // 删除速度（毫秒）
+  pauseDuration?: number; // 显示完成后的暂停时间（毫秒）
+  emptyPause?: number; // 清空后的暂停时间（毫秒）
+  fontSize?: number; // 字体大小
+  cursorColor?: string; // 光标颜色
+  textColor?: string; // 文本颜色
 }
 
 const props = withDefaults(defineProps<TypewriterProps>(), {
@@ -134,7 +134,9 @@ onBeforeUnmount(() => {
     margin-left: -0.05em; // 消除光标与文本间的间隙
     vertical-align: baseline;
     position: relative;
-    top: 0.05em; // 微调垂直位置
+    // top: 0.05em; // 微调垂直位置
+    height: 100%;
+    width: 5px;
   }
 }
 

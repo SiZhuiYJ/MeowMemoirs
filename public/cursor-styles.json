@@ -21,6 +21,7 @@
       ".el-date-table td",
       ".el-drawer__close-btn",
       ".el-dropdown-menu__item",
+      ".el-header .common-header .menu-btn",
       ".el-image-viewer__btn",
       ".el-image-viewer__btn .el-icon",
       ".el-image__preview",

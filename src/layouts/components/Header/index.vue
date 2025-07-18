@@ -59,6 +59,7 @@ const handleSubMenu = (path: string) => {
     <Toolbar
       :style="{
         background: scrollHeight > 50 ? 'var(--el-header-bg-color)' : 'transparent',
+        boxShadow: '-10px 0px 10px 0px' + (scrollHeight > 50 ? '#fff' : '#ffffff00'),
       }"
       style="transition: all 0.3s ease"
     ></Toolbar>
@@ -77,7 +78,7 @@ const handleSubMenu = (path: string) => {
   width: calc(100% - 30px);
   border-radius: 10px;
   margin: 10px;
-  transition: all 0.3s ease;
+  transition: all 0.5s ease;
   color: var(--el-header-text-color);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   color: #000;

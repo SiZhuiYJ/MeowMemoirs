@@ -1,89 +1,56 @@
 <script setup lang="ts">
 import commonHeader from "@/layouts/components/Header/index.vue";
-import { useTemplateRef } from "vue";
-import { ref, onMounted, onBeforeUnmount } from "vue";
-const mainScrollRef = useTemplateRef<HTMLDivElement>("mainScrollRef");
+import { ref } from "vue";
+import { useWindowEventListener } from "@/hooks/useEventListener";
 const scrollHeight = ref(0);
 
 const handleScroll = () => {
-  if (!mainScrollRef.value) return;
-  scrollHeight.value = mainScrollRef.value?.scrollTop || 0;
+  scrollHeight.value = window.scrollY;
 };
 // 返回顶部
 const backToTop = () => {
-  if (!mainScrollRef.value) return;
-  mainScrollRef.value.scrollTo({
+  window.scrollTo({
     top: 0,
     behavior: "smooth", // 平滑滚动
   });
 };
-onMounted(() => {
-  if (mainScrollRef.value) {
-    mainScrollRef.value.addEventListener("scroll", handleScroll);
-  }
-});
-
-onBeforeUnmount(() => {
-  if (mainScrollRef.value) {
-    mainScrollRef.value.removeEventListener("scroll", handleScroll);
-  }
-});
+useWindowEventListener("scroll", handleScroll);
 </script>
 <template>
   <div class="common-layout">
-    <el-container style="height: 100vh">
+    <el-container>
       <el-header class="header" height="40px">
         <common-header
           :scrollHeight="scrollHeight"
           @backToTop="backToTop()"
         ></common-header>
       </el-header>
-      <el-main class="main">
-        <div class="main-scroll" ref="mainScrollRef">
+      <main class="main">
+        <div class="main-scroll">
           <router-view></router-view>
         </div>
-      </el-main>
+      </main>
     </el-container>
   </div>
 </template>
 <style scoped lang="scss">
 .header {
-  position: absolute;
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: 0;
   padding: 0 !important;
   width: 100%;
 }
 .main {
-  flex: 1;
-  background-color: rgb(246, 249, 254);
-  width: 100%;
-  height: 100%;
-  padding: 0 !important;
+  width: 100vw;
+
   .main-scroll {
-    width: 100%;
-    height: 100%;
-    // height: calc(100vh - 50px);
-    overflow-x: hidden;
-    overflow-y: auto; // 隐藏滚动条
+    min-height: 100vh;
+    width: 100vw;
     display: flex;
-    align-items: center;
     justify-content: center;
-    transition: all 0.3s;
-    &::-webkit-scrollbar {
-      width: 0;
-      height: 0;
-    }
-    // 滚动条轨道
-    &::-webkit-scrollbar-track {
-      background: transparent;
-      width: 0;
-      height: 0;
-    }
-    // 滚动条滑块
-    &::-webkit-scrollbar-thumb {
-      background: transparent;
-      width: 0;
-      height: 0;
-    }
+    align-items: center;
   }
 }
 .dark .main {

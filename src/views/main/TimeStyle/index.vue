@@ -59,7 +59,8 @@ onMounted(() => {
   font-weight: 700;
   background: #111;
   color: #fff;
-  height: 100%;
+  height: 100vh;
+  width: 100%;
 }
 
 a.switcher {
