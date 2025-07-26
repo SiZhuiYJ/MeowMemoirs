@@ -1,4 +1,6 @@
 import { setANICursorWithGroupElement } from "ani-cursor.js";
+import useApiUrl from "@/libs/useApiUrl/index";
+const { getStaticFileUrl } = useApiUrl();
 let DEFAULT_CURSOR: string[] = ["body"]; // 默认光标
 let LOAD_CURSOR: string[] = ['img[lazy="loading"]', ".el-loading-mask"]; // 加载光标
 let POINTER_CURSOR: string[] = [".left-column,.Logo,.toolbar"]; // 按钮光标
@@ -16,8 +18,7 @@ let ZOOM_IN_CURSOR: string[] = []; // 放大光标
 let CONTEXT_MENU_CURSOR: string[] = []; // 鼠标右键光标
 // 鼠标样式
 const getAniUrl = (fileName: string): string => {
-  // return `https://catsdiary.com:4567/MeowMemoirs/File/MediaFile/indigenous/MapStorage?path=mouse/${fileName}.ani`;
-  return `/mouse/${fileName}.ani`;
+  return `mouse/${fileName}.ani`;
 };
 export interface GroupedCursor {
   name: string;
@@ -120,7 +121,11 @@ export async function setCursor() {
     console.log(CURSOR_CONFIGS);
     // 遍历配置并设置光标
     CURSOR_CONFIGS.forEach(({ cursors, aniType }) => {
-      setANICursorWithGroupElement(cursors, getAniUrl(aniType));
+      if (cursors.length === 0) return;
+      setANICursorWithGroupElement(
+        cursors,
+        getStaticFileUrl(getAniUrl(aniType))
+      );
     });
   } catch (error) {
     console.log(error);

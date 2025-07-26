@@ -9,8 +9,8 @@ interface handoverType {
   value: handoverParams;
   label: "账号" | "电话" | "邮箱";
 }
-const Identifier = ref("");
-const password = ref("");
+const Identifier = ref("admin_rainbow");
+const password = ref("Admin@123456");
 const handover = ref<handoverParams>("RainbowId");
 // 登录类型
 const handoverList: handoverType[] = [

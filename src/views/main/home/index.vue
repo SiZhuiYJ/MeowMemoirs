@@ -4,6 +4,8 @@ import { useRouter } from "vue-router";
 import { useScreenStore } from "@/utils/screen";
 import PersonalDataCard from "./PersonalDataCard/index.vue";
 import ToHome from "./ToHome/index.vue";
+import useApiUrl from "@/libs/useApiUrl/index";
+const { getStaticFileUrl } = useApiUrl();
 const { isMobile } = useScreenStore();
 const router = useRouter();
 const outLogin = () => {
@@ -14,18 +16,18 @@ const login = () => {
 };
 const imgList = [
   {
-    progressive: "/img/home/_2-720p.webp",
-    src: "/img/home/_2-4k.webp",
+    progressive: "img/home/_2-720p.webp",
+    src: "img/home/_2-4k.webp",
     alt: "Image 示例图片",
   },
   {
-    progressive: "/img/home/_4-720p.webp",
-    src: "/img/home/_4-4k.webp",
+    progressive: "img/home/_4-720p.webp",
+    src: "img/home/_4-4k.webp",
     alt: "Image 示例图片",
   },
   {
-    progressive: "/img/home/_8-720p.webp",
-    src: "/img/home/_8-4k.webp",
+    progressive: "img/home/_8-720p.webp",
+    src: "img/home/_8-4k.webp",
     alt: "Image 示例图片",
   },
 ];
@@ -49,8 +51,10 @@ const TextList = [
     <div class="cover">
       <img
         class="preview"
-        :src="`/img/home/_${isMobile ? '9' : '1'}-4k.webp`"
-        v-progressive.lazy="`/img/home/_${isMobile ? '9' : '1'}-720p.webp`"
+        :src="getStaticFileUrl(`img/home/_${isMobile ? '9' : '1'}-4k.webp`)"
+        v-progressive.lazy="
+          getStaticFileUrl(`img/home/_${isMobile ? '9' : '1'}-720p.webp`)
+        "
         alt="Image 示例图片"
       />
 
@@ -100,8 +104,8 @@ const TextList = [
     <div class="progressive" v-for="(item, index) in imgList">
       <img
         class="preview"
-        v-progressive.lazy="item.progressive"
-        :src="item.src"
+        v-progressive.lazy="getStaticFileUrl(item.progressive)"
+        :src="getStaticFileUrl(item.src)"
         :alt="item.alt"
         :key="index"
       />
@@ -110,8 +114,10 @@ const TextList = [
     <div class="page-break">
       <img
         class="preview"
-        :src="`/img/home/_${isMobile ? '1' : '9'}-4k.webp`"
-        v-progressive.lazy="`/img/home/_${isMobile ? '1' : '9'}-720p.webp`"
+        :src="getStaticFileUrl(`img/home/_${isMobile ? '1' : '9'}-4k.webp`)"
+        v-progressive.lazy="
+          getStaticFileUrl(`img/home/_${isMobile ? '1' : '9'}-720p.webp`)
+        "
         alt="Image 示例图片"
       />
     </div>

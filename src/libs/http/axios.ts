@@ -17,7 +17,7 @@ export interface Result<T = any> {
   data: T;
 }
 // 只有请求封装用的Yu，方便简写
-class Yu {
+class MM {
   private instance: AxiosInstance;
   // 初始化
   constructor(config: AxiosRequestConfig) {
@@ -41,7 +41,7 @@ class Yu {
       (error) => this.handleResponseError(error)
     );
   }
-  private handleRequest(config: InternalAxiosRequestConfig) {
+  private async handleRequest(config: InternalAxiosRequestConfig) {
     console.log("发送请求", config);
     // 获取token
     const token = getToken();
@@ -51,12 +51,12 @@ class Yu {
     }
     return config;
   }
-  private handleRequestError(error: any) {
+  private async handleRequestError(error: any) {
     error.data = {};
     error.data.msg = "服务器异常，请联系管理员🌻";
     return error;
   }
-  private handleResponse(response: AxiosResponse) {
+  private async handleResponse(response: AxiosResponse) {
     console.log("获得数据", response);
     const status = response.data.status || response.data.code; // 后端返回数据状态
     if (status == 200) {
@@ -65,12 +65,16 @@ class Yu {
       // console.log("200状态", status);
       return response.data;
     } else if (status == 401) {
-      // console.log("401状态", status);
       const userStore = useUserStore();
-      userStore.setToken(null); // 清空token必须使用这个，不能使用session清空，因为登录的时候js会获取一遍token还会存在。
-      meowMsgError("登录身份过期，请重新登录🌻");
-      router.replace(LOGIN_URL);
-      return Promise.reject(response.data);
+      try {
+        await userStore.postToken();
+        return await this.instance(response.config);
+      } catch (error) {
+        userStore.setToken(null); // 清空token必须使用这个，不能使用session清空，因为登录的时候js会获取一遍token还会存在。
+        meowMsgError("登录身份过期，请重新登录🌻");
+        router.replace(LOGIN_URL);
+        return Promise.reject(response.data);
+      }
     } else {
       // console.log("后端返回数据：", res.data.msg)
       meowNoticeError(
@@ -81,7 +85,7 @@ class Yu {
       ); // 可以将异常信息延续到页面中处理，使用try{}catch(error){};
     }
   }
-  private handleResponseError(error: any) {
+  private async handleResponseError(error: any) {
     // 处理网络错误，不是服务器响应的数据
     console.log("获取错误", error);
 
@@ -90,7 +94,14 @@ class Yu {
       message: errorCode[error.status] || "连接到服务器失败🌻",
     };
     if (error && error.response) {
-      if (error.status == "405") {
+      if (error.status == "401") {
+        const userStore = useUserStore();
+        await userStore.postToken();
+        return await this.instance(error.response.config);
+      } else if (error.status == "403") {
+        const userStore = useUserStore();
+        userStore.setToken(null); // 清空token必须使用这个，不能使用session清空，因为登录的时候js会获取一遍token还会存在。
+      } else if (error.status == "405") {
         data.code = 405;
         data.message = "连接到服务器失败🌻";
       } else {
@@ -105,32 +116,32 @@ class Yu {
     return Promise.reject(data); // 将错误返回给 try{} catch(){} 中进行捕获，就算不进行捕获，上方 res.data.status != 200 也会抛出提示。
   }
   // Get请求
-  get<T = Result>(url: string, params?: object): Promise<T> {
-    return this.instance.get(url, { params });
+  async get<T = Result>(url: string, params?: object): Promise<T> {
+    return await this.instance.get(url, { params });
   }
   // Post请求
-  post<T = Result>(url: string, data?: object): Promise<T> {
-    return this.instance.post(url, data);
+  async post<T = Result>(url: string, data?: object): Promise<T> {
+    return await this.instance.post(url, data);
   }
   // Put请求
-  put<T = Result>(url: string, data?: object): Promise<T> {
-    return this.instance.put(url, data);
+  async put<T = Result>(url: string, data?: object): Promise<T> {
+    return await this.instance.put(url, data);
   }
   // Delete请求 /yu/role/1
-  delete<T = Result>(url: string): Promise<T> {
-    return this.instance.delete(url);
+  async delete<T = Result>(url: string): Promise<T> {
+    return await this.instance.delete(url);
   }
   // 图片上传
-  upload<T = Result>(url: string, formData?: object): Promise<T> {
-    return this.instance.post(url, formData, {
+  async upload<T = Result>(url: string, formData?: object): Promise<T> {
+    return await this.instance.post(url, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     });
   }
   // 导出Excel
-  exportExcel<T = Result>(url: string, params?: object): Promise<T> {
-    return axios.get(import.meta.env.VITE_SERVER + url, {
+  async exportExcel<T = Result>(url: string, params?: object): Promise<T> {
+    return await axios.get(import.meta.env.VITE_SERVER + url, {
       params,
       headers: {
         Accept: "application/vnd.ms-excel",
@@ -140,8 +151,8 @@ class Yu {
     });
   }
   // 下载
-  download<T = Result>(url: string, data?: object): Promise<T> {
-    return axios.post(import.meta.env.VITE_SERVER + url, data, {
+  async download<T = Result>(url: string, data?: object): Promise<T> {
+    return await axios.post(import.meta.env.VITE_SERVER + url, data, {
       headers: {
         Authorization: "Bearer " + getToken(),
       },
@@ -191,4 +202,4 @@ const errorCode: Record<number, string> = {
   504: "504 Gateway Time - out", //网关超时
   505: "505", //HTTP版本未被支持
 };
-export default Yu; // 实例化axios
+export default MM; // 实例化axios

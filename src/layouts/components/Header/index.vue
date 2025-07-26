@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import AsideSubMenu from "./components/Menu/AsideSubMenu/index.vue";
 import { layoutRouter } from "@/routers/modules/staticRouter";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
+import { computed } from "vue";
+const route = useRoute();
 import { useGlobalStore } from "@/stores";
 const globalStore = useGlobalStore();
 import Toolbar from "./components/Toolbar/index.vue";
@@ -15,14 +18,7 @@ const emit = defineEmits<{
 const handBackToTop = () => {
   emit("backToTop");
 };
-const route = useRoute();
-const router = useRouter();
-import { ref } from "vue";
-const columnActive = ref(route.path);
-const handleSubMenu = (path: string) => {
-  columnActive.value = path;
-  router.push(path);
-};
+const columnActive = computed(() => route.path);
 </script>
 <template>
   <div
@@ -36,36 +32,49 @@ const handleSubMenu = (path: string) => {
   >
     <Logo></Logo>
     <el-menu
-      class="el-menu-popper-demo"
+      class="el-menu-popper"
+      :default-active="columnActive"
       mode="horizontal"
       :popper-offset="16"
-      style="max-width: 600px; height: 40px; border-bottom: none; background: none"
-      :ellipsis="false"
+      ellipsis
     >
-      <el-menu-item
-        v-for="item in layoutRouter[1].children"
-        :key="item.path"
-        :index="item.path"
-        :class="{
-          'is-active': columnActive === item.path,
-        }"
-        style="border-bottom: none !important; color: var(--el-header-text-color)"
-        :icon="item.meta?.icon"
-        @click="handleSubMenu(item.path)"
-        >{{ item.meta?.title }}</el-menu-item
-      >
+      <AsideSubMenu :menuList="layoutRouter[1].children" menuType="main" />
     </el-menu>
     <Top :scrollHeight="scrollHeight" @click="handBackToTop()" />
     <Toolbar
       :style="{
         background: scrollHeight > 50 ? 'var(--el-header-bg-color)' : 'transparent',
-        boxShadow: '-10px 0px 10px 0px' + (scrollHeight > 50 ? '#fff' : '#ffffff00'),
+        boxShadow:
+          '-10px 0px 10px 0px' +
+          (scrollHeight > 50 ? 'var(--el-header-bg-color)' : 'transparent'),
       }"
       style="transition: all 0.3s ease"
     ></Toolbar>
   </div>
 </template>
 <style scoped lang="scss">
+.el-menu-popper {
+  max-width: calc(100vw - 500px);
+  height: 40px;
+  border-bottom: none;
+  background: none;
+  overflow-y: hidden;
+  overflow-x: auto;
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  // 滚动条轨道
+  &::-webkit-scrollbar-track {
+    display: none;
+  }
+
+  // 滚动条滑块
+  &::-webkit-scrollbar-thumb {
+    height: 4px;
+    background: var(--el-color-primary);
+  }
+}
 .common-header {
   display: flex;
   justify-content: space-between;
@@ -90,9 +99,5 @@ const handleSubMenu = (path: string) => {
     width: calc(100% - 10px);
     backdrop-filter: blur(0);
   }
-}
-.is-active {
-  border-top: 2px solid var(--el-menu-active-color);
-  color: var(--el-menu-active-color) !important;
 }
 </style>

@@ -32,7 +32,6 @@ const LayoutComponent: Record<LayoutType, Component> = {
 
 /** 获取布局格式 */
 const layout = computed(() => useGlobalStore().layout);
-console.log(layout.value)
 // 获取当前为[移动端、IPad、PC端]仓库，阔以使用 watchEffect(() => {}) 进行监听。
 const { isMobile } = useScreenStore();
 </script>

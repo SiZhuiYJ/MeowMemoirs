@@ -7,7 +7,7 @@ import { useRouter } from "vue-router";
 import { useScreenStore } from "@/utils/screen";
 import { computed, ref } from "vue";
 const router = useRouter();
-const { getLocalImgUrl } = useApiUrl();
+const { getStaticFileUrl } = useApiUrl();
 const { isMobile, isPad, isDesktop, isScreen } = useScreenStore();
 const isLogin = ref(true);
 const login = () => {
@@ -18,18 +18,23 @@ const register = () => {
 };
 const background = computed(() => {
   return isMobile.value
-    ? getLocalImgUrl("_9.webp")
+    ? 9
     : isPad.value
-    ? getLocalImgUrl("_4.webp")
+    ? 4
     : isScreen.value
-    ? getLocalImgUrl("_3.webp")
+    ? 3
     : isDesktop.value
-    ? getLocalImgUrl("_1.webp")
-    : getLocalImgUrl("_8.webp");
+    ? 1
+    : 8;
 });
 </script>
 <template>
-  <div class="body" :style="{ 'background-image': `url(${background})` }">
+  <div class="body">
+    <img
+      class="progressive"
+      :src="getStaticFileUrl('img/home/_' + background + '-4k.webp')"
+      v-progressive.lazy="getStaticFileUrl('img/home/_' + background + '-720p.webp')"
+    />
     <div
       class="Logo animate-float"
       @click="router.push('/home/index')"
@@ -52,14 +57,14 @@ const background = computed(() => {
       <div class="con-box left" v-if="!isMobile">
         <h2>欢迎来到<span>恋爱之家</span></h2>
         <p>快来领取你的专属<span>对象</span>吧</p>
-        <img :src="getLocalImgUrl('_5.webp')" alt="" />
+        <img :src="getStaticFileUrl('img/login/_5.webp')" alt="" />
         <p>已有账号？</p>
         <button id="login" @click="login">去登录</button>
       </div>
       <div class="con-box right" v-if="!isMobile">
         <h2>欢迎来到<span>恋爱之家</span></h2>
         <p>快来看看你的可爱<span>对象</span>吧</p>
-        <img class="ILXY_image" :src="getLocalImgUrl('_6.webp')" alt="" />
+        <img class="ILXY_image" :src="getStaticFileUrl('img/login/_6.webp')" alt="" />
         <p>没有账号？</p>
         <button id="register" @click="register">去注册</button>
       </div>
@@ -81,17 +86,14 @@ const background = computed(() => {
   align-items: center;
   /* 渐变背景 */
   background: linear-gradient(200deg, #f3e7e9, #e3eeff);
-  /* 背景图垂直、水平均居中 */
-  background-position: center center;
-  /* 背景图不平铺 */
-  background-repeat: no-repeat;
-  /* 当内容高度大于图片高度时，背景图像的位置相对于viewport固定 */
-  background-attachment: fixed;
-  /* 让背景图基于容器大小伸缩 */
-  background-size: cover;
-  /* 设置背景颜色，背景图加载过程中会显示背景色 */
-  background-color: #464646;
-
+  .progressive {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    top: 0;
+    left: 0;
+  }
   .Logo {
     position: fixed;
     top: 0;

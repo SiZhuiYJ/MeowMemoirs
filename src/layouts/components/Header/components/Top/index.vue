@@ -1,10 +1,12 @@
 <template>
   <div class="TopMao" :class="{ TopMaoShow: scrollHeight > 500 }">
-    <img src="/img/header/scroll.webp" alt="" srcset="" />
+    <img :src="getStaticFileUrl('img/header/scroll.webp')" alt="" srcset="" />
   </div>
 </template>
 
 <script setup lang="ts">
+import useApiUrl from "@/libs/useApiUrl/index";
+const { getStaticFileUrl } = useApiUrl();
 defineProps<{
   scrollHeight: number;
 }>();

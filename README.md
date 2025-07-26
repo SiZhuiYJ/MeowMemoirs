@@ -2,53 +2,68 @@
 
 ## 项目描述
 
-  <div style="  height: 70px; display: flex; align-items: center; justify-content: center; border-radius: 5px; padding-right: 3px;">
-    <img
-      style="height: 26px; width: 60px; padding: 0 2px; object-fit: cover;"
-      src="http://8.137.127.7/favicon.ico"
-      alt=""
-      srcset=""
-    />
-    <div style=" display: flex; align-items: center; color: #606266; font-weight: bold; font-size: 20px;">
-      喵咪 <span style="color: #FFF;padding: 3px 1.5px; background-color: #e3c0df; border-radius: 5px;height: 32px;" >事件簿</span>
-    </div>
-  </div>
-  <br/>
-  <div style="  height:70px; display: flex; align-items: center; justify-content: center;  border-radius: 5px; padding-right: 3px;">
-    <img
-      style="height: 26px; width: 60px; padding: 0 2px; object-fit: cover;"
-      src="http://8.137.127.7/favicon.ico"
-      alt=""
-      srcset=""
-    />
-    <div style=" display: flex; align-items: center; color: #606266; font-weight: bold; font-size: 20px;">
-      Meow <span style="color: #FFF;padding: 3px 1.5px; background-color: #e3c0df; border-radius: 5px;height: 32px;" >Memoirs</span>
-    </div>
-  </div>
+![image](https://8.137.127.7/favicon.ico)
+
+喵咪 事件簿
+Meow Memoirs
 
 ## 项目技术
 
-Vue 3 + TypeScript + Vite + Vue Router + Vuex + Element Plus + Axios
+Vue 3 + TypeScript + Vite + Vue Router + Element Plus + Axios
 
 学习制作自己的小网站“喵咪事件簿”
 
+### :sparkles: 项目结构
+
+```text
+Memory Blog/
+|-- src/
+|   |-- hooks        // 自定义 hooks
+|   |-- assets       // 静态资源
+|   |-- libs         // 接口
+|   |-- components   // 通用组件
+|   |-- config       // 配置文件
+|   |-- directives   // 自定义指令
+|   |-- routers      // 路由配置
+|   |-- stores       // 状态管理
+|   |-- views        // 页面
+|   |-- layouts      // 布局
+|   |-- styles       // 样式
+|   |-- utils        // 工具类
+|   |-- App.vue      // 根组件
+|-- package.json
+|-- README.md
+```
+
+### 技术栈
+
+- React
+- TypeScript
+- React Router
+- Element Plus
+- Sass
+- Axios
+- Vite
+- Framer motion
+
+### 使用文档
+
+```bash
+cd MeowMemoirs
+npm install
+npm run dev
+
+// 修改你的配置
+// .env.development //本地配置文件
+// .env.production  //服务器配置文件
+
+npm run build  //打包
+```
+
 ## 项目地址
 
-### https 协议
-
-<div>
 <a target="_blank" href="https://www.meowmemoirs.cn/">https://www.meowmemoirs.cn/</a><br/>
 <a target="_blank" href="https://meowmemoirs.cn/">https://meowmemoirs.cn/</a><br/>
-<a target="_blank" href="https://8.137.127.7/">https://8.137.127.7/</a>
-</div>
-
-### http 协议
-
-<div>
-<a target="_blank" href="http://www.meowmemoirs.cn/">http://www.meowmemoirs.cn/</a><br/>
-<a target="_blank" href="http://meowmemoirs.cn/">http://meowmemoirs.cn/</a><br/>
-<a target="_blank" href="http://8.137.127.7/">http://8.137.127.7/</a>
-</div>
 
 ## 项目截图
 

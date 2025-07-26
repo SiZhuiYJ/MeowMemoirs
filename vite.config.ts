@@ -29,9 +29,9 @@ export default defineConfig({
     visualizer({ open: true }),
   ],
   server: {
-    host: "catsdiary.com", //服务器主机名
-    // host: "0.0.0.0", //本地测试时使用
-    port: 2345, //端口号
+    // host: "catsdiary.com", //服务器主机名
+    host: "0.0.0.0", //本地测试时使用
+    port: 9191, //端口号
     open: false, //启动后是否自动打开浏览器
     https: {
       key: fs.readFileSync("certs/localhost+1-key.pem"),
@@ -40,6 +40,9 @@ export default defineConfig({
   },
   build: {
     assetsDir: "assets",
+    outDir: "dist", // 输出目录
+    minify: "terser", // 压缩方式
+    cssCodeSplit: true, // CSS代码分割
     rollupOptions: {
       output: {
         manualChunks(id) {
@@ -53,22 +56,11 @@ export default defineConfig({
           }
         },
       },
-      // output: {
-      //   manualChunks: function (id: string) {
-      //     if (
-      //       id.includes("node_modules") &&
-      //       (id.endsWith(".js") || id.endsWith(".ts"))
-      //     ) {
-      //       return "vendor";
-      //     }
-      //   },
-      // },
     },
-    minify: "terser",
     // 清除所有console和debugger
     terserOptions: {
       compress: {
-        drop_console: true,
+        drop_console: false,
         drop_debugger: true,
       },
     },
