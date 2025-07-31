@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import useApiUrl from "@/libs/useApiUrl/index";
+const { getStaticFileUrl } = useApiUrl();
 // 打开网站方法
 const openWebsite = () => {
   // 新窗口打开网站
@@ -29,7 +31,12 @@ const openEmail = () => {
         <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
       </svg>
     </button>
-    <div class="profile-pic"></div>
+    <div
+      class="profile-pic"
+      :style="{
+        backgroundImage: 'url(' + getStaticFileUrl('img/user/Avatar.webp') + ')',
+      }"
+    ></div>
     <div class="bottom">
       <div class="content">
         <span class="name">思追依旧</span>
@@ -71,7 +78,7 @@ const openEmail = () => {
     </div>
   </div>
 </template>
-<style scoped>
+<style scoped lang="scss">
 .card {
   width: 280px;
   height: 280px;
@@ -111,7 +118,6 @@ const openEmail = () => {
   border: 0px solid #fbb9b6;
   overflow: hidden;
   transition: all 0.5s ease-in-out 0.2s, z-index 0.5s ease-in-out 0.2s;
-  background-image: url("/img/user/Avatar.webp");
   /* 背景图垂直、水平均居中 */
   background-position: center center;
   /* 背景图不平铺 */

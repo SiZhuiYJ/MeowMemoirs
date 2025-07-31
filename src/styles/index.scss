@@ -91,7 +91,7 @@
 #app {
   background-color: var(--foreground-color);
   width: 100vw;
-  height: 100vh;
+  // height: 100vh;
 
 
 }
@@ -105,7 +105,10 @@ html {
   body {
     padding: 0;
     margin: 0;
+    height: 100vh;
+    width: 100vw;
 
+    /* 为webkit浏览器设置纵向和横向滚动条宽度和高度 */
     &::-webkit-scrollbar {
       display: none;
 
@@ -121,27 +124,10 @@ html {
     &::-webkit-scrollbar-thumb {
       display: none;
     }
+
+    /* 悬浮在滑块上时为滑块设置背景颜色 */
+    &::-webkit-scrollbar-thumb:hover {
+      background: #fff222;
+    }
   }
-}
-
-/* 为webkit浏览器设置纵向和横向滚动条宽度和高度 */
-::-webkit-scrollbar {
-  width: 6px; // 纵向滚动条宽度
-  height: 6px; // 纵向滚动条高度
-}
-
-/* 为滚动条轨道设置背景颜色 */
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-/* 为滚动条设置滑块颜色 */
-::-webkit-scrollbar-thumb {
-  background: var(--foreground-color);
-  border-radius: 10px;
-}
-
-/* 悬浮在滑块上时为滑块设置背景颜色 */
-::-webkit-scrollbar-thumb:hover {
-  background: #00000000;
 }

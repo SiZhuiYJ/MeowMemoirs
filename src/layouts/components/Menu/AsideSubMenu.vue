@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import AsideSubMenu from "@/layouts/components/Header/components/Menu/AsideSubMenu/index.vue";
+import AsideSubMenu from "@/layouts/components/Menu/AsideSubMenu.vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
 defineProps(["menuList", "menuType"]);
@@ -18,7 +18,7 @@ const handleSubMenu = (path: string) => {
       <AsideSubMenu :menuList="item.children" menuType="sub" />
     </el-sub-menu>
     <el-menu-item
-      v-else
+      v-else-if="item.meta.isHide == '1'"
       :index="item.path"
       class="item"
       :class="{ 'menuType-sub': menuType == 'sub' }"
@@ -35,11 +35,11 @@ const handleSubMenu = (path: string) => {
 .item {
   border-bottom: none !important;
   border-top: 2px solid transparent;
-  color: var(--el-header-text-color);
+  // color: var(--el-header-text-color);
 }
 .sub-item {
   border-top: 2px solid transparent;
-  --el-menu-text-color: var(--el-header-text-color) !important;
+  // --el-menu-text-color: var(--el-header-text-color) !important;
 }
 .is-active {
   border-top: 2px solid var(--el-menu-active-color);

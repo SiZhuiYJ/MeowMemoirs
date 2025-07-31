@@ -54,6 +54,7 @@ declare module 'vue' {
     ElTag: typeof import('element-plus/es')['ElTag']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     GlobalIcon: typeof import('./src/components/GlobalIcon/index.vue')['default']
+    Index: typeof import('./src/components/MobileDrawer/Index.vue')['default']
     MediaTable: typeof import('./src/components/MediaTable/index.vue')['default']
     MediaViewer: typeof import('./src/components/MediaViewer/index.vue')['default']
     MeowCard: typeof import('./src/components/MeowCard/index.vue')['default']

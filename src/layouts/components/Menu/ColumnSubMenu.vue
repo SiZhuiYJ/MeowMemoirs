@@ -12,7 +12,11 @@
       <ColumnSubMenu :menuList="item.children" />
     </el-sub-menu>
     <!-- 叶子节点[功能节点] -->
-    <el-menu-item v-else :index="item.path" @click="handleMenuRouter(item)">
+    <el-menu-item
+      v-else-if="item.meta.isHide != '0'"
+      :index="item.path"
+      @click="handleMenuRouter(item)"
+    >
       <GlobalIcon v-if="item.meta.icon" :name="item.meta.icon" size="18"></GlobalIcon>
       <template #title>
         <el-tooltip :content="item.meta?.title" :show-after="2000" placement="right">
@@ -43,7 +47,7 @@ const handleMenuRouter = (value: any) => {
       return;
     }
   }
-  console.log('path', value.path)
+  console.log("path", value.path);
   router.push(value.path);
 };
 </script>
@@ -64,7 +68,7 @@ const handleMenuRouter = (value: any) => {
   --el-menu-item-height: var(--aside-menu-height);
   // color: #000000;
   user-select: none;
-  border-radius: var(--aside-menu-border-left);
+  border-left: 2px solid transparent;
 
   // @apply dark:c-#E5E3FA;
   color: var(--el-menu-text-color);
@@ -79,13 +83,8 @@ const handleMenuRouter = (value: any) => {
 
   // 设置鼠标悬停时el-menu-item的样式
   &:hover {
-    // color: var(--el-color-primary);
     color: var(--el-menu-hover-text-color);
-    // background: var(--el-color-primary-light-8);
     background: var(--el-menu-hover-bg-color);
-
-    // & 含义 .el-menu-item
-    border-radius: var(--aside-menu-border-left);
 
     // 实现鼠标悬停时icon变色
     i {
@@ -93,16 +92,16 @@ const handleMenuRouter = (value: any) => {
       color: var(--el-menu-hover-text-color);
     }
   }
-
-  // 设置选择el-menu-item时的样式
-  &.is-active {
-    // color: var(--el-color-primary);
-    color: var(--el-menu-active-text-color);
-    // background: var(--el-color-primary-light-8);
-    background: var(--el-menu-active-bg-color);
-  }
 }
-
+.is-active {
+  color: var(--el-menu-active-text-color);
+  background: linear-gradient(
+    to right,
+    var(--el-color-primary-light-9) 0,
+    transparent 100%
+  );
+  border-left: 2px solid var(--el-menu-border-left-color) !important;
+}
 :deep(.el-sub-menu__title) {
   height: var(--aside-menu-height);
   padding-right: 0; // 去除collapse缩小多余的边框
@@ -139,18 +138,19 @@ const handleMenuRouter = (value: any) => {
     background: var(--el-menu-active-bg-color);
   }
 }
+.el-sub-menu {
+  border-left: 2px solid transparent;
+}
 </style>
 
 <style lang="scss">
 /** 子级菜单字体高亮，父级菜单也高亮 */
-.el-sub-menu.is-active>.el-sub-menu__title {
-  // color: var(--el-color-primary) !important;
+.el-sub-menu.is-active > .el-sub-menu__title {
   color: var(--el-menu-active-text-color) !important;
 }
 
 /** icon图标也跟着变 */
-.el-sub-menu.is-active>.el-sub-menu__title i {
-  // color: var(--el-color-primary) !important;
+.el-sub-menu.is-active > .el-sub-menu__title i {
   color: var(--el-menu-active-text-color) !important;
 }
 </style>

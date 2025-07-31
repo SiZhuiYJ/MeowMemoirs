@@ -1,6 +1,6 @@
 import type { RouteRecordRaw } from "vue-router";
 import { HOME_URL, LOGIN_URL } from "@/config";
-import Layout from "@/layouts/index.vue";
+import Layout from "@/layouts/Frontend/index.vue";
 
 /**
  * LayoutRouter[布局路由]
@@ -10,6 +10,29 @@ export const layoutRouter: RouteRecordRaw[] = [
     path: "/",
     redirect: HOME_URL,
   },
+  // {
+  //   path: "/layout",
+  //   name: "layout",
+  //   component: Layout,
+  //   redirect: HOME_URL,
+  //   children: [
+  //      {
+  //       path: HOME_URL, // [唯一]
+  //       component: () => import("@/views/home/index.vue"),
+  //       meta: {
+  //         title: "主控台", // 标题
+  //         enName: "Master Station", // 英文名称
+  //         icon: "HomeFilled", // 图标
+  //         isHide: "1", // 代表路由在菜单中是否隐藏，是否隐藏[0隐藏，1显示]
+  //         isLink: "", // 是否外链[有值则是外链]
+  //         isKeepAlive: "0", // 是否缓存路由数据[0是，1否]
+  //         isFull: "1", // 是否缓存全屏[0是，1否]
+  //         isAffix: "0" // 是否缓存固定路由[0是，1否]
+  //       }
+  //     }
+  //   ]
+  // },
+  // 上方或者下方效果一样
   {
     path: "/layout",
     name: "layout",
@@ -23,7 +46,7 @@ export const layoutRouter: RouteRecordRaw[] = [
           title: "首页", // 标题
           enName: "Master Station", // 英文名称
           icon: "HomeFilled", // 图标
-          isHide: "0", // 代表路由在菜单中是否隐藏，是否隐藏[0隐藏，1显示]
+          isHide: "1", // 代表路由在菜单中是否隐藏，是否隐藏[0隐藏，1显示]
           isLink: "", // 是否外链[有值则是外链]
           isKeepAlive: "0", // 是否缓存路由数据[0是，1否]
           isFull: "1", // 是否缓存全屏[0是，1否]
@@ -33,9 +56,23 @@ export const layoutRouter: RouteRecordRaw[] = [
 
       {
         path: "/main/blogPost",
-        component: () => import("@/views/main/blogPost/index.vue"),
+        component: () => import("@/views/main/blogPost/directory/index.vue"),
         meta: {
           title: "文档",
+          enName: "blogPost",
+          icon: "Clock",
+          isHide: "1",
+          isLink: "",
+          isKeepAlive: "0",
+          isFull: "1",
+          isAffix: "0",
+        },
+      },
+      {
+        path: "/main/blogPost/article",
+        component: () => import("@/views/main/blogPost/article/index.vue"),
+        meta: {
+          title: "博客内容",
           enName: "blogPost",
           icon: "Clock",
           isHide: "0",
@@ -53,7 +90,7 @@ export const layoutRouter: RouteRecordRaw[] = [
           title: "动画",
           enName: "animation",
           icon: "MeowMemoirs-animation",
-          isHide: "0",
+          isHide: "1",
           isLink: "",
           isKeepAlive: "0",
           isFull: "1",
@@ -68,7 +105,7 @@ export const layoutRouter: RouteRecordRaw[] = [
               title: "时间",
               enName: "TimeStyle",
               icon: "Clock",
-              isHide: "0",
+              isHide: "1",
               isLink: "",
               isKeepAlive: "0",
               isFull: "1",
@@ -83,7 +120,7 @@ export const layoutRouter: RouteRecordRaw[] = [
               title: "星空",
               enName: "StarrySky",
               icon: "Star",
-              isHide: "0",
+              isHide: "1",
               isLink: "",
               isKeepAlive: "0",
               isFull: "1",
@@ -98,7 +135,7 @@ export const layoutRouter: RouteRecordRaw[] = [
               title: "蛋糕",
               enName: "banner",
               icon: "IceTea",
-              isHide: "0",
+              isHide: "1",
               isLink: "",
               isKeepAlive: "0",
               isFull: "1",
@@ -112,7 +149,7 @@ export const layoutRouter: RouteRecordRaw[] = [
               title: "爱心",
               enName: "love",
               icon: "MeowMemoirs-love",
-              isHide: "0",
+              isHide: "1",
               isLink: "",
               isKeepAlive: "0",
               isFull: "1",
@@ -129,7 +166,7 @@ export const layoutRouter: RouteRecordRaw[] = [
           title: "告白",
           enName: "confession of love",
           icon: "Promotion",
-          isHide: "0",
+          isHide: "1",
           isLink: "",
           isKeepAlive: "0",
           isFull: "1",
@@ -143,7 +180,7 @@ export const layoutRouter: RouteRecordRaw[] = [
               title: "表白",
               enName: "love",
               icon: "MeowMemoirs-cute",
-              isHide: "0",
+              isHide: "1",
               isLink: "",
               isKeepAlive: "0",
               isFull: "1",
@@ -158,7 +195,7 @@ export const layoutRouter: RouteRecordRaw[] = [
               title: "表白证书",
               enName: "certificate",
               icon: "MeowMemoirs-marriage-certificate",
-              isHide: "0",
+              isHide: "1",
               isLink: "",
               isKeepAlive: "0",
               isFull: "1",
@@ -173,7 +210,7 @@ export const layoutRouter: RouteRecordRaw[] = [
               title: "设置",
               enName: "settings",
               icon: "Tools",
-              isHide: "0",
+              isHide: "1",
               isLink: "",
               isKeepAlive: "0",
               isFull: "1",
@@ -190,7 +227,7 @@ export const layoutRouter: RouteRecordRaw[] = [
           title: "便签",
           enName: "memo",
           icon: "MeowMemoirs-sticky-note",
-          isHide: "0",
+          isHide: "1",
           isLink: "",
           isKeepAlive: "0",
           isFull: "1",
@@ -205,7 +242,7 @@ export const layoutRouter: RouteRecordRaw[] = [
               title: "记事",
               enName: "notes",
               icon: "MeowMemoirs-memorandum",
-              isHide: "0",
+              isHide: "1",
               isLink: "",
               isKeepAlive: "0",
               isFull: "1",
@@ -219,7 +256,7 @@ export const layoutRouter: RouteRecordRaw[] = [
               title: "待办",
               enName: "todo",
               icon: "MeowMemoirs-to-do",
-              isHide: "0",
+              isHide: "1",
               isLink: "",
               isKeepAlive: "0",
               isFull: "1",

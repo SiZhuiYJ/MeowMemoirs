@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import commonHeader from "@/layouts/components/HeaderBackstage/index.vue";
+import commonHeader from "@/layouts/components/Header/index.vue";
 import { useGlobalStore, useAuthStore } from "@/stores";
 import type { AppRouteRecordRaw } from "@/routers/type";
 const globalStore = useGlobalStore();

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import commonHeader from "@/layouts/components/Header/index.vue";
+import commonHeader from "@/layouts/Frontend/components/Header/index.vue";
 import { ref } from "vue";
 import { useWindowEventListener } from "@/hooks/useEventListener";
 const scrollHeight = ref(0);
@@ -17,21 +17,19 @@ const backToTop = () => {
 useWindowEventListener("scroll", handleScroll);
 </script>
 <template>
-  <div class="common-layout">
-    <el-container>
-      <el-header class="header" height="40px">
-        <common-header
-          :scrollHeight="scrollHeight"
-          @backToTop="backToTop()"
-        ></common-header>
-      </el-header>
-      <main class="main">
-        <div class="main-scroll">
-          <router-view></router-view>
-        </div>
-      </main>
-    </el-container>
-  </div>
+  <el-container>
+    <el-header class="header" height="40px">
+      <common-header
+        :scrollHeight="scrollHeight"
+        @backToTop="backToTop()"
+      ></common-header>
+    </el-header>
+    <main class="main">
+      <div class="main-scroll">
+        <router-view></router-view>
+      </div>
+    </main>
+  </el-container>
 </template>
 <style scoped lang="scss">
 .header {

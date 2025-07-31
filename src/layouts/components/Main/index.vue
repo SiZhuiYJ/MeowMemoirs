@@ -84,12 +84,9 @@ onBeforeUnmount(() => {
 @use "../../../styles/transition.scss";
 
 .layout-main {
-  display: flex;
-  flex-direction: column;
   flex: 1;
   padding: 5px 6px;
   overflow-x: hidden;
-  flex: 1;
   background-color: #f6f9fe;
 }
 .dark .layout-main {

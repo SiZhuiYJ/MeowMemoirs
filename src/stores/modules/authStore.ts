@@ -38,6 +38,9 @@ export const useAuthStore = defineStore("auth", () => {
     breadcrumbList.value = staticRouter.concat(
       generateRoutes(data.menuList, 0)
     );
+    console.log(menuList.value);
+    console.log(recursiveMenuList.value);
+    console.log(breadcrumbList.value);
   }
   async function getLoginUserInfo() {
     const { data } = await userApi.MMPostUser();

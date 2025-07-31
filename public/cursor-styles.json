@@ -63,10 +63,18 @@
       ".el-time-spinner__arrow",
       ".el-time-spinner__item:hover:not(.is-disabled):not(.is-active)",
       ".el-year-table td",
-      ".file-selector ul li",
       ".fold-summary",
+      ".layout-container .el-header .common-header .menu-btn",
       ".plane-switch",
+      ".scrollbar__bar",
+      ".scrollbar__thumb",
       ".st-sunMoonThemeToggleBtn",
+      ".v-md-editor .codemirror-wrapper.codemirror-reset .CodeMirror-overlayscroll-horizontal>div,.v-md-editor .codemirror-wrapper.codemirror-reset .CodeMirror-overlayscroll-vertical>div",
+      ".v-md-editor__toc-nav-item",
+      ".v-md-editor__toolbar-item",
+      ".v-md-plugin-tip.details summary",
+      ".v-md-pre-wrapper.copy-code-mode .v-md-copy-code-btn",
+      "[data-v-md-anchor]",
       "button"
     ]
   },
@@ -114,6 +122,7 @@
   {
     "name": "default",
     "list": [
+      ".CodeMirror-gutter-elt",
       ".clock",
       ".el-image-viewer__actions__inner",
       ".el-image-viewer__progress",
@@ -125,10 +134,24 @@
   {
     "name": "text",
     "list": [
+      ".CodeMirror-lines",
       ".confession-config .form__group .form__field:placeholder-shown ~ .form__label",
       ".el-breadcrumb__item:last-child .el-breadcrumb__inner,.el-breadcrumb__item:last-child .el-breadcrumb__inner a,.el-breadcrumb__item:last-child .el-breadcrumb__inner a:hover,.el-breadcrumb__item:last-child .el-breadcrumb__inner:hover",
       ".el-input__wrapper",
-      ".el-select__wrapper.is-filterable"
+      ".el-select__wrapper.is-filterable",
+      ".v-md-editor__editor-wrapper"
+    ]
+  },
+  {
+    "name": "crosshair",
+    "list": [
+      ".CodeMirror-crosshair"
+    ]
+  },
+  {
+    "name": "help",
+    "list": [
+      ".vuepress-markdown-body .token.entity"
     ]
   },
   {

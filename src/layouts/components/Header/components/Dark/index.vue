@@ -1,21 +1,30 @@
 <template>
   <div
     class="toolbar"
-    style="color: var(--el-header-text-color); width: 32px; border-radius: 50%"
+    @click="handleSwitchDark"
+    style="color: var(--el-header-text-color-regular)"
   >
-    <el-tooltip :content="!globalStore.isDark ? '明亮模式' : '暗夜模式'">
-      <div class="mode-hover">
-        <ModeSwitching />
-      </div>
+    <!-- 明亮模式 -->
+    <el-tooltip content="明亮模式" v-if="!globalStore.isDark">
+      <el-icon class="icon" :size="size">
+        <Sunny />
+      </el-icon>
+    </el-tooltip>
+    <!-- 暗黑模式 -->
+    <el-tooltip content="暗夜模式" v-if="globalStore.isDark">
+      <el-icon class="icon" :size="size">
+        <Moon />
+      </el-icon>
     </el-tooltip>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useTheme } from "@/utils/theme.ts";
 import { useGlobalStore } from "@/stores";
-import ModeSwitching from "./ModeSwitching/index.vue";
 
 const globalStore = useGlobalStore();
+const { switchDark } = useTheme();
 
 defineProps({
   size: {
@@ -23,20 +32,51 @@ defineProps({
     default: 21,
   },
 });
+
+/** 暗黑主题和明亮主题切换 */
+const handleSwitchDark = async (event: MouseEvent) => {
+  const x = event.clientX;
+  const y = event.clientY;
+  // 画圆
+  const endRadius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+  // @ts-ignore
+  if (document.startViewTransition == undefined) {
+    /** 明亮和暗黑模式核心逻辑 */
+    // 定义图标切换变量(true-月亮，false-太阳)
+    useGlobalStore().setGlobal("isDark", !globalStore.isDark);
+    switchDark();
+    /** 明亮和暗黑模式核心逻辑 */
+  } else {
+    // @ts-ignore
+    const transition = document.startViewTransition(() => {
+      /** 明亮和暗黑模式核心逻辑 */
+      // 定义图标切换变量(true-月亮，false-太阳)
+      useGlobalStore().setGlobal("isDark", !globalStore.isDark);
+      switchDark();
+      /** 明亮和暗黑模式核心逻辑 */
+    });
+    await transition.ready;
+    const clipPath = [
+      `circle(0px at ${x}px ${y}px)`,
+      `circle(${endRadius}px at ${x}px ${y}px)`,
+    ];
+    document.documentElement.animate(
+      {
+        clipPath: globalStore.isDark ? clipPath : [...clipPath].reverse(),
+      },
+      {
+        duration: 300,
+        easing: "ease-in",
+        pseudoElement: globalStore.isDark
+          ? "::view-transition-new(root)"
+          : "::view-transition-old(root)",
+      }
+    );
+  }
+};
 </script>
 
-<style lang="scss" scoped>
-.mode-hover {
-  height: 24px;
-  width: 24px;
-  padding: 2px;
-  border-radius: 50%;
-  &:hover {
-    border: 1px solid var(--el-color-primary-light-7);
-    box-shadow: 0 0 4px 2px var(--el-color-primary-light-7);
-  }
-}
-</style>
+<style lang="scss" scoped></style>
 <style lang="scss">
 ::view-transition-old(root),
 ::view-transition-new(root) {

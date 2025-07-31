@@ -1,5 +1,6 @@
 <template>
-  <div @click="toSystem" class="toolbar" style="color: var(--el-header-text-color)">
+  <!-- style="color: var(--el-header-text-color)" -->
+  <div @click="toSystem" class="toolbar" style="color: var(--el-menu-text-color)">
     <el-tooltip content="控制台">
       <el-icon class="to-system" style="font-size: 20px">
         <Monitor />

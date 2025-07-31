@@ -8,12 +8,17 @@ import Components from "unplugin-vue-components/vite";
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 import { visualizer } from "rollup-plugin-visualizer";
 
+import prismjs from "vite-plugin-prismjs";
+
 // https://vite.dev/config/
 import tsconfigPaths from "vite-tsconfig-paths"; //npm uninstall vite-tsconfig-paths
 import cssAnalyzer from "./plugins/vite-plugin-css-analyzer";
 export default defineConfig({
   plugins: [
     vue(),
+    prismjs({
+      languages: ["json", "bash"],
+    }),
     tsconfigPaths(), //  配置tsconfig.json路径
     cssAnalyzer(), //  配置css分析插件 鼠标
     createSvgIconsPlugin({
