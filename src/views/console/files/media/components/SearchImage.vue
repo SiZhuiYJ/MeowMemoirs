@@ -50,8 +50,7 @@ const handleReset = () => {
         placeholder="请选择图片类型"
         @add="store.addTag"
         @change="handleSearch"
-      >
-      </MeowSelect>
+      />
     </el-form-item>
     <el-form-item label="拍摄地址" prop="createAddress">
       <MeowSelect
@@ -62,8 +61,7 @@ const handleReset = () => {
         collapse-tags-tooltip
         placeholder="请选择拍摄地址"
         @change="handleSearch"
-      >
-      </MeowSelect>
+      />
     </el-form-item>
     <el-form-item label="拍照时间" prop="createTime">
       <el-date-picker
@@ -99,8 +97,7 @@ const handleReset = () => {
         collapse-tags-tooltip
         placeholder="请选择设备名称"
         @change="handleSearch"
-      >
-      </MeowSelect>
+      />
     </el-form-item>
 
     <el-form-item>

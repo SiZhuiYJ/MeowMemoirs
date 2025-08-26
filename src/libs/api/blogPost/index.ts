@@ -1,7 +1,12 @@
 // @/libs/api/blogPost/index.ts
 import http from "@/libs/http";
 import type { ResponseData } from "@/libs/http/type";
-import type { blogPost, operation, Tag } from "@/libs/api/blogPost/type";
+import type {
+  blogPost,
+  operation,
+  Tag,
+  AddTag,
+} from "@/libs/api/blogPost/type";
 
 interface BlogList {
   blogs: blogPost[];
@@ -28,5 +33,12 @@ export const BlogPostApi = {
   // 上传文章
   MMPostBlogPostUpload(blog: blogPost, operation: operation) {
     return http.post<ResponseData<Blog>>(`/Blog/UploadBlog/${operation}`, blog);
+  },
+  // 添加标签
+  MMPostBlogAddTag(blogTag: AddTag) {
+    return http.post<ResponseData<{ tagId: number }>>(
+      `/Blog/AddBlogTag`,
+      blogTag
+    );
   },
 };

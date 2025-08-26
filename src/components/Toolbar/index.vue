@@ -5,7 +5,7 @@
       <el-tooltip :content="showSearch ? '隐藏搜索' : '显示搜索'" placement="top">
         <el-button circle icon="search" @click="toggleSearch()" />
       </el-tooltip>
-      <el-tooltip :content="showView ? '详情' : '大图'" placement="top">
+      <el-tooltip :content="showView ? '详情' : '大图'" placement="top" v-if="isShowView">
         <el-button circle @click="toggleView()">
           <el-icon :size="20">
             <svg-icon
@@ -31,7 +31,17 @@
 
 <script setup lang="ts">
 import svgIcon from "@/components/SvgIcons/index.vue";
-const props = defineProps(["showSearch", "showView"]);
+interface Props {
+  showSearch: boolean; // 可选
+  showView?: boolean; // 必填
+  isShowView?: boolean; // 必填
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  showSearch: true,
+  showView: false,
+  isShowView: false,
+});
 const emits = defineEmits(["update:showSearch", "update:showView", "refreshTable"]);
 
 /** 点击子组件，调用父组件方法 */

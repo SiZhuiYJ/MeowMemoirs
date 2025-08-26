@@ -23,3 +23,10 @@ export interface UploadBlog {
   tags: string;
   coverContent: string;
 }
+// 添加标签
+export interface AddTag {
+  TagColor: string;
+  TagDescription: string;
+  TagIcon: string;
+  TagName: string;
+}

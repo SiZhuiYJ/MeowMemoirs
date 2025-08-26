@@ -45,16 +45,16 @@ import { meowMsgWarning, meowMsgBox } from "@/utils/message.ts";
 
 // 定义参数的类型
 interface IDialogProps {
-  title?: string;
-  visible?: boolean;
-  width?: number;
-  center?: boolean;
-  height?: number;
-  confirmText?: string;
-  cancelText?: string;
-  destroyOnClose?: boolean;
-  fullscreen?: boolean;
-  loading?: boolean;
+  title?: string; // 弹窗标题
+  visible?: boolean; // 弹窗是否可见
+  width?: number; // 弹窗宽度
+  center?: boolean; // 弹窗是否居中
+  height?: number; // 弹窗高度
+  confirmText?: string; // 确认按钮的文案
+  cancelText?: string; // 取消按钮的文案
+  destroyOnClose?: boolean; // 是否销毁
+  fullscreen?: boolean; // 是否全屏
+  loading?: boolean; // 是否显示加载中
   footerHidden?: boolean; // 是否隐藏确认和取消按钮部分
 }
 

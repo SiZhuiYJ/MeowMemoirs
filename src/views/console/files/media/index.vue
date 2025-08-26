@@ -60,6 +60,7 @@ onMounted(() => {
           <Toolbar
             v-model:showSearch="showSearch"
             v-model:showView="showView"
+            :isShowView="true"
             @refreshTable="store.initializeData"
           ></Toolbar>
         </el-row>

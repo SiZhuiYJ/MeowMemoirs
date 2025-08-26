@@ -1,6 +1,11 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import type { blogPost, operation, Tag } from "@/libs/api/blogPost/type";
+import type {
+  AddTag,
+  blogPost,
+  operation,
+  Tag,
+} from "@/libs/api/blogPost/type";
 import { BlogPostApi } from "@/libs/api/blogPost";
 
 export const useBlogStore = defineStore("blog", () => {
@@ -40,6 +45,12 @@ export const useBlogStore = defineStore("blog", () => {
     currentBlog.value = data.blog;
     return currentBlog.value;
   };
+  // 添加博客标签
+  const addBlogTag = async (blogTag: AddTag) => {
+    const { data } = await BlogPostApi.MMPostBlogAddTag(blogTag);
+    console.log(blogTag, data);
+    return data.tagId; // 返回新添加标签的ID
+  };
   // 临时缓存当前博客
   const cacheCurrentBlog = (blog: blogPost) => {
     editBlog.value = blog;
@@ -53,6 +64,7 @@ export const useBlogStore = defineStore("blog", () => {
     getTagList,
     selectBlog,
     uploadBlog,
+    addBlogTag,
     cacheCurrentBlog,
   };
 });

@@ -8,15 +8,6 @@ import {
   meowMsgInfo,
   meowMsgError,
 } from "@/utils/message";
-// @ts-ignore
-// import { koiDatePicker } from "@/utils/index.ts";
-// @ts-ignore
-// import {
-//   listPage,
-//   deleteById,
-//   batchDelete,
-//   // updateStatus,
-// } from "@/api/system/loginlog/index.ts";
 
 // 表格加载动画Loading
 const loading = ref(false);

@@ -133,6 +133,57 @@
                 "redirect": "console/memo/todo/index"
             },
             {
+                "path": "/console/blogPost",
+                "name": "blogPost",
+                "label": "博客管理",
+                "icon": "Setting",
+                "menuId": 16,
+                "menuName": "博客管理",
+                "enName": "System",
+                "parentId": 1,
+                "menuType": "2",
+                "component": "",
+                "children": [
+                    {
+                        "path": "/console/blogPost/myPost",
+                        "name": "blogPost",
+                        "label": "我的博客",
+                        "icon": "Setting",
+                        "menuId": 161,
+                        "menuName": "我的博客",
+                        "parentId": 16,
+                        "menuType": "3",
+                        "component": "console/blogPost/myPost/index",
+                        "redirect": ""
+                    },
+                    {
+                        "path": "/console/blogPost/blogList",
+                        "name": "blogList",
+                        "label": "全部博客",
+                        "icon": "Setting",
+                        "menuId": 162,
+                        "menuName": "全部博客",
+                        "parentId": 16,
+                        "menuType": "3",
+                        "component": "console/blogPost/blogList/index",
+                        "redirect": ""
+                    },
+                    {
+                        "path": "/console/blogPost/ModifyPost",
+                        "name": "ModifyPost",
+                        "label": "修改博客",
+                        "icon": "Setting",
+                        "menuId": 163,
+                        "menuName": "修改博客",
+                        "parentId": 16,
+                        "menuType": "3",
+                        "component": "console/blogPost/ModifyPost/index",
+                        "redirect": ""
+                    }
+                ],
+                "redirect": "console/system/index"
+            },
+            {
                 "path": "/console/system",
                 "name": "system",
                 "label": "系统管理",

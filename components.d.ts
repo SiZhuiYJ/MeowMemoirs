@@ -8,6 +8,8 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    copy: typeof import('./src/components/MeowSelect/index copy.vue')['default']
+    DynamicForm: typeof import('./src/components/DynamicForm/index.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
@@ -17,9 +19,11 @@ declare module 'vue' {
     ElCarouselItem: typeof import('element-plus/es')['ElCarouselItem']
     ElCheckbox: typeof import('element-plus/es')['ElCheckbox']
     ElCol: typeof import('element-plus/es')['ElCol']
+    ElColorPicker: typeof import('element-plus/es')['ElColorPicker']
     ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
     ElContainer: typeof import('element-plus/es')['ElContainer']
     ElDatePicker: typeof import('element-plus/es')['ElDatePicker']
+    ElDialog: typeof import('element-plus/es')['ElDialog']
     ElDivider: typeof import('element-plus/es')['ElDivider']
     ElDrawer: typeof import('element-plus/es')['ElDrawer']
     ElDropdown: typeof import('element-plus/es')['ElDropdown']
@@ -55,6 +59,7 @@ declare module 'vue' {
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     GlobalIcon: typeof import('./src/components/GlobalIcon/index.vue')['default']
     Index: typeof import('./src/components/MobileDrawer/Index.vue')['default']
+    'Index copy': typeof import('./src/components/MeowSelect/index copy.vue')['default']
     MediaTable: typeof import('./src/components/MediaTable/index.vue')['default']
     MediaViewer: typeof import('./src/components/MediaViewer/index.vue')['default']
     MeowCard: typeof import('./src/components/MeowCard/index.vue')['default']
@@ -65,6 +70,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     ShowDetails: typeof import('./src/components/ShowDetails/index.vue')['default']
     SvgIcons: typeof import('./src/components/SvgIcons/index.vue')['default']
+    TagDialog: typeof import('./src/components/Tag/TagDialog/index.vue')['default']
     Toolbar: typeof import('./src/components/Toolbar/index.vue')['default']
     TypewriterEffect: typeof import('./src/components/TypewriterEffect/index.vue')['default']
     WaterfallFlow: typeof import('./src/components/WaterfallFlow/index.vue')['default']

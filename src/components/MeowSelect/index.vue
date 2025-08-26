@@ -72,7 +72,6 @@
 import { computed, nextTick, ref, watch } from "vue";
 import { ElMessage } from "element-plus";
 import type { CheckboxValueType } from "element-plus";
-
 interface Option {
   label: string;
   value: string | number;
