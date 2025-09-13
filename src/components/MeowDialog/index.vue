@@ -5,7 +5,7 @@
     :title="title"
     :width="width"
     :center="center"
-    :close-on-click-modal="false"
+    :close-on-click-modal="closeOnClickModal"
     append-to-body
     draggable
     :destroy-on-close="destroyOnClose"
@@ -13,6 +13,7 @@
     :fullscreen="fullscreen"
     :loading="loading"
     :footerHidden="footerHidden"
+    :overflow="true"
   >
     <slot name="header"></slot>
     <div
@@ -56,6 +57,7 @@ interface IDialogProps {
   fullscreen?: boolean; // 是否全屏
   loading?: boolean; // 是否显示加载中
   footerHidden?: boolean; // 是否隐藏确认和取消按钮部分
+  closeOnClickModal?: boolean; // 是否点击模态框背景关闭
 }
 
 // 子组件接收父组件的值
@@ -73,6 +75,7 @@ const props = withDefaults(defineProps<IDialogProps>(), {
   fullscreen: false,
   loading: false,
   footerHidden: false,
+  closeOnClickModal: false,
 });
 
 // 开关变量
@@ -89,16 +92,20 @@ const Open = () => {
 
 /** 取消对话框 */
 const Close = () => {
-  meowMsgBox("您确认进行关闭么？")
-    .then(() => {
-      visible.value = false;
-      meowMsgWarning("已关闭🌻");
-    })
-    .catch(() => {
-      // 用户点击了取消按钮或关闭对话框
-      // 执行取消操作或不做任何操作
-      meowMsgWarning("已取消🌻");
-    });
+  if (!props.closeOnClickModal)
+    meowMsgBox("您确认进行关闭么？")
+      .then(() => {
+        visible.value = false;
+        meowMsgWarning("已关闭🌻");
+      })
+      .catch(() => {
+        // 用户点击了取消按钮或关闭对话框
+        // 执行取消操作或不做任何操作
+        meowMsgWarning("已取消🌻");
+      });
+  else {
+    visible.value = false;
+  }
 };
 
 /** 确认提交后关闭对话框 */
@@ -127,49 +134,8 @@ defineExpose({
 });
 </script>
 
-<style lang="scss" scoped>
-// .dialog-container {
-//   overflow-x: initial;
-//   overflow-y: auto; // 超出部分则滚动
-// }
-
-// .el-dialog {
-//   border-top-left-radius: 8px !important;
-//   border-top-right-radius: 8px !important;
-//   padding-top: 0px;
-
-//   // 标题头部
-//   .el-dialog__header {
-//     display: flex;
-//     align-items: center;
-//     justify-content: center;
-//     height: 50px !important;
-//     padding: 0 0 6px 0;
-
-//     // background: #1e71ee;
-//     @apply dark:bg-#141414;
-//     .el-dialog__title {
-//       font-family: YouYuan;
-//       font-size: 18px;
-//       font-weight: 500;
-//     }
-//   }
-//   .el-dialog__body {
-//     padding: 0px;
-//   }
-//   .el-dialog__footer {
-//     padding: 10px;
-//   }
-// }
-// .el-dialog__body {
-//   // 内容区域内边距
-//   padding: 10px;
-// }
-// .el-dialog__headerbtn {
-//   padding-bottom: 10px !important;
-//   .el-dialog__close {
-//     border: 1px solid;
-//     border-radius: 10px;
-//   }
-// }
+<style lang="scss">
+.el-dialog {
+  max-width: 100vw;
+}
 </style>

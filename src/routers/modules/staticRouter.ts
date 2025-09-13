@@ -69,6 +69,20 @@ export const layoutRouter: RouteRecordRaw[] = [
         },
       },
       {
+        path: "/main/classSchedule",
+        component: () => import("@/views/main/classSchedule/index.vue"),
+        meta: {
+          title: "课表",
+          enName: "classSchedule",
+          icon: "Calendar",
+          isHide: "1",
+          isLink: "",
+          isKeepAlive: "0",
+          isFull: "1",
+          isAffix: "0",
+        },
+      },
+      {
         path: "/main/blogPost/article",
         component: () => import("@/views/main/blogPost/article/index.vue"),
         meta: {
@@ -82,6 +96,7 @@ export const layoutRouter: RouteRecordRaw[] = [
           isAffix: "0",
         },
       },
+
       {
         path: "/main/animation",
         name: "animation",

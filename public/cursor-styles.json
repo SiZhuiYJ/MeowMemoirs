@@ -7,6 +7,7 @@
       ".dropdown",
       ".el-breadcrumb__inner a:hover,.el-breadcrumb__inner.is-link:hover",
       ".el-button",
+      ".el-calendar-table .el-calendar-day:hover",
       ".el-carousel__arrow",
       ".el-carousel__arrow i",
       ".el-carousel__button",

@@ -25,13 +25,13 @@ export default defineConfig({
       iconDirs: [path.resolve(process.cwd(), "src/assets/icons")],
       symbolId: "icon-[dir]-[name]",
     }),
+    visualizer({ open: true }),
     AutoImport({
       resolvers: [ElementPlusResolver()],
     }),
     Components({
       resolvers: [ElementPlusResolver()],
     }),
-    visualizer({ open: true }),
   ],
   server: {
     // host: "catsdiary.com", //服务器主机名

@@ -4,6 +4,7 @@ import { ref, onMounted, nextTick, computed, onUnmounted } from "vue";
 import { setCursor } from "@/utils/cursor";
 import { useTheme } from "@/utils/theme.ts";
 import { useGlobalStore } from "@/stores";
+import zhCn from "element-plus/es/locale/lang/zh-cn";
 const globalStore = useGlobalStore();
 
 const dimension = computed(() => globalStore.dimension);
@@ -128,7 +129,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <el-config-provider :size="dimension">
+  <el-config-provider :size="dimension" :locale="zhCn">
     <router-view></router-view>
   </el-config-provider>
 </template>

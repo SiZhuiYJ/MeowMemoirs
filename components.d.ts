@@ -8,13 +8,13 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    copy: typeof import('./src/components/MeowSelect/index copy.vue')['default']
     DynamicForm: typeof import('./src/components/DynamicForm/index.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
     ElBreadcrumbItem: typeof import('element-plus/es')['ElBreadcrumbItem']
     ElButton: typeof import('element-plus/es')['ElButton']
+    ElCalendar: typeof import('element-plus/es')['ElCalendar']
     ElCarousel: typeof import('element-plus/es')['ElCarousel']
     ElCarouselItem: typeof import('element-plus/es')['ElCarouselItem']
     ElCheckbox: typeof import('element-plus/es')['ElCheckbox']
@@ -49,6 +49,7 @@ declare module 'vue' {
     ElRow: typeof import('element-plus/es')['ElRow']
     ElScrollbar: typeof import('element-plus/es')['ElScrollbar']
     ElSelect: typeof import('element-plus/es')['ElSelect']
+    ElSelectV2: typeof import('element-plus/es')['ElSelectV2']
     ElSubMenu: typeof import('element-plus/es')['ElSubMenu']
     ElSwitch: typeof import('element-plus/es')['ElSwitch']
     ElTable: typeof import('element-plus/es')['ElTable']
@@ -69,7 +70,6 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     ShowDetails: typeof import('./src/components/ShowDetails/index.vue')['default']
     SvgIcons: typeof import('./src/components/SvgIcons/index.vue')['default']
-    TagDialog: typeof import('./src/components/Tag/TagDialog/index.vue')['default']
     Toolbar: typeof import('./src/components/Toolbar/index.vue')['default']
     TypewriterEffect: typeof import('./src/components/TypewriterEffect/index.vue')['default']
     WaterfallFlow: typeof import('./src/components/WaterfallFlow/index.vue')['default']
