@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 // 课程类
 interface Class {
   id: number; // 课程id
@@ -13,227 +13,9 @@ interface Class {
   remark?: string; // 备注
 }
 // 起始日期
-const startDate = ref(new Date(2025, 9, 8));
+const startDate = ref(new Date(2025, 8, 8)); //2025-9-8为开学时间
 // 所有课程列表
-const classList = ref<Class[]>([
-  {
-    id: 1,
-    name: "中国近现代史纲要",
-    location: "成都校区 E405",
-    dayOfWeek: 1,
-    week: [1, 2, 3, 4, 9, 10, 11, 12, 13, 14, 15, 16],
-    number: [9, 10],
-    teacher: "王雪山",
-    color: "#FF0000",
-    remark: `中国近现代史纲要/AB21400002/(9-9节)1-4周,9-16周/成都校区 E405/王雪山/(2025-2026-1)-AB21400002-10/48/3.0
-      中国近现代史纲要/AB21400002/(10-10节)1-4周,9-16周/成都校区 E405/王雪山/(2025-2026-1)-AB21400002-10/48/3.0`,
-  },
-  {
-    id: 2,
-    name: "形势与政策1",
-    location: "成都校区 E405",
-    dayOfWeek: 1,
-    week: [6, 7],
-    number: [9, 10],
-    teacher: "王雪山",
-    color: "#FF0001",
-    remark: `形势与政策1/AB21400005/(9-9节)6-7周/成都校区 E405/王雪山/(2025-2026-1)-AB21400005-08/8/0.5
-    形势与政策1/AB21400005/(10-10节)6-7周/成都校区 E405/王雪山/(2025-2026-1)-AB21400005-08/8/0.5`,
-  },
-  {
-    id: 3,
-    name: "婴幼儿回应性照料",
-    location: "成都校区 C107（音乐综合实训室）",
-    dayOfWeek: 2,
-    week: [1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
-    number: [3, 4],
-    teacher: "周红",
-    color: "#FF0002",
-    remark: `婴幼儿回应性照料/BB10403020/(3-3节)1-4周,6-17周/成都校区 C107（音乐综合实训室）/周红/(2025-2026-1)-BB10403020-13/34/2
-      婴幼儿回应性照料/BB10403020/(4-4节)1-4周,6-17周/成都校区 C107（音乐综合实训室）/周红/(2025-2026-1)-BB10403020-13/34/2`,
-  },
-  {
-    id: 4,
-    name: "教育见习I",
-    location: "成都校区 外出",
-    dayOfWeek: 3,
-    week: [8],
-    number: [1, 2, 3, 4, 5, 6, 7, 8],
-    teacher: "唐金金",
-    color: "#FF0004",
-    remark: `教育见习I/CB21500008/(1-1节)8周/成都校区 外出/唐金金/(2025-2026-1)-CB21500008-06/17/1
-    教育见习I/CB21500008/(2-2节)8周/成都校区 外出/唐金金/(2025-2026-1)-CB21500008-06/17/1
-    教育见习I/CB21500008/(3-3节)8周/成都校区 外出/唐金金/(2025-2026-1)-CB21500008-06/17/1
-    教育见习I/CB21500008/(4-4节)8周/成都校区 外出/唐金金/(2025-2026-1)-CB21500008-06/17/1
-    教育见习I/CB21500008/(5-5节)8周/成都校区 外出/唐金金/(2025-2026-1)-CB21500008-06/17/1
-    教育见习I/CB21500008/(6-6节)8周/成都校区 外出/唐金金/(2025-2026-1)-CB21500008-06/17/1
-    教育见习I/CB21500008/(7-7节)8周/成都校区 外出/唐金金/(2025-2026-1)-CB21500008-06/17/1
-    教育见习I/CB21500008/(8-8节)8周/成都校区 外出/唐金金/(2025-2026-1)-CB21500008-06/17/1
-    `,
-  },
-  {
-    id: 5,
-    name: "教育见习I",
-    location: "成都校区 外出",
-    dayOfWeek: 4,
-    week: [8],
-    number: [1, 2, 3, 4, 5, 6, 7, 8],
-    teacher: "唐金金",
-    color: "#FF0004",
-    remark: `教育见习I/CB21500008/(1-1节)8周/成都校区 外出/唐金金/(2025-2026-1)-CB21500008-06/17/1
-    教育见习I/CB21500008/(2-2节)8周/成都校区 外出/唐金金/(2025-2026-1)-CB21500008-06/17/1
-    教育见习I/CB21500008/(3-3节)8周/成都校区 外出/唐金金/(2025-2026-1)-CB21500008-06/17/1
-    教育见习I/CB21500008/(4-4节)8周/成都校区 外出/唐金金/(2025-2026-1)-CB21500008-06/17/1
-    教育见习I/CB21500008/(5-5节)8周/成都校区 外出/唐金金/(2025-2026-1)-CB21500008-06/17/1
-    教育见习I/CB21500008/(6-6节)8周/成都校区 外出/唐金金/(2025-2026-1)-CB21500008-06/17/1
-    教育见习I/CB21500008/(7-7节)8周/成都校区 外出/唐金金/(2025-2026-1)-CB21500008-06/17/1
-    教育见习I/CB21500008/(8-8节)8周/成都校区 外出/唐金金/(2025-2026-1)-CB21500008-06/17/1
-    `,
-  },
-  {
-    id: 6,
-    name: "教育见习I",
-    location: "成都校区 外出",
-    dayOfWeek: 5,
-    week: [8],
-    number: [1, 2, 3, 4, 5, 6, 7, 8],
-    teacher: "唐金金",
-    color: "#FF0004",
-    remark: `教育见习I/CB21500008/(1-1节)8周/成都校区 外出/唐金金/(2025-2026-1)-CB21500008-06/17/1
-    教育见习I/CB21500008/(2-2节)8周/成都校区 外出/唐金金/(2025-2026-1)-CB21500008-06/17/1
-    教育见习I/CB21500008/(3-3节)8周/成都校区 外出/唐金金/(2025-2026-1)-CB21500008-06/17/1
-    教育见习I/CB21500008/(4-4节)8周/成都校区 外出/唐金金/(2025-2026-1)-CB21500008-06/17/1
-    教育见习I/CB21500008/(5-5节)8周/成都校区 外出/唐金金/(2025-2026-1)-CB21500008-06/17/1
-    教育见习I/CB21500008/(6-6节)8周/成都校区 外出/唐金金/(2025-2026-1)-CB21500008-06/17/1
-    教育见习I/CB21500008/(7-7节)8周/成都校区 外出/唐金金/(2025-2026-1)-CB21500008-06/17/1
-    教育见习I/CB21500008/(8-8节)8周/成都校区 外出/唐金金/(2025-2026-1)-CB21500008-06/17/1
-    `,
-  },
-  {
-    id: 7,
-    name: "幼儿园课程设计与实施",
-    location: "成都校区 B104",
-    dayOfWeek: 3,
-    week: [1, 2, 3, 6, 9, 10, 11, 12, 13, 14, 15, 16],
-    number: [3, 4],
-    teacher: "唐金金",
-    color: "#FF0000",
-    remark: `幼儿园课程设计与实施/BB10403017/(3-3节)1-3周,6周,9-17周/成都校区 B104/唐金金/(2025-2026-1)-BB10403017-06/34/2
-      幼儿园课程设计与实施/BB10403017/(4-4节)1-3周,6周,9-17周/成都校区 B104/唐金金/(2025-2026-1)-BB10403017-06/34/2`,
-  },
-  {
-    id: 8,
-    name: "幼儿园教育活动设计与实施",
-    location: "成都校区 D107",
-    dayOfWeek: 3,
-    week: [1, 2, 3, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16],
-    number: [5, 6],
-    teacher: "徐冬梅",
-    color: "#FF0000",
-    remark: `幼儿园教育活动设计与实施/BB10403003/(5-5节)1-3周,6-7周,9-17周/成都校区 D107/徐冬梅/(2025-2026-1)-BB10403003-16/34/2
-      幼儿园教育活动设计与实施/BB10403003/(6-6节)1-3周,6-7周,9-17周/成都校区 D107/徐冬梅/(2025-2026-1)-BB10403003-16/34/2`,
-  },
-  {
-    id: 9,
-    name: "形势与政策1",
-    location: "成都校区 E405",
-    dayOfWeek: 3,
-    week: [6, 7],
-    number: [9, 10],
-    teacher: "王雪山",
-    color: "#FF0000",
-    remark: `形势与政策1/AB21400005/(9-9节)6-7周/成都校区 E405/王雪山/(2025-2026-1)-AB21400005-08/8/0.5
-    形势与政策1/AB21400005/(10-10节)6-7周/成都校区 E405/王雪山/(2025-2026-1)-AB21400005-08/8/0.5`,
-  },
-  {
-    id: 10,
-    name: "奥尔夫音乐教学法Ⅰ",
-    location: "成都校区 F506（舞台排练实训室）",
-    dayOfWeek: 4,
-    week: [1, 2, 3, 5, 6, 7],
-    number: [5, 6, 7, 8],
-    teacher: "张莹",
-    color: "#FF0000",
-    remark: `奥尔夫音乐教学法Ⅰ/BB30403018/(5-5节)1-3周,5-7周/成都校区 F506（舞台排练实训室）/张莹/(2025-2026-1)-BB30403018-14/34/2.0
-    奥尔夫音乐教学法Ⅰ/BB30403018/(6-6节)1-3周,5-7周/成都校区 F506（舞台排练实训室）/张莹/(2025-2026-1)-BB30403018-14/34/2.0
-    奥尔夫音乐教学法Ⅰ/BB30403018/(7-7节)1-3周,5-7周/成都校区 F506（舞台排练实训室）/张莹/(2025-2026-1)-BB30403018-14/34/2.0
-    奥尔夫音乐教学法Ⅰ/BB30403018/(8-8节)1-3周,5-7周/成都校区 F506（舞台排练实训室）/张莹/(2025-2026-1)-BB30403018-14/34/2.0`,
-  },
-  {
-    id: 11,
-    name: "教师职业道德与教育政策法规",
-    location: "成都校区 B102",
-    dayOfWeek: 5,
-    week: [1, 2, 3, 5, 7, 9, 10, 11, 12, 13, 14, 15, 16],
-    number: [5, 6],
-    teacher: "杨薛琳",
-    color: "#FF0000",
-    remark: `教师职业道德与教育政策法规/BB10403016/(5-5节)1-3周,5-7周,9-17周/成都校区 B102/杨薛琳/(2025-2026-1)-BB10403016-06/34/2.0
-    教师职业道德与教育政策法规/BB10403016/(6-6节)1-3周,5-7周,9-17周/成都校区 B102/杨薛琳/(2025-2026-1)-BB10403016-06/34/2.0`,
-  },
-  {
-    id: 12,
-    name: "幼儿中医推拿Ⅰ",
-    location: "成都校区 C107（音乐综合实训室）",
-    dayOfWeek: 5,
-    week: [1, 2, 3, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16],
-    number: [7, 8],
-    teacher: "李姝涵",
-    color: "#FF0000",
-    remark: `幼儿中医推拿Ⅰ/BB30403021/(7-7节)1-3周,5-7周,9-17周/成都校区 C107（音乐综合实训室）/李姝涵/(2025-2026-1)-BB30403021-13/34/2
-    幼儿中医推拿Ⅰ/BB30403021/(8-8节)1-3周,5-7周,9-17周/成都校区 C107（音乐综合实训室）/李姝涵/(2025-2026-1)-BB30403021-13/34/2`,
-  },
-  {
-    id: 13,
-    name: "奥尔夫音乐教学法Ⅰ",
-    location: "成都校区 F506（舞台排练实训室）",
-    dayOfWeek: 6,
-    week: [5],
-    number: [5, 6, 7, 8],
-    teacher: "张莹",
-    color: "#FF0000",
-    remark: `奥尔夫音乐教学法Ⅰ/BB30403018/(5-5节)5周/成都校区 F506（舞台排练实训室）/张莹/(2025-2026-1)-BB30403018-14/34/2.0
-    奥尔夫音乐教学法Ⅰ/BB30403018/(6-6节)5周/成都校区 F506（舞台排练实训室）/张莹/(2025-2026-1)-BB30403018-14/34/2.0
-    奥尔夫音乐教学法Ⅰ/BB30403018/(7-7节)5周/成都校区 F506（舞台排练实训室）/张莹/(2025-2026-1)-BB30403018-14/34/2.0
-    奥尔夫音乐教学法Ⅰ/BB30403018/(8-8节)5周/成都校区 F506（舞台排练实训室）/张莹/(2025-2026-1)-BB30403018-14/34/2.0`,
-  },
-  {
-    id: 14,
-    name: "幼儿园课程设计与实施",
-    location: "成都校区 B104",
-    dayOfWeek: 0,
-    week: [3],
-    number: [3, 4],
-    teacher: "唐金金",
-    color: "#FF0000",
-    remark: `幼儿园课程设计与实施/BB10403017/(3-3节)3周/成都校区 B104/唐金金/(2025-2026-1)-BB10403017-06/34/2
-    幼儿园课程设计与实施/BB10403017/(4-4节)3周/成都校区 B104/唐金金/(2025-2026-1)-BB10403017-06/34/2`,
-  },
-  {
-    id: 15,
-    name: "幼儿园教育活动设计与实施",
-    location: "成都校区 D107",
-    dayOfWeek: 0,
-    week: [3],
-    number: [5, 6],
-    teacher: "徐冬梅",
-    color: "#FF0000",
-    remark: `幼儿园教育活动设计与实施/BB10403003/(5-5节)3周/成都校区 D107/徐冬梅/(2025-2026-1)-BB10403003-16/34/2
-    幼儿园教育活动设计与实施/BB10403003/(6-6节)3周/成都校区 D107/徐冬梅/(2025-2026-1)-BB10403003-16/34/2`,
-  },
-  {
-    id: 16,
-    name: "中国近现代史纲要",
-    location: "成都校区 E405",
-    dayOfWeek: 0,
-    week: [3],
-    number: [9, 10],
-    teacher: "王雪山",
-    color: "#FF0000",
-    remark: `中国近现代史纲要/AB21400002/(9-9节)3周/成都校区 E405/王雪山/(2025-2026-1)-AB21400002-10/48/3.0
-    中国近现代史纲要/AB21400002/(10-10节)3周/成都校区 E405/王雪山/(2025-2026-1)-AB21400002-10/48/3.0`,
-  },
-]);
+const classList = ref<Class[]>([]);
 // today.value = new Date();
 // 当前周次
 const currentWeek = ref(1);
@@ -256,17 +38,13 @@ function getClass(week: number, dayOfWeek: number, number: number): Class | unde
 // 获取今日是startDate的第几周
 function getWeekNumber(time: string): number {
   const inputDate = new Date(time);
-
   // 获取日期的时间戳（毫秒数）
   const startMs = startDate.value.getTime();
   const inputMs = inputDate.getTime();
-
   // 计算日期差值（天）
   const dayDiff = Math.floor((inputMs - startMs) / (1000 * 60 * 60 * 24));
-
   // 计算周数（向上取整）
   const weekNumber = Math.ceil((dayDiff + 1) / 7);
-
   return weekNumber;
 }
 
@@ -304,6 +82,16 @@ function numberToChinese(number: number): string {
   }
   return chineseNumbers[Math.floor(number / 100)] + "百" + numberToChinese(number % 100);
 }
+
+//获取当前日期格式为yyyy-mm-dd
+function getCurrentDate() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 import MeowDialog from "@/components/MeowDialog/index.vue";
 // 添加 OR 修改对话框Ref
 const DialogRef = ref();
@@ -339,7 +127,21 @@ function getWeekTableByWeeklong(): { label: string; value: number }[] {
     return { label: "第" + numberToChinese(index + 1) + "周", value: index + 1 };
   });
 }
-console.log(getWeekNumber("2025-09-20"));
+
+// 加载完成调用
+onMounted(async () => {
+  const baseUrl = import.meta.env.BASE_URL;
+
+  // 使用 fetch 加载 JSON 文件
+  const response = await fetch(`${baseUrl}class.json`);
+
+  if (!response.ok)
+    throw new Error(`Failed to fetch cursor styles: ${response.statusText}`);
+  const classJson: Class[] = await response.json();
+  console.log(classJson);
+  classList.value = classJson;
+  changeWeekNumber(getWeekNumber(getCurrentDate()));
+});
 </script>
 <template>
   <!-- 课程控制器 -->
@@ -350,11 +152,16 @@ console.log(getWeekNumber("2025-09-20"));
       <template #date-cell="{ data }">
         <p
           class="date-cell"
-          :class="data.isSelected ? 'is-selected' : ''"
+          :class="[
+            data.isSelected ? 'is-selected' : '',
+            data.day === '2025-09-08' ? 'is-today' : '',
+          ]"
           @click="changeWeekNumber(getWeekNumber(data.day))"
         >
           {{ data.day.split("-")[2] }}
-          {{ data.isSelected ? "✔️" : "" }}
+          {{ data.isSelected ? "✔️" : "" }}<br />
+          {{ data.day === getCurrentDate() ? "今" : "" }}
+          {{ data.day === "2025-09-08" ? "⭐" : "" }}
         </p>
       </template>
     </el-calendar>
@@ -382,13 +189,13 @@ console.log(getWeekNumber("2025-09-20"));
               }"
               @click="showClassDetail(getClass(currentWeek, index+1, number)!.id)"
             >
-              <div class="course-name">
+              <el-text class="course-name" line-clamp="1">
                 {{ getClass(currentWeek, index + 1, number)?.name }}
-              </div>
-              <div class="course-details">
+              </el-text>
+              <el-text class="course-details" line-clamp="1">
                 {{ getClass(currentWeek, index + 1, number)?.location }} /
                 {{ getClass(currentWeek, index + 1, number)?.teacher }}
-              </div>
+              </el-text>
             </div>
           </template>
           <template v-else>
@@ -670,5 +477,8 @@ console.log(getWeekNumber("2025-09-20"));
 // 日历
 .date-cell {
   height: 100%;
+}
+.is-today {
+  background-color: #5f9fd3;
 }
 </style>

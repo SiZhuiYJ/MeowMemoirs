@@ -35,5 +35,5 @@ export const ROUTER_WHITE_LIST: string[] = [
   "/main/confession/settings",
   "/main/memo/notes",
   "/main/memo/todo",
-  "/main/ClassSchedule",
+  "/main/classSchedule",
 ];
