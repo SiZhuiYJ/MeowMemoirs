@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
+import { meowMsgError, meowMsgSuccess } from "@/utils/message";
 // 课程类
 interface Class {
   id: number; // 课程id
@@ -93,6 +94,7 @@ function getCurrentDate() {
 }
 
 import MeowDialog from "@/components/MeowDialog/index.vue";
+import { ElLoading } from "element-plus";
 // 添加 OR 修改对话框Ref
 const DialogRef = ref();
 /** 打开Dialog操作 */
@@ -127,19 +129,31 @@ function getWeekTableByWeeklong(): { label: string; value: number }[] {
     return { label: "第" + numberToChinese(index + 1) + "周", value: index + 1 };
   });
 }
-
-// 加载完成调用
-onMounted(async () => {
+// 获取课表数据
+async function getScheduleData() {
+  const loading = ElLoading.service({
+    lock: true,
+    text: "获取课表数据中...",
+    background: "rgba(0, 0, 0, 0.7)",
+  });
+  setTimeout(() => {}, 2000);
   const baseUrl = import.meta.env.BASE_URL;
 
   // 使用 fetch 加载 JSON 文件
   const response = await fetch(`${baseUrl}class.json`);
 
-  if (!response.ok)
-    throw new Error(`Failed to fetch cursor styles: ${response.statusText}`);
+  if (!response.ok) {
+    meowMsgError("课表获取失败");
+    throw new Error(`获取失败: ${response.statusText}`);
+  }
   const classJson: Class[] = await response.json();
-  console.log(classJson);
   classList.value = classJson;
+  meowMsgSuccess("课表获取成功");
+  loading.close();
+}
+// 加载完成调用
+onMounted(async () => {
+  getScheduleData();
   changeWeekNumber(getWeekNumber(getCurrentDate()));
 });
 </script>
@@ -147,10 +161,10 @@ onMounted(async () => {
   <!-- 课程控制器 -->
   <div class="confession-class-controller">
     <!-- 当前周数 -->
-    <div class="current-week">当前周数：{{ currentWeek }}</div>
+    <div class="current-week">当前周数：第{{ numberToChinese(currentWeek) }}周</div>
     <el-calendar>
       <template #date-cell="{ data }">
-        <p
+        <div
           class="date-cell"
           :class="[
             data.isSelected ? 'is-selected' : '',
@@ -162,7 +176,7 @@ onMounted(async () => {
           {{ data.isSelected ? "✔️" : "" }}<br />
           {{ data.day === getCurrentDate() ? "今" : "" }}
           {{ data.day === "2025-09-08" ? "⭐" : "" }}
-        </p>
+        </div>
       </template>
     </el-calendar>
   </div>
@@ -171,7 +185,7 @@ onMounted(async () => {
       <div class="confession-time-item" key="-1">
         <div class="time-header">节次</div>
         <div class="time-slot" v-for="number in numberList" :key="number">
-          第{{ numberToChinese(number) }}节
+          {{ numberToChinese(number) }}节
         </div>
       </div>
       <div
@@ -192,14 +206,14 @@ onMounted(async () => {
               <el-text class="course-name" line-clamp="1">
                 {{ getClass(currentWeek, index + 1, number)?.name }}
               </el-text>
-              <el-text class="course-details" line-clamp="1">
+              <el-text class="course-details" line-clamp="2">
                 {{ getClass(currentWeek, index + 1, number)?.location }} /
                 {{ getClass(currentWeek, index + 1, number)?.teacher }}
               </el-text>
             </div>
           </template>
           <template v-else>
-            <div class="empty-slot">无课程</div>
+            <div class="empty-slot">无</div>
           </template>
         </div>
       </div>
@@ -473,8 +487,22 @@ onMounted(async () => {
   .course-name {
     font-size: 10px;
   }
+  .course-details {
+    font-size: 6px;
+  }
+  .confession-class {
+    padding: 0;
+  }
 }
 // 日历
+.current-week {
+  padding: 30px 10px 5px;
+  width: calc(100% - 20px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 .date-cell {
   height: 100%;
 }
