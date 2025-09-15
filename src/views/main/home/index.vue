@@ -14,23 +14,6 @@ const outLogin = () => {
 const login = () => {
   router.push("/login");
 };
-const imgList = [
-  {
-    progressive: "img/home/_2-720p.webp",
-    src: "img/home/_2-4k.webp",
-    alt: "Image 示例图片",
-  },
-  {
-    progressive: "img/home/_4-720p.webp",
-    src: "img/home/_4-4k.webp",
-    alt: "Image 示例图片",
-  },
-  {
-    progressive: "img/home/_8-720p.webp",
-    src: "img/home/_8-4k.webp",
-    alt: "Image 示例图片",
-  },
-];
 const TextList = [
   "🐾「爪印轻点，心事成册——喵咪记事簿，记录你的每一份柔软」",
   "📸「毛茸茸的时光机，一键收藏与主子的独家记忆」",
@@ -101,15 +84,7 @@ const TextList = [
         </div>
       </div>
     </div>
-    <div class="progressive" v-for="(item, index) in imgList">
-      <img
-        class="preview"
-        v-progressive.lazy="getStaticFileUrl(item.progressive)"
-        :src="getStaticFileUrl(item.src)"
-        :alt="item.alt"
-        :key="index"
-      />
-    </div>
+
     <!-- 封页 -->
     <div class="page-break">
       <img
@@ -202,8 +177,7 @@ const TextList = [
       }
     }
   }
-  .page-break,
-  .progressive {
+  .page-break {
     background-color: #f5f5f5;
     width: calc(100vw - 20px);
     padding: 10px 10px 0;
@@ -211,7 +185,6 @@ const TextList = [
       width: 100%;
     }
   }
-
   .message {
     flex-direction: row;
     align-items: center;

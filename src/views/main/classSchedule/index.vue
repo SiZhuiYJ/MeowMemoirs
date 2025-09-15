@@ -213,7 +213,7 @@ onMounted(async () => {
         <div class="time-header">节次</div>
         <div class="time-slot" v-for="number in numberList" :key="number">
           <span class="time-slot-number">{{ numberToChinese(number) }}节</span>
-          <span class="time-slot-time">{{ "{" + timeList[number] + "}" }}</span>
+          <span class="time-slot-time">{{ "{" + timeList[number - 1] + "}" }}</span>
         </div>
       </div>
       <div
