@@ -5,6 +5,9 @@ const showDetails = ref(false);
 const toggleDetails = () => {
   showDetails.value = !showDetails.value;
 };
+defineExpose({
+  toggleDetails,
+});
 </script>
 
 <template>

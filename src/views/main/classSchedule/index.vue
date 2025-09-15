@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { meowMsgError, meowMsgSuccess } from "@/utils/message";
+import Folding from "@/layouts/components/Header/components/LoadListener/Folding/index.vue";
 // 课程类
 interface Class {
   id: number; // 课程id
@@ -15,9 +16,10 @@ interface Class {
 }
 // 起始日期
 const startDate = ref(new Date(2025, 8, 8)); //2025-9-8为开学时间
+// 选着的日期
+const currentDate = ref(new Date());
 // 所有课程列表
 const classList = ref<Class[]>([]);
-// today.value = new Date();
 // 当前周次
 const currentWeek = ref(1);
 // 周次长度
@@ -26,6 +28,21 @@ const weeklong = ref(30);
 const weekList = ref(["周一", "周二", "周三", "周四", "周五", "周六", "周日"]);
 // 节次列表
 const numberList = ref([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+// 作息列表
+const timeList = ref<string[]>([
+  "8:25-9:10",
+  "9:15-10:00",
+  "10:10-10:55",
+  "11:00-11:45",
+  "14:00-14:45",
+  "14:50-15:35",
+  "15:45-16:30",
+  "16:35-17:20",
+  "18:30-19:15",
+  "19:20-20:05",
+  "20:10-20:55",
+  "21:00-21:45",
+]);
 // 获取周次某天某节课的课程
 function getClass(week: number, dayOfWeek: number, number: number): Class | undefined {
   if (dayOfWeek == 7) dayOfWeek = 0;
@@ -39,6 +56,7 @@ function getClass(week: number, dayOfWeek: number, number: number): Class | unde
 // 获取今日是startDate的第几周
 function getWeekNumber(time: string): number {
   const inputDate = new Date(time);
+  currentDate.value = inputDate;
   // 获取日期的时间戳（毫秒数）
   const startMs = startDate.value.getTime();
   const inputMs = inputDate.getTime();
@@ -151,47 +169,59 @@ async function getScheduleData() {
   meowMsgSuccess("课表获取成功");
   loading.close();
 }
+const folding = ref();
 // 加载完成调用
 onMounted(async () => {
   getScheduleData();
   changeWeekNumber(getWeekNumber(getCurrentDate()));
+  if (window.innerWidth > 768) folding.value.toggleDetails();
 });
 </script>
 <template>
   <!-- 课程控制器 -->
   <div class="confession-class-controller">
     <!-- 当前周数 -->
-    <div class="current-week">当前周数：第{{ numberToChinese(currentWeek) }}周</div>
-    <el-calendar>
-      <template #date-cell="{ data }">
-        <div
-          class="date-cell"
-          :class="[
-            data.isSelected ? 'is-selected' : '',
-            data.day === '2025-09-08' ? 'is-today' : '',
-          ]"
-          @click="changeWeekNumber(getWeekNumber(data.day))"
-        >
-          {{ data.day.split("-")[2] }}
-          {{ data.isSelected ? "✔️" : "" }}<br />
-          {{ data.day === getCurrentDate() ? "今" : "" }}
-          {{ data.day === "2025-09-08" ? "⭐" : "" }}
-        </div>
+    <Folding ref="folding">
+      <div class="current-week">当前周数：</div>
+      <template #toggle>
+        <div class="current-week">第{{ numberToChinese(currentWeek) }}周</div>
       </template>
-    </el-calendar>
+      <template #container>
+        <el-calendar>
+          <template #date-cell="{ data }">
+            <div
+              class="date-cell"
+              :class="[
+                data.isSelected ? 'is-selected' : '',
+                data.day === '2025-09-08' ? 'is-today' : '',
+              ]"
+              @click="changeWeekNumber(getWeekNumber(data.day))"
+            >
+              {{ data.day.split("-")[2] }}
+              {{ data.isSelected ? "✔️" : "" }}<br />
+              {{ data.day === getCurrentDate() ? "今" : "" }}
+              {{ data.day === "2025-09-08" ? "⭐" : "" }}
+            </div>
+          </template>
+        </el-calendar></template
+      >
+    </Folding>
   </div>
   <div class="confession-class">
     <div class="confession-class-grid">
       <div class="confession-time-item" key="-1">
         <div class="time-header">节次</div>
         <div class="time-slot" v-for="number in numberList" :key="number">
-          {{ numberToChinese(number) }}节
+          <span class="time-slot-number">{{ numberToChinese(number) }}节</span>
+          <span class="time-slot-time">{{ "{" + timeList[number] + "}" }}</span>
         </div>
       </div>
       <div
         class="confession-class-item"
         v-for="(item, index) in weekList"
+        :class="[currentDate.getDay() === (index + 1) % 7 ? 'class-activate' : '']"
         :key="index + 1"
+        :title="index + ':' + currentDate.getDay() + ':' + (index % 7)"
       >
         <div class="day-header">{{ item }}</div>
         <div v-for="number in numberList" :key="number" class="course-slot">
@@ -328,6 +358,7 @@ onMounted(async () => {
 </template>
 <style scoped lang="scss">
 .confession-class-controller {
+  padding: 40px 0 0;
   //   width: 40vw;
   min-width: 300px;
   max-width: 500px;
@@ -351,28 +382,47 @@ onMounted(async () => {
       gap: 1px;
       background-color: #eef2f7;
       flex-direction: column;
+      .time-slot {
+        background: var(--el-color-primary-light-4);
+        padding: 5px;
+        font-weight: 500;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        color: #f8fafd;
+        font-style: italic;
+        .time-slot-number {
+          font-size: 16px;
+        }
+        .time-slot-time {
+          font-size: 10px;
+        }
+      }
+      .time-header,
+      .day-header {
+        background: var(--el-color-primary);
+        color: white;
+        padding: 15px;
+        text-align: center;
+        font-weight: 500;
+      }
+      .course-slot {
+        height: 50px;
+        padding: 5px;
+        background: white;
+        position: relative;
+      }
+    }
+    .class-activate {
+      .course-slot {
+        background: var(--el-color-primary-light-7);
+      }
     }
   }
 }
 
-.time-slot {
-  background: #f8fafd;
-  padding: 5px;
-  color: #7a8599;
-  font-weight: 500;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #bdc3c7;
-  font-style: italic;
-}
-.course-slot {
-  height: 50px;
-  padding: 5px;
-  background: white;
-  position: relative;
-}
 .course-item {
   background: #e3f2fd;
   border-left: 4px solid #2196f3;
@@ -403,14 +453,6 @@ onMounted(async () => {
   margin-top: 20px;
   display: flex;
   gap: 10px;
-}
-.time-header,
-.day-header {
-  background: #4e54c8;
-  color: white;
-  padding: 15px;
-  text-align: center;
-  font-weight: 500;
 }
 
 // 详情框样式
@@ -484,8 +526,24 @@ onMounted(async () => {
   }
 }
 @media (max-width: 768px) {
+  .course-slot {
+    padding: 2px;
+    .course-item {
+      padding: 2px;
+      height: 48px;
+    }
+  }
+  .time-slot {
+    .time-slot-number {
+      font-size: 10px;
+    }
+    .time-slot-time {
+      font-size: 5px;
+    }
+  }
   .course-name {
-    font-size: 10px;
+    font-size: 9px;
+    margin-bottom: 1px;
   }
   .course-details {
     font-size: 6px;
@@ -496,17 +554,17 @@ onMounted(async () => {
 }
 // 日历
 .current-week {
-  padding: 30px 10px 5px;
-  width: calc(100% - 20px);
+  padding: 10px 20px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 .date-cell {
-  height: 100%;
+  height: calc(100% - 4px);
+  padding: 2px;
 }
 .is-today {
-  background-color: #5f9fd3;
+  background-color: var(--el-color-primary);
 }
 </style>
