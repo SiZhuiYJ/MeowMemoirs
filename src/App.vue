@@ -9,11 +9,16 @@ const globalStore = useGlobalStore();
 
 const dimension = computed(() => globalStore.dimension);
 const { initThemeConfig } = useTheme();
-setCursor();
 /** 初始化主题配置 */
 const handleThemeConfig = () => {
   nextTick(() => {
     initThemeConfig();
+  });
+};
+/** 初始化鼠标样式 */
+const handleCursor = () => {
+  nextTick(() => {
+    setCursor();
   });
 };
 // 动画
@@ -108,6 +113,16 @@ onMounted(() => {
 
   // 初始化无操作计时器
   resetIdleTimer();
+
+  // 初始化鼠标样式 - 使用requestIdleCallback避免阻塞关键资源
+  if ("requestIdleCallback" in window) {
+    requestIdleCallback(() => {
+      handleCursor();
+    });
+  } else {
+    // 兼容旧浏览器
+    setTimeout(() => handleCursor(), 1000);
+  }
 });
 
 onUnmounted(() => {

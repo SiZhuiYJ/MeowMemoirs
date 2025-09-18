@@ -59,7 +59,6 @@ const openBlog = (id: number) => {
 </script>
 
 <template>
-  <!-- <div class="content-wrapper"> -->
   <div class="blog-selector">
     <div
       v-if="blogStore.blogList.length"
@@ -111,7 +110,6 @@ const openBlog = (id: number) => {
     </div>
     <LoadingSpinner v-else />
   </div>
-  <!-- </div> -->
 </template>
 
 <style scoped lang="scss">

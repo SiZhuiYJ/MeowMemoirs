@@ -111,6 +111,20 @@ function getCurrentDate() {
   return `${year}-${month}-${day}`;
 }
 
+// 通用函数：获取任意日期的前n天
+const getDateDaysBefore = (date: Date, days: number): Date => {
+  const copy = new Date(date); // 创建副本避免修改原对象
+  copy.setDate(copy.getDate() - days);
+  return copy;
+};
+
+// 获取任意日期的MM-DD格式
+function formatDateToMMDD(date: Date): string {
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const day = date.getDate().toString().padStart(2, "0");
+  return `${month}-${day}`;
+}
+
 import MeowDialog from "@/components/MeowDialog/index.vue";
 import { ElLoading } from "element-plus";
 // 添加 OR 修改对话框Ref
@@ -169,6 +183,7 @@ async function getScheduleData() {
   meowMsgSuccess("课表获取成功");
   loading.close();
 }
+
 const folding = ref();
 // 加载完成调用
 onMounted(async () => {
@@ -182,7 +197,12 @@ onMounted(async () => {
   <div class="confession-class-controller">
     <!-- 当前周数 -->
     <Folding ref="folding">
-      <div class="current-week">当前周数：</div>
+      <div class="current-week">
+        当前日期：
+        <p style="color: var(--el-color-primary)">{{ formatDateToMMDD(currentDate) }}</p>
+        <p>-</p>
+        当前周数：
+      </div>
       <template #toggle>
         <div class="current-week">第{{ numberToChinese(currentWeek) }}周</div>
       </template>
@@ -211,6 +231,7 @@ onMounted(async () => {
     <div class="confession-class-grid">
       <div class="confession-time-item" key="-1">
         <div class="time-header">节次</div>
+        <div class="date-header">日期</div>
         <div class="time-slot" v-for="number in numberList" :key="number">
           <span class="time-slot-number">{{ numberToChinese(number) }}节</span>
           <span class="time-slot-time">{{ "{" + timeList[number - 1] + "}" }}</span>
@@ -221,9 +242,17 @@ onMounted(async () => {
         v-for="(item, index) in weekList"
         :class="[currentDate.getDay() === (index + 1) % 7 ? 'class-activate' : '']"
         :key="index + 1"
-        :title="index + ':' + currentDate.getDay() + ':' + (index % 7)"
       >
-        <div class="day-header">{{ item }}</div>
+        <div class="day-header">
+          {{ item }}
+        </div>
+        <div class="date-header">
+          {{
+            formatDateToMMDD(
+              getDateDaysBefore(currentDate, currentDate.getDay() - index - 1)
+            )
+          }}
+        </div>
         <div v-for="number in numberList" :key="number" class="course-slot">
           <template v-if="getClass(currentWeek, index + 1, number)">
             <div
@@ -236,7 +265,7 @@ onMounted(async () => {
               <el-text class="course-name" line-clamp="1">
                 {{ getClass(currentWeek, index + 1, number)?.name }}
               </el-text>
-              <el-text class="course-details" line-clamp="2">
+              <el-text class="course-details" line-clamp="3">
                 {{ getClass(currentWeek, index + 1, number)?.location }} /
                 {{ getClass(currentWeek, index + 1, number)?.teacher }}
               </el-text>
@@ -407,6 +436,24 @@ onMounted(async () => {
         padding: 15px;
         text-align: center;
         font-weight: 500;
+        @media (max-width: 768px) {
+          padding: 10px;
+        }
+        > p {
+          font-size: 12px;
+        }
+      }
+      .date-header {
+        height: 20px;
+        font-size: 12px;
+        background: var(--el-color-primary);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        @media (max-width: 768px) {
+          font-size: 10px;
+        }
       }
       .course-slot {
         height: 50px;
@@ -556,7 +603,7 @@ onMounted(async () => {
 .current-week {
   padding: 10px 20px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
 }
