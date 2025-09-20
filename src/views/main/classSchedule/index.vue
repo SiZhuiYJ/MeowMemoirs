@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { meowMsgError, meowMsgSuccess } from "@/utils/message";
 import Folding from "@/layouts/components/Header/components/LoadListener/Folding/index.vue";
 // 课程类
@@ -18,6 +18,12 @@ interface Class {
 const startDate = ref(new Date(2025, 8, 8)); //2025-9-8为开学时间
 // 选着的日期
 const currentDate = ref(new Date());
+// 双向绑定
+const weekNumber = ref(new Date());
+
+watch(weekNumber, (newValue) => {
+  changeWeekNumber(getWeekNumber(getDateFormatYYYYMMDD(newValue)));
+});
 // 所有课程列表
 const classList = ref<Class[]>([]);
 // 当前周次
@@ -43,6 +49,13 @@ const timeList = ref<string[]>([
   "20:10-20:55",
   "21:00-21:45",
 ]);
+import type { CalendarDateType, CalendarInstance } from "element-plus";
+
+const calendar = ref<CalendarInstance>();
+const selectDate = (val: CalendarDateType) => {
+  if (!calendar.value) return;
+  calendar.value.selectDate(val);
+};
 // 获取周次某天某节课的课程
 function getClass(week: number, dayOfWeek: number, number: number): Class | undefined {
   if (dayOfWeek == 7) dayOfWeek = 0;
@@ -105,20 +118,23 @@ function numberToChinese(number: number): string {
 //获取当前日期格式为yyyy-mm-dd
 function getCurrentDate() {
   const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
+  return getDateFormatYYYYMMDD(now);
 }
 
-// 通用函数：获取任意日期的前n天
+/** 通用函数：获取任意日期的前n天 */
 const getDateDaysBefore = (date: Date, days: number): Date => {
   const copy = new Date(date); // 创建副本避免修改原对象
   copy.setDate(copy.getDate() - days);
   return copy;
 };
-
-// 获取任意日期的MM-DD格式
+/** 获取任意日期的yyyy-mm-dd格式 */
+function getDateFormatYYYYMMDD(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+/** 获取任意日期的mm-dd格式 */
 function formatDateToMMDD(date: Date): string {
   const month = (date.getMonth() + 1).toString().padStart(2, "0");
   const day = date.getDate().toString().padStart(2, "0");
@@ -127,6 +143,7 @@ function formatDateToMMDD(date: Date): string {
 
 import MeowDialog from "@/components/MeowDialog/index.vue";
 import { ElLoading } from "element-plus";
+import { useScreenStore } from "@/utils/screen";
 // 添加 OR 修改对话框Ref
 const DialogRef = ref();
 /** 打开Dialog操作 */
@@ -189,14 +206,15 @@ const folding = ref();
 onMounted(async () => {
   getScheduleData();
   changeWeekNumber(getWeekNumber(getCurrentDate()));
-  if (window.innerWidth > 768) folding.value.toggleDetails();
+  if (useScreenStore().isMobile.value)
+    if (window.innerWidth > 768) folding.value.toggleDetails();
 });
 </script>
 <template>
   <!-- 课程控制器 -->
   <div class="confession-class-controller">
     <!-- 当前周数 -->
-    <Folding ref="folding">
+    <Folding ref="folding" v-if="useScreenStore().isMobile.value">
       <div class="current-week">
         当前日期：
         <p style="color: var(--el-color-primary)">{{ formatDateToMMDD(currentDate) }}</p>
@@ -207,7 +225,7 @@ onMounted(async () => {
         <div class="current-week">第{{ numberToChinese(currentWeek) }}周</div>
       </template>
       <template #container>
-        <el-calendar>
+        <el-calendar v-model="weekNumber">
           <template #date-cell="{ data }">
             <div
               class="date-cell"
@@ -223,9 +241,36 @@ onMounted(async () => {
               {{ data.day === "2025-09-08" ? "⭐" : "" }}
             </div>
           </template>
-        </el-calendar></template
-      >
+        </el-calendar>
+      </template>
     </Folding>
+    <div class="week-controller" v-else>
+      <el-calendar v-model="weekNumber" ref="calendar">
+        <template #header="{ date }">
+          <span>{{ date }}-上课第{{ numberToChinese(currentWeek) }}周</span>
+          <el-button-group>
+            <el-button size="small" @click="selectDate('prev-month')"> 上个月 </el-button>
+            <el-button size="small" @click="selectDate('today')">今天</el-button>
+            <el-button size="small" @click="selectDate('next-month')"> 下个月 </el-button>
+          </el-button-group>
+        </template>
+        <template #date-cell="{ data }">
+          <div
+            class="date-cell"
+            :class="[
+              data.isSelected ? 'is-selected' : '',
+              data.day === '2025-09-08' ? 'is-today' : '',
+            ]"
+            @click="changeWeekNumber(getWeekNumber(data.day))"
+          >
+            {{ data.day.split("-")[2] }}
+            {{ data.isSelected ? "✔️" : "" }}<br />
+            {{ data.day === getCurrentDate() ? "今" : "" }}
+            {{ data.day === "2025-09-08" ? "⭐" : "" }}
+          </div>
+        </template>
+      </el-calendar>
+    </div>
   </div>
   <div class="confession-class">
     <div class="confession-class-grid">
@@ -398,7 +443,6 @@ onMounted(async () => {
   overflow: hidden;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   width: 100%;
-  padding: 40px 0 0;
   .confession-class-grid {
     // display: flex;
     display: grid;
@@ -433,12 +477,9 @@ onMounted(async () => {
       .day-header {
         background: var(--el-color-primary);
         color: white;
-        padding: 15px;
+        padding: 5px;
         text-align: center;
         font-weight: 500;
-        @media (max-width: 768px) {
-          padding: 10px;
-        }
         > p {
           font-size: 12px;
         }

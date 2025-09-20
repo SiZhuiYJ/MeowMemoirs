@@ -4,6 +4,7 @@ import { ref, onMounted, nextTick, computed, onUnmounted } from "vue";
 import { setCursor } from "@/utils/cursor";
 import { useTheme } from "@/utils/theme.ts";
 import { useGlobalStore } from "@/stores";
+import { useScreenStore } from "@/utils/screen";
 import zhCn from "element-plus/es/locale/lang/zh-cn";
 const globalStore = useGlobalStore();
 
@@ -18,7 +19,7 @@ const handleThemeConfig = () => {
 /** 初始化鼠标样式 */
 const handleCursor = () => {
   nextTick(() => {
-    setCursor();
+    if (!useScreenStore().isMobile.value) setCursor();
   });
 };
 // 动画
