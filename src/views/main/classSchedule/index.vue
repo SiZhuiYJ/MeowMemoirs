@@ -201,7 +201,67 @@ async function getScheduleData() {
   loading.close();
 }
 
+// 使用日历的文件 (例如: calendar-utils.ts)
+import calendars, {type LunarDateInfo } from "./util/index";
+import dayjs from "dayjs";
+import "dayjs/locale/zh-cn";
+
+dayjs.locale("zh-cn");
+
+interface SlotData {
+  day: string;
+}
+
+// 是否节假日
+function isFestival(slotData: SlotData): boolean {
+  const solarDayArr = slotData.day.split("-");
+  const lunarDay = calendars.solar2lunar(
+    parseInt(solarDayArr[0]),
+    parseInt(solarDayArr[1]),
+    parseInt(solarDayArr[2])
+  ) as LunarDateInfo;
+
+  // 公历节日\农历节日\农历节气
+  const festAndTerm: string[] = [];
+  festAndTerm.push(lunarDay.festival == null ? "" : " " + lunarDay.festival);
+  festAndTerm.push(lunarDay.lunarFestival == null ? "" : "" + lunarDay.lunarFestival);
+
+  return festAndTerm.join("") !== "";
+}
+
+// 公历转农历
+function solarToLunar(slotData: SlotData): string {
+  const solarDayArr = slotData.day.split("-");
+  const lunarDay = calendars.solar2lunar(
+    parseInt(solarDayArr[0]),
+    parseInt(solarDayArr[1]),
+    parseInt(solarDayArr[2])
+  ) as LunarDateInfo;
+
+  // 农历日期
+  let lunarMD = "";
+  if (lunarDay.IDayCn === "初一") {
+    lunarMD = lunarDay.IMonthCn;
+  } else {
+    lunarMD = lunarDay.IDayCn;
+  }
+
+  // 公历节日\农历节日\农历节气
+  const festAndTerm: string[] = [];
+  festAndTerm.push(lunarDay.festival == null ? "" : " " + lunarDay.festival);
+  festAndTerm.push(lunarDay.lunarFestival == null ? "" : " " + lunarDay.lunarFestival);
+  festAndTerm.push(lunarDay.Term == null ? "" : " " + lunarDay.Term);
+
+  const result = festAndTerm.join("");
+  return result === "" ? lunarMD : result;
+}
+
+// 屏幕状态
 const folding = ref();
+
+// 禁用状态
+const disabled = ref(true);
+
 // 加载完成调用
 onMounted(async () => {
   getScheduleData();
@@ -227,18 +287,17 @@ onMounted(async () => {
       <template #container>
         <el-calendar v-model="weekNumber">
           <template #date-cell="{ data }">
-            <div
-              class="date-cell"
-              :class="[
-                data.isSelected ? 'is-selected' : '',
-                data.day === '2025-09-08' ? 'is-today' : '',
-              ]"
-              @click="changeWeekNumber(getWeekNumber(data.day))"
-            >
-              {{ data.day.split("-")[2] }}
-              {{ data.isSelected ? "✔️" : "" }}<br />
-              {{ data.day === getCurrentDate() ? "今" : "" }}
-              {{ data.day === "2025-09-08" ? "⭐" : "" }}
+            <div @click="changeWeekNumber(getWeekNumber(data.day))">
+              <div class="solar">{{ data.day.split("-")[2] }}</div>
+              <div class="lunar" :class="{ festival: isFestival(data) }">
+                {{ solarToLunar(data) }}
+              </div>
+              <!-- 标记 -->
+              <div class="mark" style="display: flex">
+                <p v-if="data.day === '2025-09-08'">⭐</p>
+                <p v-if="data.day === getCurrentDate()">今</p>
+                <p v-if="data.isSelected">✔️</p>
+              </div>
             </div>
           </template>
         </el-calendar>
@@ -255,7 +314,19 @@ onMounted(async () => {
           </el-button-group>
         </template>
         <template #date-cell="{ data }">
-          <div
+          <div @click="changeWeekNumber(getWeekNumber(data.day))">
+            <div class="solar">{{ data.day.split("-")[2] }}</div>
+            <div class="lunar" :class="{ festival: isFestival(data) }">
+              {{ solarToLunar(data) }}
+            </div>
+            <!-- 标记 -->
+            <div class="mark" style="display: flex">
+              <p v-if="data.day === '2025-09-08'">⭐</p>
+              <p v-if="data.day === getCurrentDate()">今</p>
+              <p v-if="data.isSelected">✔️</p>
+            </div>
+          </div>
+          <!-- <div
             class="date-cell"
             :class="[
               data.isSelected ? 'is-selected' : '',
@@ -267,7 +338,7 @@ onMounted(async () => {
             {{ data.isSelected ? "✔️" : "" }}<br />
             {{ data.day === getCurrentDate() ? "今" : "" }}
             {{ data.day === "2025-09-08" ? "⭐" : "" }}
-          </div>
+          </div> -->
         </template>
       </el-calendar>
     </div>
@@ -340,6 +411,7 @@ onMounted(async () => {
           <span class="detail-label">课程名称:</span>
           <div class="detail-value">
             <el-input
+              :disabled="disabled"
               v-model="classDetail!.name"
               placeholder="名称"
               suffix-icon="CollectionTag"
@@ -350,6 +422,7 @@ onMounted(async () => {
           <span class="detail-label">课程地点:</span>
           <div class="detail-value">
             <el-input
+              :disabled="disabled"
               v-model="classDetail!.location"
               placeholder="地点"
               suffix-icon="AddLocation"
@@ -360,6 +433,7 @@ onMounted(async () => {
           <span class="detail-label">授课老师:</span>
           <div class="detail-value">
             <el-input
+              :disabled="disabled"
               v-model="classDetail!.teacher"
               placeholder="老师"
               suffix-icon="User"
@@ -371,6 +445,7 @@ onMounted(async () => {
           <div class="detail-value">
             <el-radio-group v-model="classDetail!.dayOfWeek">
               <el-radio-button
+                :disabled="disabled"
                 v-for="value in 7"
                 :label="value == 1 ? '日' : numberToChinese(value - 1)"
                 :value="value - 1"
@@ -383,6 +458,7 @@ onMounted(async () => {
           <span class="detail-label">课程周次:</span>
           <div class="detail-value">
             <el-select-v2
+              :disabled="disabled"
               v-model="classDetail!.week"
               :options="getWeekTableByWeeklong()"
               placeholder="多选"
@@ -398,6 +474,7 @@ onMounted(async () => {
           <span class="detail-label">课程节次:</span>
           <div class="detail-value">
             <el-select-v2
+              :disabled="disabled"
               v-model="classDetail!.number"
               :options="getTimeTable()"
               placeholder="多选"
@@ -411,13 +488,25 @@ onMounted(async () => {
         </div>
         <div class="class-details-item">
           <span class="detail-label">课程颜色:</span>
-          <div class="detail-value"><el-color-picker v-model="classDetail!.color" /></div>
-          {{ classDetail?.color }}
+          <div class="detail-value">
+            <span
+              :style="{
+                backgroundColor: classDetail?.color,
+                width: '100%',
+                display: 'flex',
+                height: '100%',
+                borderRadius: '5px',
+              }"
+            >
+              <el-color-picker :disabled="disabled" v-model="classDetail!.color" />
+            </span>
+          </div>
         </div>
         <div class="class-details-item">
           <span class="detail-label">课程备注:</span>
           <div class="detail-value">
             <el-input
+              :disabled="disabled"
               v-model="classDetail!.remark"
               style="width: 315px"
               :autosize="{ minRows: 2, maxRows: 4 }"
@@ -510,7 +599,21 @@ onMounted(async () => {
     }
   }
 }
-
+.lunar {
+  font-size: 16px;
+  @media (max-width: 768px) {
+    font-size: 8px;
+  }
+}
+.mark {
+  font-size: 16px;
+  @media (max-width: 768px) {
+    font-size: 10px;
+    p {
+      width: 50%;
+    }
+  }
+}
 .course-item {
   background: #e3f2fd;
   border-left: 4px solid #2196f3;
@@ -655,4 +758,5 @@ onMounted(async () => {
 .is-today {
   background-color: var(--el-color-primary);
 }
+// 修改组件样式 .el-calendar-day
 </style>
