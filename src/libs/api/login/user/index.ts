@@ -11,6 +11,11 @@ import type {
 interface AuthRouter {
   menuList: menuList[];
 }
+// {
+//   "type": "RainbowId",
+//   "identifier": "admin_rainbow",
+//   "password": "Admin@123456"
+// }
 export const userApi = {
   // 用户登录
   MMLogin(params: ILoginParams) {

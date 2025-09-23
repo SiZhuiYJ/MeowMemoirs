@@ -199,6 +199,9 @@ const mobileDrawer = ref(false);
     }
   }
 }
+.dark .main {
+  background-color: rgb(33, 33, 33);
+}
 .el-footer {
   background: #f5f5f5;
 }

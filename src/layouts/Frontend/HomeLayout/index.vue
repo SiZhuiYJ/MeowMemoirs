@@ -42,7 +42,6 @@ useWindowEventListener("scroll", handleScroll);
 }
 .main {
   width: 100vw;
-
   .main-scroll {
     min-height: 100vh;
     width: 100vw;

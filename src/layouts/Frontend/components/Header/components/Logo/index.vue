@@ -43,7 +43,7 @@ const globalStore = useGlobalStore();
     font-weight: bold;
     font-size: 20px;
     span {
-      padding: 3px 1.5px;
+      padding: 0 1.5px;
       background-color: var(--el-color-primary);
       border-radius: 5px;
     }

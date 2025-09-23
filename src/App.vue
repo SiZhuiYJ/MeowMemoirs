@@ -6,6 +6,11 @@ import { useTheme } from "@/utils/theme.ts";
 import { useGlobalStore } from "@/stores";
 import { useScreenStore } from "@/utils/screen";
 import zhCn from "element-plus/es/locale/lang/zh-cn";
+// 初始化日历语言
+import dayjs from "dayjs";
+import "dayjs/locale/zh-cn";
+dayjs.locale("zh-cn");
+
 const globalStore = useGlobalStore();
 
 const dimension = computed(() => globalStore.dimension);
@@ -122,7 +127,7 @@ onMounted(() => {
     });
   } else {
     // 兼容旧浏览器
-    setTimeout(() => handleCursor(), 1000);
+    setTimeout(() => handleCursor(), 2000);
   }
 });
 
@@ -171,6 +176,7 @@ onUnmounted(() => {
   color: #efd7d9;
   animation: -snowflake-animate 1s linear forwards;
   z-index: 999;
+
   &::before {
     //content: "\1F338";
     content: "🐾";
