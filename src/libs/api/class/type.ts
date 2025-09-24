@@ -21,3 +21,15 @@ export interface ClassDto {
   color: string; // 颜色
   remark?: string; // 备注
 }
+// id: 4,
+// date: "2025-09-08",
+// type: "anniversary",
+// info: "结婚纪念日",
+// color: "blue",
+export interface Event {
+  id: number;
+  date: string;
+  type: "anniversary" | "countdown" | "festival" | "important" | "birthday" | "other";
+  info: string;
+  color: string;
+}

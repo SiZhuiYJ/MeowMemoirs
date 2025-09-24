@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import { ClassApi } from "@/libs/api/class/index";
-import type { Class } from "@/libs/api/class/type";
+import type { Class, Event } from "@/libs/api/class/type";
 import { numberToChinese } from "@/utils/calendar";
 import { ElLoading } from "element-plus";
 import { meowMsgError, meowMsgSuccess } from "@/utils/message";
@@ -14,7 +14,6 @@ export const useClassStore = defineStore("class", () => {
   const startDate = ref(new Date(2025, 8, 8)); //2025-9-8为开学时间
   // 双向绑定
   const weekNumber = ref(new Date());
-
   // 周次长度
   const weeklong = ref(18);
   // 星期列表
@@ -36,6 +35,45 @@ export const useClassStore = defineStore("class", () => {
     "20:10-20:55",
     "21:00-21:45",
   ]);
+  // 标记日期：纪念日，重要日
+  const markDate = ref<Event[]>([
+    {
+      id: 1,
+      date: "2025-09-08",
+      type: "important",
+      info: "上课第一天",
+      color: "yellow",
+    },
+    {
+      id: 2,
+      date: "2025-10-01",
+      type: "festival",
+      info: "国庆节",
+      color: "blue",
+    },
+    {
+      id: 3,
+      date: "2025-09-11",
+      type: "countdown",
+      info: "世界末日",
+      color: "red",
+    },
+    {
+      id: 4,
+      date: "2025-09-08",
+      type: "anniversary",
+      info: "结婚纪念日",
+      color: "blue",
+    },
+    {
+      id: 5,
+      date: "2004-01-29",
+      type: "birthday",
+      info: "小君君的生日",
+      color: "red",
+    },
+  ])
+
   async function initializeData() {
     const loading = ElLoading.service({
       lock: true,
@@ -80,6 +118,9 @@ export const useClassStore = defineStore("class", () => {
       return { label: "第" + numberToChinese(index + 1) + "周", value: index + 1 };
     });
   }
+  function setWeekNumber(time: string) {
+    weekNumber.value = new Date(time);
+  }
   // 获取周次某天某节课的课程
   function getClass(week: number, dayOfWeek: number, number: number): Class | undefined {
     if (dayOfWeek == 7) dayOfWeek = 0;
@@ -92,22 +133,24 @@ export const useClassStore = defineStore("class", () => {
   }
 
   // 获取当前周次
-  const currentWeek = computed((): number => {
+  const getCurrentWeek = computed((): number => {
     return getWeekNumber(getDateFormatYYYYMMDD(weekNumber.value), startDate.value)
   });
   return {
-    classes,
-    startDate,
-    weekNumber,
-    weekList,
-    numberList,
-    timeList,
-    weeklong,
-    currentWeek,
-    initializeData,
-    AddClass,
-    getTimeTable,
-    getWeekTableByWeeklong,
-    getClass
+    classes,// 所有课程列表
+    startDate,// 起始日期
+    weekNumber,// 当前周数
+    weekList,// 星期列表
+    numberList,// 节次列表
+    timeList,// 作息列表
+    weeklong,// 周次长度
+    getCurrentWeek,// 当前周数
+    markDate,// 标记日期
+    initializeData,// 初始化数据
+    AddClass,// 添加课程
+    setWeekNumber,// 设置周数
+    getTimeTable,// 获取节次表
+    getWeekTableByWeeklong,// 获取周次表
+    getClass// 获取周次某天某节课的课程
   };
 });

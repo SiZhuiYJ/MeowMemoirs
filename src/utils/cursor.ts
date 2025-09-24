@@ -3,7 +3,7 @@ import useApiUrl from "@/libs/useApiUrl/index";
 const { getStaticFileUrl } = useApiUrl();
 let DEFAULT_CURSOR: string[] = ["body"]; // 默认光标
 let LOAD_CURSOR: string[] = ['img[lazy="loading"]', ".el-loading-mask"]; // 加载光标
-let POINTER_CURSOR: string[] = [".left-column,.Logo,.toolbar"]; // 按钮光标
+let POINTER_CURSOR: string[] = [".left-column,.Logo,.toolbar,.day-item"]; // 按钮光标
 let TEXT_CURSOR: string[] = [
   "textarea,p,h1,h2,h3,h4,h5,h6,.text,.el-range-input,.el-form-item__label,.el-input__wrapper .el-input__inner",
 ]; // 文本光标

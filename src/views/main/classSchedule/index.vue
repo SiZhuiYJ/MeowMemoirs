@@ -2,17 +2,33 @@
 import { onMounted, ref } from "vue";
 
 import Folding from "@/layouts/components/Header/components/LoadListener/Folding/index.vue";
-import { getCurrentDate, formatDateToMMDD, getDateDaysBefore, numberToChinese, solarToLunar, isFestival, getDateFormatYYYYMMDD } from "@/utils/calendar";
-import type { Class } from "@/libs/api/class/type";
+import { getCurrentDate, formatDateToMMDD, getDateFormatYYYYMMDD, getDateDaysBefore, numberToChinese, solarToLunar, isFestival } from "@/utils/calendar";
+import type { Class, Event } from "@/libs/api/class/type";
 import type { CalendarDateType, CalendarInstance } from "element-plus";
 import { useClassStore } from "@/stores";
 const classStore = useClassStore();
-const { getClass, initializeData } = useClassStore();
+const { getClass, setWeekNumber, initializeData } = useClassStore();
 const calendar = ref<CalendarInstance>();
 const selectDate = (val: CalendarDateType) => {
   if (!calendar.value) return;
   calendar.value.selectDate(val);
 };
+
+// 出生日期转生日
+const getdayByBirth = (date: Event) => {
+  if (date.type === "birthday")
+    return new Date().getFullYear() + '-' + date.date.split('-')[1] + '-' + date.date.split('-')[2];
+  else return date.date;
+}
+// 今日距离某个期多少天给出天数包括正负
+const getDaysBetween = (date1: string, date2: string) => {
+  const oneDay = 24 * 60 * 60 * 1000;
+  const firstDate = new Date(date1);
+  const secondDate = new Date(date2);
+  const diffDays = (firstDate.getTime() - secondDate.getTime()) / oneDay;
+  return diffDays;
+};
+
 
 import ClassDetail from "@/views/console/calendar/components/ClassDialog.vue";
 import { useScreenStore } from "@/utils/screen";
@@ -50,7 +66,7 @@ onMounted(async () => {
         当前周数：
       </div>
       <template #toggle>
-        <div class="current-week">第{{ numberToChinese(classStore.currentWeek) }}周</div>
+        <div class="current-week">第{{ numberToChinese(classStore.getCurrentWeek) }}周</div>
       </template>
       <template #container>
         <el-calendar v-model="classStore.weekNumber">
@@ -69,12 +85,20 @@ onMounted(async () => {
             </div>
           </template>
         </el-calendar>
+        <div class="important-day">
+          <i v-for="day in classStore.markDate" :key="day.id" :style="{ borderLeftColor: day.color }" class="day-item"
+            @click="setWeekNumber(getdayByBirth(day))">
+            {{ day.info }}·{{ day.date }}·{{ getDaysBetween(getdayByBirth(day), getDateFormatYYYYMMDD(new
+              Date())) >= 0 ? "还有" : "过去" }}{{
+              Math.abs(getDaysBetween(getdayByBirth(day), getDateFormatYYYYMMDD(new Date()))) }}天
+          </i>
+        </div>
       </template>
     </Folding>
     <div class="week-controller" v-else>
       <el-calendar v-model="classStore.weekNumber" ref="calendar">
         <template #header="{ date }">
-          <span>{{ date }}-上课第{{ numberToChinese(classStore.currentWeek) }}周</span>
+          <span>{{ date }}-上课第{{ numberToChinese(classStore.getCurrentWeek) }}周</span>
           <el-button-group>
             <el-button size="small" @click="selectDate('prev-month')"> 上个月 </el-button>
             <el-button size="small" @click="selectDate('today')">今天</el-button>
@@ -92,12 +116,18 @@ onMounted(async () => {
               <p v-if="data.day === '2025-09-08'">⭐</p>
               <p v-if="data.day === getCurrentDate()">今</p>
               <p v-if="data.isSelected">✔️</p>
+
             </div>
           </div>
         </template>
       </el-calendar>
-      <div style="padding:0 20px;">
-        <div>上课第一天·{{ getDateFormatYYYYMMDD(classStore.startDate) }}</div>
+      <div class="important-day">
+        <i v-for="day in classStore.markDate" :key="day.id" :style="{ borderLeftColor: day.color }" class="day-item"
+          @click="setWeekNumber(getdayByBirth(day))">
+          {{ day.info }}·{{ day.date }}·{{ getDaysBetween(getdayByBirth(day), getDateFormatYYYYMMDD(new
+            Date())) >= 0 ? "还有" : "过去" }}{{
+            Math.abs(getDaysBetween(getdayByBirth(day), getDateFormatYYYYMMDD(new Date()))) }}天
+        </i>
       </div>
     </div>
     <div class="confession-class">
@@ -124,17 +154,17 @@ onMounted(async () => {
             }}
           </div>
           <div v-for="number in classStore.numberList" :key="number" class="course-slot">
-            <template v-if="getClass(classStore.currentWeek, index + 1, number)">
+            <template v-if="getClass(classStore.getCurrentWeek, index + 1, number)">
               <div class="course-item" :style="{
-                borderLeftColor: getClass(classStore.currentWeek, index + 1, number)!.color,
+                borderLeftColor: getClass(classStore.getCurrentWeek, index + 1, number)!.color,
               }"
-                @click="() => { showClassDetail(getClass(classStore.currentWeek, index + 1, number)!.id); console.log(getClass(classStore.currentWeek, index + 1, number)) }">
+                @click="() => { showClassDetail(getClass(classStore.getCurrentWeek, index + 1, number)!.id); console.log(getClass(classStore.getCurrentWeek, index + 1, number)) }">
                 <el-text class="course-name" line-clamp="1">
-                  {{ getClass(classStore.currentWeek, index + 1, number)?.name }}
+                  {{ getClass(classStore.getCurrentWeek, index + 1, number)?.name }}
                 </el-text>
                 <el-text class="course-details" line-clamp="3">
-                  {{ getClass(classStore.currentWeek, index + 1, number)?.location }} /
-                  {{ getClass(classStore.currentWeek, index + 1, number)?.teacher }}
+                  {{ getClass(classStore.getCurrentWeek, index + 1, number)?.location }} /
+                  {{ getClass(classStore.getCurrentWeek, index + 1, number)?.teacher }}
                 </el-text>
               </div>
             </template>
@@ -168,11 +198,34 @@ onMounted(async () => {
   .week-controller {
     min-width: 300px;
     max-width: 500px;
+
+
   }
 
   @media (max-width: 768px) {
     padding: 30px 0 0;
     flex-direction: column;
+  }
+}
+
+.important-day {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2px;
+  padding: 0 20px;
+
+  .day-item {
+    padding: 2px;
+    border-left: 4px solid #fff;
+    font-size: 12px;
+  }
+
+  @media (max-width: 768px) {
+    padding: 0 20px 10px;
+
+    .day-item {
+      font-size: 8px;
+    }
   }
 }
 
