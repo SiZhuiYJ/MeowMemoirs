@@ -62,7 +62,7 @@ class ANIMousePlus {
             throw new Error('Invalid RIFF file signature');
         }
 
-        const fileSize = view.getUint32(4, true);
+        // const fileSize = view.getUint32(4, true);
         const fileType = this.readString(view, 8, 4);
 
         if (fileType !== 'ACON') {
@@ -84,7 +84,7 @@ class ANIMousePlus {
 
             // 如果是LIST块，解析子块
             if (chunkId === 'LIST') {
-                const listType = this.readString(view, chunk.start, 4);
+                // const listType = this.readString(view, chunk.start, 4);
                 chunk.subChunks = this.parseListChunks(view, chunk.start + 4, chunkSize - 4);
             }
 
