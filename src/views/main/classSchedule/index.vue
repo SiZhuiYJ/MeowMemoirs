@@ -116,7 +116,6 @@ onMounted(async () => {
               <p v-if="data.day === '2025-09-08'">⭐</p>
               <p v-if="data.day === getCurrentDate()">今</p>
               <p v-if="data.isSelected">✔️</p>
-
             </div>
           </div>
         </template>
