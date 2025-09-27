@@ -1,5 +1,5 @@
 import useApiUrl from "@/libs/useApiUrl/index";
-import { setANICursorWithGroupElement } from "./cursor-plus"
+import { setANICursorWithGroupElement } from "./ani-cursor"
 const { getStaticFileUrl } = useApiUrl();
 let DEFAULT_CURSOR: string[] = ["body"]; // 默认光标
 let LOAD_CURSOR: string[] = ['img[lazy="loading"]', ".el-loading-mask"]; // 加载光标
