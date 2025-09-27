@@ -1,4 +1,3 @@
-// import { setANICursorWithGroupElement } from "ani-cursor.js";
 import useApiUrl from "@/libs/useApiUrl/index";
 import { setANICursorWithGroupElement } from "./cursor-plus"
 const { getStaticFileUrl } = useApiUrl();

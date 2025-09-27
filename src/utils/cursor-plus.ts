@@ -371,6 +371,7 @@ class ANIMousePlus {
 
                             // 缓存并返回结果
                             this.LoadedANIs.push(ANIInfo);
+                            console.log(`Loaded ANI: `, ANIInfo);
                             resolve(ANIInfo);
                         }).catch(reject);
 
@@ -435,13 +436,12 @@ class ANIMousePlus {
                 totalRoundTime,
             }) => {
                 // 创建样式并插入到文档中
-                const styleContent = `${KeyFrameContent}
-          ${elementSelector} { 
-            animation: ${keyframesName} ${totalRoundTime}ms step-end infinite; 
-          }
-          .${aniURLRegexClassName} { 
-            animation: ${keyframesName} ${totalRoundTime}ms step-end infinite; 
-          }`;
+                const styleContent = `${KeyFrameContent} ${elementSelector} { 
+                animation: ${keyframesName} ${totalRoundTime}ms step-end infinite; 
+            }
+                .${aniURLRegexClassName} { 
+                animation: ${keyframesName} ${totalRoundTime}ms step-end infinite; 
+            }`;
 
                 this.injectStyle(styleContent);
             }
@@ -464,9 +464,9 @@ class ANIMousePlus {
                 totalRoundTime,
             }) => {
                 const styleContent = `${KeyFrameContent}
-          .${aniURLRegexClassName} { 
-            animation: ${keyframesName} ${totalRoundTime}ms step-end infinite; 
-          }`;
+                .${aniURLRegexClassName} { 
+                animation: ${keyframesName} ${totalRoundTime}ms step-end infinite; 
+                }`;
 
                 this.injectStyle(styleContent);
                 defaultClass = aniURLRegexClassName;
