@@ -371,7 +371,6 @@ class ANIMousePlus {
 
                             // 缓存并返回结果
                             this.LoadedANIs.push(ANIInfo);
-                            console.log(`Loaded ANI: `, ANIInfo);
                             resolve(ANIInfo);
                         }).catch(reject);
 
