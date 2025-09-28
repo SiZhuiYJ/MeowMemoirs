@@ -1,16 +1,3 @@
-<template>
-  <el-icon :size="props.size">
-    <component v-if="!props.name.startsWith(SVG_PREFIX)" :is="props.name"></component>
-    <component
-      v-if="props.name.startsWith(SVG_PREFIX)"
-      :is="SvgIcons"
-      :icon-class="iconName(props.name)"
-      :size="props.size"
-    >
-    </component>
-  </el-icon>
-</template>
-
 <script setup lang="ts">
 import { SVG_PREFIX } from "@/config/index.ts";
 import SvgIcons from "@/components/SvgIcons/index.vue";
@@ -32,5 +19,16 @@ const iconName = (name: string) => {
   return name.substring(index + 1);
 };
 </script>
+
+<template>
+  <el-icon :size="props.size">
+    <component v-if="!props.name.startsWith(SVG_PREFIX)" :is="props.name"></component>
+    <component v-if="props.name.startsWith(SVG_PREFIX)" :is="SvgIcons" :icon-class="iconName(props.name)"
+      :size="props.size">
+    </component>
+  </el-icon>
+</template>
+
+
 
 <style lang="scss" scoped></style>
