@@ -80,11 +80,75 @@ const getCursor = async () => {
   });
 };
 // 设置光标
+// export async function setCursor() {
+//   try {
+//     // 获取基础 URL
+//     await getCursor();
+//     // 定义光标类型和对应的动画URL配置
+//     const CURSOR_CONFIGS = [
+//       {
+//         cursors: [...DEFAULT_CURSOR, ...EL_DEFAULT_CURSOR],
+//         aniType: "NormalSelect",
+//       },
+//       { cursors: [...LOAD_CURSOR, ...EL_LOAD_CURSOR], aniType: "Work" },
+//       {
+//         cursors: [...POINTER_CURSOR, ...EL_POINTER_CURSOR],
+//         aniType: "AlternateSelect",
+//       },
+//       { cursors: [...TEXT_CURSOR, ...EL_TEXT_CURSOR], aniType: "TextSelect" },
+//       {
+//         cursors: [...DISABLED_CURSOR, ...EL_DISABLED_CURSOR],
+//         aniType: "Unavailable",
+//       },
+//       { cursors: [...MOVE_CURSOR, ...EL_MOVE_CURSOR], aniType: "Move" },
+//       {
+//         cursors: [...GRAB_CURSOR, ...EL_GRAB_CURSOR],
+//         aniType: "LocationSelect",
+//       },
+//       { cursors: [...GRABBING_CURSOR, ...EL_GRABBING_CURSOR], aniType: "Move" },
+//       { cursors: [...HELP_CURSOR, ...EL_HELP_CURSOR], aniType: "HelpSelect" },
+//       { cursors: [...WAIT_CURSOR, ...EL_WAIT_CURSOR], aniType: "Busy" },
+//       {
+//         cursors: [...CROSSHAIR_CURSOR, ...EL_CROSSHAIR_CURSOR],
+//         aniType: "PrecisionSelect",
+//       },
+//       { cursors: [...ZOOM_IN_CURSOR, ...EL_ZOOM_IN_CURSOR], aniType: "Work" },
+//       {
+//         cursors: [...CONTEXT_MENU_CURSOR, ...EL_CONTEXT_MENU_CURSOR],
+//         aniType: "AlternateSelect",
+//       },
+//     ];
+//     console.log(CURSOR_CONFIGS);
+//     // 遍历配置并设置光标
+//     CURSOR_CONFIGS.forEach(({ cursors, aniType }) => {
+//       if (cursors.length === 0) return;
+//       setANICursorWithGroupElement(
+//         cursors,
+//         getStaticFileUrl(getAniUrl(aniType))
+//       );
+//     });
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
+import { setPrecomputedCursor } from "./ani-cursor";
+
+
+// 预解析的光标配置接口
+interface PrecomputedCursorConfig {
+  fileName: string;
+  frameInfo: Array<{
+    frameIndex: number;
+    framDuration: number;
+  }>;
+  totalDuration: number;
+  frameCount: number;
+}
+// 设置光标
 export async function setCursor() {
   try {
-    // 获取基础 URL
     await getCursor();
-    // 定义光标类型和对应的动画URL配置
+
     const CURSOR_CONFIGS = [
       {
         cursors: [...DEFAULT_CURSOR, ...EL_DEFAULT_CURSOR],
@@ -118,33 +182,99 @@ export async function setCursor() {
         aniType: "AlternateSelect",
       },
     ];
-    console.log(CURSOR_CONFIGS);
-    // 遍历配置并设置光标
-    CURSOR_CONFIGS.forEach(({ cursors, aniType }) => {
+
+    // 并行加载所有光标配置
+    const cursorPromises = CURSOR_CONFIGS.map(async ({ cursors, aniType }) => {
       if (cursors.length === 0) return;
-      setANICursorWithGroupElement(
-        cursors,
-        getStaticFileUrl(getAniUrl(aniType))
-      );
-      // const dataurl = [getStaticFileUrl("mouse/AlternateSelect/frame_000.webp"),
-      // getStaticFileUrl("mouse/AlternateSelect/frame_002.webp"),
-      // getStaticFileUrl("mouse/AlternateSelect/frame_003.webp"),
-      // getStaticFileUrl("mouse/AlternateSelect/frame_004.webp"),
-      // getStaticFileUrl("mouse/AlternateSelect/frame_005.webp"),
-      // getStaticFileUrl("mouse/AlternateSelect/frame_006.webp"),
-      // getStaticFileUrl("mouse/AlternateSelect/frame_007.webp"),
-      // getStaticFileUrl("mouse/AlternateSelect/frame_008.webp"),
-      // getStaticFileUrl("mouse/AlternateSelect/frame_009.webp"),
-      // getStaticFileUrl("mouse/AlternateSelect/frame_010.webp"),
-      // getStaticFileUrl("mouse/AlternateSelect/frame_011.webp"),
-      // getStaticFileUrl("mouse/AlternateSelect/frame_012.webp"),]
-      // console.log(cursors, dataurl);
-      // setCursorWithGroupElement(
-      //   cursors,
-      //   dataurl, 100, 'auto'
-      // )
+
+      try {
+        // 尝试使用预解析数据
+        const precomputedData = await loadPrecomputedCursor(aniType);
+
+        // 检查预解析数据是否有效
+        if (!precomputedData.frameUrls || !precomputedData.frameDurations) {
+          throw new Error("Invalid precomputed data");
+        }
+
+        setPrecomputedCursor(
+          cursors,
+          precomputedData.frameUrls,
+          precomputedData.frameDurations,
+          "auto",
+          precomputedData.totalDuration
+        );
+
+        console.log(`✅ 使用预解析光标: ${aniType}`);
+      } catch (error) {
+        console.warn(`⚠️ 预解析光标加载失败，使用原始ANI: ${aniType}`, error);
+
+        // 回退到原始 ANI 文件
+        try {
+          setANICursorWithGroupElement(
+            cursors,
+            getStaticFileUrl(getAniUrl(aniType))
+          );
+          console.log(`✅ 回退到原始ANI: ${aniType}`);
+        } catch (fallbackError) {
+          console.error(`❌ ANI文件也加载失败: ${aniType}`, fallbackError);
+        }
+      }
     });
+
+    await Promise.allSettled(cursorPromises);
+    console.log("🎯 所有光标设置完成");
   } catch (error) {
-    console.log(error);
+    console.error('❌ 光标设置失败:', error);
+  }
+}
+
+// 改进的预解析光标加载函数
+async function loadPrecomputedCursor(aniType: string): Promise<{
+  frameUrls: string[];
+  frameDurations: number[];
+  totalDuration: number;
+}> {
+  try {
+    // 加载配置文件
+    const configUrl = `mouse/${aniType}/config.json`;
+    console.log("📁 加载配置文件:", configUrl);
+
+    const configResponse = await fetch(getStaticFileUrl(configUrl));
+
+    if (!configResponse.ok) {
+      throw new Error(`Failed to load cursor config: ${configResponse.status}`);
+    }
+
+    const config: PrecomputedCursorConfig = await configResponse.json();
+    console.log(`📊 加载配置成功: ${aniType}`, config);
+
+    // 验证配置数据
+    if (!config.frameInfo || !Array.isArray(config.frameInfo) || config.frameInfo.length === 0) {
+      throw new Error("Invalid frame info in config");
+    }
+
+    // 构建帧URL数组
+    const frameUrls = [];
+    for (let i = 0; i < config.frameCount; i++) {
+      const frameUrl = getStaticFileUrl(`mouse/${aniType}/frame_${i + 1}.ico`);
+      frameUrls.push(frameUrl);
+    }
+
+    // 构建持续时间数组
+    const frameDurations = config.frameInfo.map(frame => frame.framDuration);
+
+    // 验证数据完整性
+    if (frameUrls.length !== frameDurations.length) {
+      throw new Error("Frame URLs and durations count mismatch");
+    }
+
+    return {
+      frameUrls,
+      frameDurations,
+      totalDuration: config.totalDuration
+    };
+  } catch (error) {
+    console.warn(`❌ 预解析光标加载失败: ${aniType}`, error);
+    throw error;
   }
 }

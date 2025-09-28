@@ -548,20 +548,111 @@ class ANIMousePlus {
     public getLoadedCount(): number {
         return this.LoadedANIs.length;
     }
+
+    public setPrecomputedCursor = (
+        elementSelectorGroup: string[],
+        frameUrls: string[],
+        frameDurations: number[],
+        cursorType: string = "auto",
+        totalDuration?: number
+    ): void => {
+        const allElements = elementSelectorGroup.join(",");
+
+        // 生成唯一的CSS类名
+        const uniqueId = this.generateUniqueId(frameUrls.join(''));
+        const aniURLRegexClassName = "cursor-precomputed-" + uniqueId;
+
+        // 检查是否已加载
+        for (const aniInfo of this.LoadedANIs) {
+            if (aniInfo.aniURLRegexClassName === aniURLRegexClassName) {
+                this.applyCursorStyle(allElements, aniInfo);
+                return;
+            }
+        }
+
+        // 计算总时长
+        const totalRoundTime = totalDuration || frameDurations.reduce((sum, duration) => sum + duration, 0);
+
+        // 构建帧信息
+        const frameInfo: FrameInfo[] = frameDurations.map((duration, index) => ({
+            frameIndex: index,
+            framDuration: duration
+        }));
+
+        // 生成关键帧动画
+        const keyframesName = `${aniURLRegexClassName}-keyframes`;
+        const keyframeContent = this.generateKeyframesCSS(
+            frameInfo,
+            frameUrls,
+            keyframesName,
+            cursorType,
+            totalRoundTime
+        );
+
+        const ANIInfo: ANIInfo = {
+            KeyFrameContent: keyframeContent,
+            aniURLRegexClassName,
+            keyframesName,
+            totalRoundTime,
+        };
+
+        this.LoadedANIs.push(ANIInfo);
+        this.applyCursorStyle(allElements, ANIInfo);
+    }
+    /**
+     * 生成唯一ID
+     */
+    private generateUniqueId(str: string): string {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            const char = str.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash;
+        }
+        return Math.abs(hash).toString(36);
+    }
+
+    /**
+     * 应用光标样式
+     */
+    private applyCursorStyle(elementSelector: string, aniInfo: ANIInfo): void {
+        const styleContent = `${aniInfo.KeyFrameContent} 
+        ${elementSelector} { 
+            animation: ${aniInfo.keyframesName} ${aniInfo.totalRoundTime}ms step-end infinite; 
+        }
+        .${aniInfo.aniURLRegexClassName} { 
+            animation: ${aniInfo.keyframesName} ${aniInfo.totalRoundTime}ms step-end infinite; 
+        }`;
+
+        this.injectStyle(styleContent);
+    }
 }
 
 // 创建单例实例
 const instance = new ANIMousePlus();
 
-// 导出方法和实例
+// 确保所有方法都绑定到实例
+const boundMethods = {
+    LoadANICursorPromise: instance.LoadANICursorPromise.bind(instance),
+    setLoadedCursorToElement: instance.setLoadedCursorToElement.bind(instance),
+    setLoadedCursorDefault: instance.setLoadedCursorDefault.bind(instance),
+    setANICursor: instance.setANICursor.bind(instance),
+    setANICursorWithGroupElement: instance.setANICursorWithGroupElement.bind(instance),
+    setPrecomputedCursor: instance.setPrecomputedCursor.bind(instance),
+    clearCache: instance.clearCache.bind(instance),
+    getLoadedCount: instance.getLoadedCount.bind(instance),
+};
+
+// 导出绑定后的方法
 export const {
     LoadANICursorPromise,
     setLoadedCursorToElement,
     setLoadedCursorDefault,
     setANICursor,
     setANICursorWithGroupElement,
+    setPrecomputedCursor,
     clearCache,
     getLoadedCount,
-} = instance;
+} = boundMethods;
 
 export default instance;
