@@ -8,7 +8,7 @@ export const useAccessStore = defineStore("access", () => {
 
 
   async function initializeData() {
-    const { data } = await LocationApi.MMPostQueryLocation();
+    const { data } = await LocationApi.MMGetQueryLocation();
     steAccess(data);
   }
 

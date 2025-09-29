@@ -102,7 +102,7 @@ const setupEventListeners = () => {
   });
 };
 
-onMounted(() => {
+onMounted(async () => {
   // 初始化主题配置
   handleThemeConfig();
 
@@ -132,14 +132,13 @@ onMounted(() => {
     // 兼容旧浏览器
     setTimeout(() => handleCursor(), 2000);
   }
-  initializeData();
-  const message = `
+  await initializeData();
+  meowNoticeSuccess(`
   ip:${accessStore.getAccess?.ip}<br>
   国家:${accessStore.getAccess?.country}<br>
   地址:${accessStore.getAccess?.area}<br>
   时间:${dayjs().format("YYYY-MM-DD HH:mm:ss")}
-  `
-  meowNoticeSuccess(message, "欢迎使用喵喵系统", 4000, "success", true);
+  `, "欢迎使用喵喵系统", 4000, "success", true);
 });
 
 onUnmounted(() => {

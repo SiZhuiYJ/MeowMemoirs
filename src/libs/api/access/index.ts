@@ -5,10 +5,10 @@ import type { IPLocation } from "./type";
 
 export const LocationApi = {
     // 获取课程列表
-    MMPostQueryLocation() {
-        return http.post<ResponseData<IPLocation>>("/Access/myip");
+    MMGetQueryLocation() {
+        return http.get<ResponseData<IPLocation>>("/Access/myip");
     },
-    MMPostQueryLocationByIP(ip: string) {
-        return http.post<ResponseData<IPLocation>>(`/Access/query?ip==${ip}`);
+    MMGetQueryLocationByIP(ip: string) {
+        return http.get<ResponseData<IPLocation>>(`/Access/query?ip=${ip}`);
     }
 };
