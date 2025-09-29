@@ -1,9 +1,10 @@
 <script setup lang="ts">
-// import { meowMsgError } from '@/utils/message'
+import { meowNoticeSuccess } from '@/utils/message'
 import { ref, onMounted, nextTick, computed, onUnmounted } from "vue";
 import { setCursor } from "@/utils/cursor";
 import { useTheme } from "@/utils/theme.ts";
-import { useGlobalStore } from "@/stores";
+
+import { useGlobalStore, useAccessStore } from "@/stores";
 import { useScreenStore } from "@/utils/screen";
 import zhCn from "element-plus/es/locale/lang/zh-cn";
 // 初始化日历语言
@@ -12,6 +13,8 @@ import "dayjs/locale/zh-cn";
 dayjs.locale("zh-cn");
 
 const globalStore = useGlobalStore();
+const accessStore = useAccessStore();
+const { initializeData } = useAccessStore();
 
 const dimension = computed(() => globalStore.dimension);
 const { initThemeConfig } = useTheme();
@@ -129,6 +132,14 @@ onMounted(() => {
     // 兼容旧浏览器
     setTimeout(() => handleCursor(), 2000);
   }
+  initializeData();
+  const message = `
+  ip:${accessStore.getAccess?.ip}<br>
+  国家:${accessStore.getAccess?.country}<br>
+  地址:${accessStore.getAccess?.area}<br>
+  时间:${dayjs().format("YYYY-MM-DD HH:mm:ss")}
+  `
+  meowNoticeSuccess(message, "欢迎使用喵喵系统", 4000, "success", true);
 });
 
 onUnmounted(() => {

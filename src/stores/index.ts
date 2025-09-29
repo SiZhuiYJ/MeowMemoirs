@@ -27,3 +27,5 @@ export * from "./modules/mediaStore";
 export * from "./modules/blogStore";
 // 导出 classStore 模块
 export * from "./modules/classStore";
+// 导出 accessStore 模块
+export * from "./modules/accessStore";
