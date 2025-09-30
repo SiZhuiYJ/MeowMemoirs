@@ -1,15 +1,22 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-import type { IPLocation } from "@/libs/api/access/type";
+import type { IPLocation, IPInfo } from "@/libs/api/access/type";
 import { LocationApi } from "@/libs/api/access";
 
 export const useAccessStore = defineStore("access", () => {
   const accessStore = ref<IPLocation>();
+  const SimpleIP = ref<IPInfo>();
 
 
   async function initializeData() {
-    const { data } = await LocationApi.MMGetQueryLocation();
-    steAccess(data);
+    try {
+      const { data } = await LocationApi.MMGetSimpleIP();
+      SimpleIP.value = data.ipInfo;
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+
   }
 
   async function steAccess(access: IPLocation) {
@@ -20,6 +27,7 @@ export const useAccessStore = defineStore("access", () => {
 
   return {
     accessStore,
+    SimpleIP,
     initializeData,
     steAccess,
     getAccess,

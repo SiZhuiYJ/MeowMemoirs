@@ -133,12 +133,22 @@ onMounted(async () => {
     setTimeout(() => handleCursor(), 2000);
   }
   await initializeData();
-  meowNoticeSuccess(`
-  ip:${accessStore.getAccess?.ip}<br>
-  国家:${accessStore.getAccess?.country}<br>
-  地址:${accessStore.getAccess?.area}<br>
-  时间:${dayjs().format("YYYY-MM-DD HH:mm:ss")}
+  // meowNoticeSuccess(`
+  // ip:${accessStore.getAccess?.ip}<br>
+  // 国家:${accessStore.getAccess?.country}<br>
+  // 地址:${accessStore.getAccess?.area}<br>
+  // 时间:${dayjs().format("YYYY-MM-DD HH:mm:ss")}<br>
+  // `, "欢迎使用喵喵系统", 4000, "success", true);
+  meowNoticeSuccess(`IP地址:${accessStore.SimpleIP?.ip}<br>
+  自治系统信息:${accessStore.SimpleIP?.as}<br>
+  IP地址对应的物理地址:${accessStore.SimpleIP?.addr}<br>
+  国家信息:${accessStore.SimpleIP?.country}<br>
+  注册国家信息:${accessStore.SimpleIP?.registeredCountry}<br>
+  所属城市:${accessStore.SimpleIP?.regions}<br>
+  所属城市（简写）:${accessStore.SimpleIP?.regionsShort}<br>
+  所属城市（拼音）:${accessStore.SimpleIP?.type}<br>
   `, "欢迎使用喵喵系统", 4000, "success", true);
+
 });
 
 onUnmounted(() => {

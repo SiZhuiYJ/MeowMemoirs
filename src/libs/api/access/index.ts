@@ -1,14 +1,30 @@
 // @/libs/api/class/index.ts
 import http from "@/libs/http";
 import type { ResponseData } from "@/libs/http/type";
-import type { IPLocation } from "./type";
+import type { IPLocation, IPInfo } from "./type";
 
+interface Location {
+    ipLocation: IPLocation;
+}
+interface SimpleIP {
+    ipInfo: IPInfo;
+}
 export const LocationApi = {
-    // 获取课程列表
+
     MMGetQueryLocation() {
-        return http.get<ResponseData<IPLocation>>("/Access/myip");
+        return http.get<ResponseData<Location>>(`/Access/myip`);
     },
     MMGetQueryLocationByIP(ip: string) {
-        return http.get<ResponseData<IPLocation>>(`/Access/query?ip=${ip}`);
-    }
+        return http.get<ResponseData<Location>>(`/Access/query?ip=${ip}`);
+    },
+    MMGetSimpleIP() {
+        return http.get<ResponseData<SimpleIP>>(`/SimpleIP/myip`);
+    },
+    MMGetSimpleIPByIP(ip: string) {
+        return http.get<ResponseData<SimpleIP>>(`/SimpleIP/query?ip=${ip}`);
+    },
+
+    MMGetQuerySimpleIP(ip: string) {
+        return http.get<ResponseData<SimpleIP>>(`/SimpleIP/${ip}`);
+    },
 };
