@@ -3,6 +3,8 @@ import { onMounted, ref } from "vue";
 import Signal from "./Signal/index.vue";
 import Folding from "./Folding/index.vue";
 import { getRandomColor } from "@/utils/color";
+import { useAccessStore } from "@/stores";
+const accessStore = useAccessStore();
 const Level = ref(0);
 const Loading = ref(false);
 // 名次个位
@@ -35,10 +37,10 @@ const serverMessage = [
 // 声明全局性能API类型
 declare const PerformanceObserver:
   | {
-      prototype: PerformanceObserver;
-      new (callback: PerformanceObserverCallback): PerformanceObserver;
-      supportedEntryTypes?: string[];
-    }
+    prototype: PerformanceObserver;
+    new(callback: PerformanceObserverCallback): PerformanceObserver;
+    supportedEntryTypes?: string[];
+  }
   | undefined;
 
 interface PerformanceMetrics {
@@ -211,22 +213,96 @@ onMounted(() => {
         <template #container>
           <h3>详细性能测试数据</h3>
           <div>
-            本次打开网页的速度击败全世界<span
-              style="font-size: 16px; font-weight: bold"
-              :style="{ color: getRandomColor() }"
-              >{{ rankNum }}</span
-            >
-            <span
-              style="font-size: 16px; font-weight: bold"
-              :style="{ color: getRandomColor() }"
-              >{{ rankTen }}</span
-            >
-            <span
-              style="font-size: 16px; font-weight: bold"
-              :style="{ color: getRandomColor() }"
-              >%</span
-            >
+            本次打开网页的速度击败全世界<span style="font-size: 16px; font-weight: bold" :style="{ color: getRandomColor() }">{{
+              rankNum }}</span>
+            <span style="font-size: 16px; font-weight: bold" :style="{ color: getRandomColor() }">{{ rankTen }}</span>
+            <span style="font-size: 16px; font-weight: bold" :style="{ color: getRandomColor() }">%</span>
             的人
+          </div>
+        </template>
+      </Folding>
+      <div style="background-color: rgb(194 194 194); width: 100%; height: 1px"></div>
+
+      <Folding>
+        <span class="label font-class">性能测试结果:</span>
+        <template #toggle>
+          <span :style="{ color: score_color[rankNum] }">
+            {{ score[rankTen] }}
+          </span>
+        </template>
+        <template #container>
+          <h3>IP 信息详情</h3>
+          <div class="ip-info-table">
+            <div class="table-row">
+              <div class="table-cell">
+                <span class="cell-label">IP地址:</span>
+                <span class="cell-value"><el-text truncated>{{ accessStore.getSimpleIP?.ip || '未知' }}</el-text></span>
+              </div>
+            </div>
+            <div class="table-row">
+              <div class="table-cell">
+                <span class="cell-label">AS编号:</span>
+                <span class="cell-value"><el-text truncated>{{ accessStore.getSimpleIP?.as?.number || '未知'
+                }}</el-text></span>
+              </div>
+            </div>
+            <div class="table-row">
+              <div class="table-cell">
+                <span class="cell-label">AS名称:</span>
+                <span class="cell-value"><el-text truncated>{{ accessStore.getSimpleIP?.as?.name || '未知'
+                }}</el-text></span>
+              </div>
+            </div>
+            <div class="table-row">
+              <div class="table-cell">
+                <span class="cell-label">运营商:</span>
+                <span class="cell-value"><el-text truncated>{{ accessStore.getSimpleIP?.as?.info || '未知'
+                }}</el-text></span>
+              </div>
+            </div>
+            <div class="table-row">
+              <div class="table-cell">
+                <span class="cell-label">地址段:</span>
+                <span class="cell-value"><el-text truncated>{{ accessStore.getSimpleIP?.addr || '未知' }}</el-text></span>
+              </div>
+            </div>
+            <div class="table-row">
+              <div class="table-cell">
+                <span class="cell-label">国家:</span>
+                <span class="cell-value"><el-text truncated>{{ accessStore.getSimpleIP?.country?.name || '未知' }} ({{
+                  accessStore.getSimpleIP?.country?.code || '未知'
+                }})</el-text></span>
+              </div>
+            </div>
+            <div class="table-row">
+              <div class="table-cell">
+                <span class="cell-label">注册国家:</span>
+                <span class="cell-value"><el-text truncated>{{ accessStore.getSimpleIP?.registeredCountry?.name || '未知'
+                }}
+                    ({{
+                      accessStore.getSimpleIP?.registeredCountry?.code || '未知' }})</el-text></span>
+              </div>
+            </div>
+            <div class="table-row">
+              <div class="table-cell">
+                <span class="cell-label">地区:</span>
+                <span class="cell-value"><el-text truncated>{{ (accessStore.getSimpleIP?.regions || []).join(' / ') ||
+                  '未知' }}</el-text></span>
+              </div>
+            </div>
+            <div class="table-row">
+              <div class="table-cell">
+                <span class="cell-label">地区简称:</span>
+                <span class="cell-value"><el-text truncated>{{ (accessStore.getSimpleIP?.regionsShort || []).join(' / ')
+                  || '未知' }}</el-text></span>
+              </div>
+            </div>
+            <div class="table-row">
+              <div class="table-cell">
+                <span class="cell-label">连接类型:</span>
+                <span class="cell-value"><el-text truncated>{{ accessStore.getSimpleIP?.type || '未知' }}</el-text></span>
+              </div>
+            </div>
           </div>
         </template>
       </Folding>
@@ -240,6 +316,7 @@ onMounted(() => {
   font-family: system-ui, -apple-system, sans-serif;
   font-family: "Roboto Mono", monospace;
 }
+
 .article {
   padding: 0;
   width: 24px;
@@ -251,6 +328,7 @@ onMounted(() => {
   background-color: initial;
   border-radius: 5px;
   border: 0;
+
   &:hover {
     background-color: var(--el-color-primary-light-9) #fcf9fc;
     border: 1px solid var(--el-color-primary-light-7);
@@ -259,6 +337,7 @@ onMounted(() => {
     outline: none;
   }
 }
+
 .label {
   font-weight: 500;
   margin-right: 8px;
@@ -274,6 +353,7 @@ onMounted(() => {
   margin-left: auto;
   font-size: 12px;
 }
+
 h3 {
   margin: 6px 0 6px;
   color: #42b983;
@@ -317,6 +397,7 @@ h3 {
     font-size: 12px;
   }
 }
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s, transform 0.3s;
@@ -326,6 +407,152 @@ h3 {
 .fade-leave-to {
   opacity: 0;
   transform: translateY(-10px);
+}
+
+.ip-info-table {
+  padding: 0;
+}
+
+.table-row {
+  display: flex;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.3s ease;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background-color: #f8f9fa;
+  }
+}
+
+.table-cell {
+  display: flex;
+  width: 100%;
+}
+
+.cell-label {
+  color: #495057;
+  display: flex;
+  align-items: center;
+  flex: 0 0 60px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.cell-value {
+  flex: 1;
+  color: #212529;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  word-break: break-word;
+  width: calc(100% - 150px);
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+
+  .ip-info-card {
+    border-radius: 10px;
+  }
+
+  .ip-info-title {
+    font-size: 18px;
+    padding: 15px;
+  }
+
+  .table-cell {
+    // padding: 10px 15px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .cell-value {
+    flex: 1;
+    font-size: 13px;
+    text-align: right;
+    // padding-left: 10px;
+  }
+}
+
+.info {
+  align-items: center;
+  justify-content: center;
+  height: 80px;
+  background-color: #000;
+
+  p {
+    a {
+      color: #fff;
+      font-family: "宋体";
+      position: relative;
+      text-decoration: none;
+
+      &:before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: -2px;
+        width: 0;
+        height: 2px;
+        background: var(--el-color-primary);
+        transition: all 0.3s;
+      }
+
+      &:hover:before {
+        width: 100%;
+        left: 0;
+        right: 0;
+      }
+    }
+  }
+}
+
+
+@keyframes center-to {
+  100% {
+    transform: translate(0, -50%);
+  }
+}
+
+@keyframes bottom-to {
+  0% {
+    transform: translate(-50%, 0);
+  }
+
+  100% {
+    // 向上移200px
+    transform: translate(-50%, -200px);
+  }
+}
+
+@keyframes glitch-it {
+  0% {
+    transform: translate(0);
+  }
+
+  20% {
+    transform: translate(-2px, 2px);
+  }
+
+  40% {
+    transform: translate(-2px, -2px);
+  }
+
+  60% {
+    transform: translate(2px, 2px);
+  }
+
+  80% {
+    transform: translate(2px, -2px);
+  }
+
+  to {
+    transform: translate(0);
+  }
 }
 </style>
 <style>

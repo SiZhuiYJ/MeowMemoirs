@@ -279,6 +279,37 @@ export const layoutRouter: RouteRecordRaw[] = [
             },
           },
         ],
+      }, {
+        path: "/main/effect",
+        name: "effect",
+        component: () => import("@/views/main/effect/index.vue"),
+        meta: {
+          title: "案例",
+          enName: "effect",
+          icon: "MeowMemoirs-sticky-note",
+          isHide: "1",
+          isLink: "",
+          isKeepAlive: "0",
+          isFull: "1",
+          isAffix: "0",
+        },
+
+        children: [
+          {
+            path: "/main/effect/ipLocation",
+            component: () => import("@/views/main/effect/ipLocation/index.vue"),
+            meta: {
+              title: "地址解析",
+              enName: "ipLocation",
+              icon: "MeowMemoirs-memorandum",
+              isHide: "1",
+              isLink: "",
+              isKeepAlive: "0",
+              isFull: "1",
+              isAffix: "0",
+            },
+          },
+        ],
       },
     ],
   },

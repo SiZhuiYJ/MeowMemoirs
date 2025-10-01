@@ -14,8 +14,8 @@ import {
 } from "@/libs/api/access";
 
 export const useAccessStore = defineStore("access", () => {
-  const accessStore = ref < IPLocation > ();
-  const SimpleIP = ref < IPInfo > ();
+  const accessStore = ref<IPLocation>();
+  const SimpleIP = ref<IPInfo>();
 
 
   async function initializeData() {
@@ -24,8 +24,6 @@ export const useAccessStore = defineStore("access", () => {
         data
       } = await LocationApi.MMGetSimpleIP();
       SimpleIP.value = data.ipInfo;
-      // const {data} = await LocationApi.MMGetQueryLocation();
-      // accessStore.value = data.ipLocation
     } catch (error) {
       console.log(error);
     }
@@ -37,20 +35,36 @@ export const useAccessStore = defineStore("access", () => {
     } catch (error) {
       console.log(error);
     }
+  }
+  // ip查询
+  async function queryLocation(ip: string) {
+    try {
+      const {
+        data
+      } = await LocationApi.MMGetSimpleIPByIP(ip);
+      SimpleIP.value = data.ipInfo
+    } catch (error) {
+      console.log(error);
+    }
 
   }
 
   async function steAccess(access: IPLocation) {
     accessStore.value = access;
   }
+  async function setSimpleIP(ipInfo: IPInfo) {
+    SimpleIP.value = ipInfo;
+  }
 
   const getAccess = computed(() => accessStore.value);
+  const getSimpleIP = computed(() => SimpleIP.value);
 
   return {
-    accessStore,
-    SimpleIP,
     initializeData,
+    queryLocation,
     steAccess,
+    setSimpleIP,
     getAccess,
+    getSimpleIP
   };
 });

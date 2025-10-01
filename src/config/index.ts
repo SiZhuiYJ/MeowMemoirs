@@ -36,4 +36,5 @@ export const ROUTER_WHITE_LIST: string[] = [
   "/main/memo/notes",
   "/main/memo/todo",
   "/main/classSchedule",
+  "/main/effect/ipLocation",
 ];
