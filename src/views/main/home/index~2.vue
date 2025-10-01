@@ -7,7 +7,6 @@
   import ToHome from "./ToHome/index.vue";
   import useApiUrl from "@/libs/useApiUrl/index";
   const { getStaticFileUrl } = useApiUrl();
-  const accessStore = useAccessStore();
   const { isMobile } = useScreenStore();
   const router = useRouter();
   const outLogin = () => {
@@ -40,7 +39,7 @@
       v-progressive.lazy="
       getStaticFileUrl(`img/home/_${isMobile ? '9': '1'}-720p.webp`)
       "
-        alt="封面"
+        alt="Image 示例图片"
       />
 
       <!-- 打字机宣传语 -->
@@ -96,7 +95,7 @@
       v-progressive.lazy="
       getStaticFileUrl(`img/home/_${isMobile ? '1': '9'}-720p.webp`)
       "
-        alt="尾页"
+        alt="Image 示例图片"
       />
       </div>
       <div :class="isMobile ? 'mobile': 'message'">
@@ -125,71 +124,89 @@
           <h3 class="ip-info-title">IP 信息详情</h3>
           <div class="ip-info-table">
             <div class="table-row">
-              <div class="table-cell">
-                <span class="cell-label">IP地址</span>
-                <span class="cell-value">{{ accessStore.SimpleIP?.ip || '未知' }}</span>
+              <div class="table-header">
+                IP地址
+              </div>
+              <div class="table-data">
+                {{ useAccessStore().SimpleIP?.ip || '未知' }}
               </div>
             </div>
             <div class="table-row">
-              <div class="table-cell">
-                <span class="cell-label">AS编号</span>
-                <span class="cell-value">{{ accessStore.SimpleIP?.as?.number || '未知' }}</span>
+              <div class="table-header">
+                AS编号
+              </div>
+              <div class="table-data">
+                {{ useAccessStore().SimpleIP?.as?.number || '未知' }}
               </div>
             </div>
             <div class="table-row">
-              <div class="table-cell">
-                <span class="cell-label">AS名称</span>
-                <span class="cell-value">{{ accessStore.SimpleIP?.as?.name || '未知' }}</span>
+              <div class="table-header">
+                AS名称
+              </div>
+              <div class="table-data">
+                {{ useAccessStore().SimpleIP?.as?.name || '未知' }}
               </div>
             </div>
             <div class="table-row">
-              <div class="table-cell">
-                <span class="cell-label">运营商</span>
-                <span class="cell-value">{{ accessStore.SimpleIP?.as?.info || '未知' }}</span>
+              <div class="table-header">
+                运营商
+              </div>
+              <div class="table-data">
+                {{ useAccessStore().SimpleIP?.as?.info || '未知' }}
               </div>
             </div>
             <div class="table-row">
-              <div class="table-cell">
-                <span class="cell-label">地址段</span>
-                <span class="cell-value">{{ accessStore.SimpleIP?.addr || '未知' }}</span>
+              <div class="table-header">
+                地址段
+              </div>
+              <div class="table-data">
+                {{ useAccessStore().SimpleIP?.addr || '未知' }}
               </div>
             </div>
             <div class="table-row">
-              <div class="table-cell">
-                <span class="cell-label">国家</span>
-                <span class="cell-value">{{ accessStore.SimpleIP?.country?.name || '未知' }} ({{ accessStore.SimpleIP?.country?.code || '未知' }})</span>
+              <div class="table-header">
+                国家
+              </div>
+              <div class="table-data">
+                {{ useAccessStore().SimpleIP?.country?.name || '未知' }} ({{ useAccessStore().SimpleIP?.country?.code || '未知' }})
               </div>
             </div>
             <div class="table-row">
-              <div class="table-cell">
-                <span class="cell-label">注册国家</span>
-                <span class="cell-value">{{ accessStore.SimpleIP?.registeredCountry?.name || '未知' }} ({{ accessStore.SimpleIP?.registeredCountry?.code || '未知' }})</span>
+              <div class="table-header">
+                注册国家
+              </div>
+              <div class="table-data">
+                {{ useAccessStore().SimpleIP?.registeredCountry?.name || '未知' }} ({{ useAccessStore().SimpleIP?.registeredCountry?.code || '未知' }})
               </div>
             </div>
             <div class="table-row">
-              <div class="table-cell">
-                <span class="cell-label">地区</span>
-                <span class="cell-value">{{ (accessStore.SimpleIP?.regions || []).join(' / ') || '未知' }}</span>
+              <div class="table-header">
+                地区
+              </div>
+              <div class="table-data">
+                {{ (useAccessStore().SimpleIP?.regions || []).join(' / ') || '未知' }}
               </div>
             </div>
             <div class="table-row">
-              <div class="table-cell">
-                <span class="cell-label">地区简称</span>
-                <span class="cell-value">{{ (accessStore.SimpleIP?.regionsShort || []).join(' / ') || '未知' }}</span>
+              <div class="table-header">
+                地区简称
+              </div>
+              <div class="table-data">
+                {{ (useAccessStore().SimpleIP?.regionsShort || []).join(' / ') || '未知' }}
               </div>
             </div>
             <div class="table-row">
-              <div class="table-cell">
-                <span class="cell-label">连接类型</span>
-                <span class="cell-value">{{ accessStore.SimpleIP?.type || '未知' }}</span>
+              <div class="table-header">
+                连接类型
+              </div>
+              <div class="table-data">
+                {{ useAccessStore().SimpleIP?.type || '未知' }}
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div>
-        {{ accessStore.getAccess?.ip }}
-      </div>
+
       <div class="info">
         <p>
           <a href="https://beian.miit.gov.cn/" target="_blank">渝ICP备2025063979号-1</a>
@@ -340,7 +357,7 @@
 
       /* IP信息表格样式 */
       .ip-info-container {
-        width: calc(100% - 20px);
+        width: calc(100vw - 20px);
         display: flex;
         justify-content: center;
         padding: 40px 20px;
@@ -386,27 +403,25 @@
         }
       }
 
-      .table-cell {
-        display: flex;
-        width: 100%;
-        padding: 12px 20px;
-      }
-
-      .cell-label {
-        flex: 0 0 150px;
+      .table-header {
+        flex: 0 0 200px;
+        padding: 16px 20px;
+        background-color: #f8f9fa;
         font-weight: 600;
         color: #495057;
-        font-size: 16px;
+        border-right: 1px solid #e9ecef;
         display: flex;
         align-items: center;
+        font-size: 16px;
       }
 
-      .cell-value {
+      .table-data {
         flex: 1;
+        padding: 16px 20px;
         color: #212529;
-        font-size: 16px;
         display: flex;
         align-items: center;
+        font-size: 16px;
         word-break: break-word;
       }
 
@@ -421,28 +436,25 @@
         }
 
         .ip-info-title {
-          font-size: 18px;
+          font-size: 20px;
           padding: 15px;
         }
 
-        .table-cell {
-          padding: 10px 15px;
-          flex-direction: row;
-          justify-content: space-between;
-          align-items: center;
+        .table-row {
+          flex-direction: column;
         }
 
-        .cell-label {
-          flex: 0 0 100px;
-          font-size: 13px;
-          font-weight: 600;
+        .table-header {
+          flex: none;
+          border-right: none;
+          border-bottom: 1px solid #e9ecef;
+          padding: 12px 15px;
+          font-size: 14px;
         }
 
-        .cell-value {
-          flex: 1;
-          font-size: 13px;
-          text-align: right;
-          padding-left: 10px;
+        .table-data {
+          padding: 12px 15px;
+          font-size: 14px;
         }
       }
 

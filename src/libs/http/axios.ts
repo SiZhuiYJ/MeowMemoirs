@@ -16,7 +16,7 @@ export interface Result<T = any> {
   msg: string;
   data: T;
 }
-// 只有请求封装用的Yu，方便简写
+// 只有请求封装用的MM，方便简写
 class MM {
   private instance: AxiosInstance;
   // 初始化

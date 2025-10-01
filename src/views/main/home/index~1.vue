@@ -7,7 +7,6 @@
   import ToHome from "./ToHome/index.vue";
   import useApiUrl from "@/libs/useApiUrl/index";
   const { getStaticFileUrl } = useApiUrl();
-  const accessStore = useAccessStore();
   const { isMobile } = useScreenStore();
   const router = useRouter();
   const outLogin = () => {
@@ -40,7 +39,7 @@
       v-progressive.lazy="
       getStaticFileUrl(`img/home/_${isMobile ? '9': '1'}-720p.webp`)
       "
-        alt="封面"
+        alt="Image 示例图片"
       />
 
       <!-- 打字机宣传语 -->
@@ -49,7 +48,7 @@
         :style=" { left: isMobile ? '5%': '20%',
           width: isMobile ? '': 'auto' }"
         >
-          <div class="typing-title">
+        <div class="typing-title">
           欢迎来到<span style="font-size: 30px; color: #e3c0df">喵咪记事簿</span>
         </div>
         <ToHome class="typing-btn" />
@@ -96,7 +95,7 @@
       v-progressive.lazy="
       getStaticFileUrl(`img/home/_${isMobile ? '1': '9'}-720p.webp`)
       "
-        alt="尾页"
+        alt="Image 示例图片"
       />
       </div>
       <div :class="isMobile ? 'mobile': 'message'">
@@ -118,78 +117,9 @@
           </div>
         </div>
       </div>
-
-      <!-- IP信息表格 -->
-      <div class="ip-info-container">
-        <div class="ip-info-card">
-          <h3 class="ip-info-title">IP 信息详情</h3>
-          <div class="ip-info-table">
-            <div class="table-row">
-              <div class="table-cell">
-                <span class="cell-label">IP地址</span>
-                <span class="cell-value">{{ accessStore.SimpleIP?.ip || '未知' }}</span>
-              </div>
-            </div>
-            <div class="table-row">
-              <div class="table-cell">
-                <span class="cell-label">AS编号</span>
-                <span class="cell-value">{{ accessStore.SimpleIP?.as?.number || '未知' }}</span>
-              </div>
-            </div>
-            <div class="table-row">
-              <div class="table-cell">
-                <span class="cell-label">AS名称</span>
-                <span class="cell-value">{{ accessStore.SimpleIP?.as?.name || '未知' }}</span>
-              </div>
-            </div>
-            <div class="table-row">
-              <div class="table-cell">
-                <span class="cell-label">运营商</span>
-                <span class="cell-value">{{ accessStore.SimpleIP?.as?.info || '未知' }}</span>
-              </div>
-            </div>
-            <div class="table-row">
-              <div class="table-cell">
-                <span class="cell-label">地址段</span>
-                <span class="cell-value">{{ accessStore.SimpleIP?.addr || '未知' }}</span>
-              </div>
-            </div>
-            <div class="table-row">
-              <div class="table-cell">
-                <span class="cell-label">国家</span>
-                <span class="cell-value">{{ accessStore.SimpleIP?.country?.name || '未知' }} ({{ accessStore.SimpleIP?.country?.code || '未知' }})</span>
-              </div>
-            </div>
-            <div class="table-row">
-              <div class="table-cell">
-                <span class="cell-label">注册国家</span>
-                <span class="cell-value">{{ accessStore.SimpleIP?.registeredCountry?.name || '未知' }} ({{ accessStore.SimpleIP?.registeredCountry?.code || '未知' }})</span>
-              </div>
-            </div>
-            <div class="table-row">
-              <div class="table-cell">
-                <span class="cell-label">地区</span>
-                <span class="cell-value">{{ (accessStore.SimpleIP?.regions || []).join(' / ') || '未知' }}</span>
-              </div>
-            </div>
-            <div class="table-row">
-              <div class="table-cell">
-                <span class="cell-label">地区简称</span>
-                <span class="cell-value">{{ (accessStore.SimpleIP?.regionsShort || []).join(' / ') || '未知' }}</span>
-              </div>
-            </div>
-            <div class="table-row">
-              <div class="table-cell">
-                <span class="cell-label">连接类型</span>
-                <span class="cell-value">{{ accessStore.SimpleIP?.type || '未知' }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
       <div>
-        {{ accessStore.getAccess?.ip }}
-      </div>
+          {{ useAccessStore().SimpleIP }}
+        </div>
       <div class="info">
         <p>
           <a href="https://beian.miit.gov.cn/" target="_blank">渝ICP备2025063979号-1</a>
@@ -337,115 +267,6 @@
           }
         }
       }
-
-      /* IP信息表格样式 */
-      .ip-info-container {
-        width: calc(100% - 20px);
-        display: flex;
-        justify-content: center;
-        padding: 40px 20px;
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-      }
-
-      .ip-info-card {
-        width: 100%;
-        max-width: 800px;
-        background: white;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-        border: 1px solid #e1e8ed;
-      }
-
-      .ip-info-title {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        margin: 0;
-        padding: 20px;
-        text-align: center;
-        font-size: 24px;
-        font-weight: 600;
-        letter-spacing: 1px;
-      }
-
-      .ip-info-table {
-        padding: 0;
-      }
-
-      .table-row {
-        display: flex;
-        border-bottom: 1px solid #f0f0f0;
-        transition: background-color 0.3s ease;
-
-        &:last-child {
-          border-bottom: none;
-        }
-
-        &:hover {
-          background-color: #f8f9fa;
-        }
-      }
-
-      .table-cell {
-        display: flex;
-        width: 100%;
-        padding: 12px 20px;
-      }
-
-      .cell-label {
-        flex: 0 0 150px;
-        font-weight: 600;
-        color: #495057;
-        font-size: 16px;
-        display: flex;
-        align-items: center;
-      }
-
-      .cell-value {
-        flex: 1;
-        color: #212529;
-        font-size: 16px;
-        display: flex;
-        align-items: center;
-        word-break: break-word;
-      }
-
-      /* 移动端适配 */
-      @media (max-width: 768px) {
-        .ip-info-container {
-          padding: 20px 10px;
-        }
-
-        .ip-info-card {
-          border-radius: 10px;
-        }
-
-        .ip-info-title {
-          font-size: 18px;
-          padding: 15px;
-        }
-
-        .table-cell {
-          padding: 10px 15px;
-          flex-direction: row;
-          justify-content: space-between;
-          align-items: center;
-        }
-
-        .cell-label {
-          flex: 0 0 100px;
-          font-size: 13px;
-          font-weight: 600;
-        }
-
-        .cell-value {
-          flex: 1;
-          font-size: 13px;
-          text-align: right;
-          padding-left: 10px;
-        }
-      }
-
       .info {
         align-items: center;
         justify-content: center;
