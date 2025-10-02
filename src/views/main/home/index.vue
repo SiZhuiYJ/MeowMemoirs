@@ -32,30 +32,57 @@ const TextList = [
   <div class="progressive-container">
     <!-- 封面 -->
     <div class="cover">
-      <img class="preview" :src="getStaticFileUrl(`img/home/_${isMobile ? '9' : '1'}-4k.webp`)" v-progressive.lazy="getStaticFileUrl(`img/home/_${isMobile ? '9' : '1'}-720p.webp`)
-        " alt="封面" />
+      <img
+        class="preview"
+        :src="getStaticFileUrl(`img/home/_${isMobile ? '9' : '1'}.webp`)"
+        v-progressive.lazy="
+          getStaticFileUrl(`img/home/_${isMobile ? '9' : '1'}-720p.webp`)
+        "
+        alt="封面"
+      />
 
       <!-- 打字机宣传语 -->
-      <div class="typing" :style="{
-        left: isMobile ? '5%' : '20%',
-        width: isMobile ? '' : 'auto'
-      }">
+      <div
+        class="typing"
+        :style="{
+          left: isMobile ? '5%' : '20%',
+          width: isMobile ? '' : 'auto',
+        }"
+      >
         <div class="typing-title">
           欢迎来到<span style="font-size: 30px; color: #e3c0df">喵咪记事簿</span>
         </div>
         <ToHome class="typing-btn" />
-        <TypewriterEffect :messages="TextList" :type-speed="80" :delete-speed="40" :pause-duration="3000"
-          :empty-pause="300" :font-size="isMobile ? 25 : 30" style="color: #fff" />
+        <TypewriterEffect
+          :messages="TextList"
+          :type-speed="80"
+          :delete-speed="40"
+          :pause-duration="3000"
+          :empty-pause="300"
+          :font-size="isMobile ? 25 : 30"
+          style="color: #fff"
+        />
       </div>
       <!-- 向下标 -->
       <div class="down-arrow">
         <span class="arrow-title">逝去的人会永远活在我们的回忆里</span>
         <div class="arrow-down">
-          <svg t="1752727759925" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
-            p-id="4445" xmlns:xlink="http://www.w3.org/1999/xlink" width="40" height="40">
+          <svg
+            t="1752727759925"
+            class="icon"
+            viewBox="0 0 1024 1024"
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            p-id="4445"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+            width="40"
+            height="40"
+          >
             <path
               d="M512 817.664l264.832-264.832-60.330667-60.330667L512 697.002667l-204.501333-204.501334-60.330667 60.330667L512 817.664z m0-241.066667l264.832-264.832-60.330667-60.330666L512 455.936 307.498667 251.434667 247.168 311.765333 512 576.597333z"
-              fill="#FFF" p-id="4446"></path>
+              fill="#FFF"
+              p-id="4446"
+            ></path>
           </svg>
         </div>
       </div>
@@ -63,8 +90,22 @@ const TextList = [
 
     <!-- 封页 -->
     <div class="page-break">
-      <img class="preview" :src="getStaticFileUrl(`img/home/_${isMobile ? '1' : '9'}-4k.webp`)" v-progressive.lazy="getStaticFileUrl(`img/home/_${isMobile ? '1' : '9'}-720p.webp`)
-        " alt="尾页" />
+      <img
+        class="preview"
+        :src="getStaticFileUrl(`img/home/_${isMobile ? '1' : '9'}.webp`)"
+        v-progressive.lazy="
+          getStaticFileUrl(`img/home/_${isMobile ? '1' : '9'}-720p.webp`)
+        "
+        alt="尾页"
+      />
+    </div>
+    <div class="page-break">
+      <img
+        class="preview"
+        :src="getStaticFileUrl(`img/home/_10.webp`)"
+        v-progressive.lazy="getStaticFileUrl(`img/home/_10.webp`)"
+        alt="尾页"
+      />
     </div>
     <div :class="isMobile ? 'mobile' : 'message'">
       <div class="message-btn">
@@ -76,7 +117,11 @@ const TextList = [
       <PersonalDataCard />
 
       <div :class="isMobile ? 'mobile-box' : 'login-box'">
-        <div class="glitch" data-text="喵咪记事簿" :style="{ writingMode: isMobile ? 'vertical-rl' : 'horizontal-tb' }">
+        <div
+          class="glitch"
+          data-text="喵咪记事簿"
+          :style="{ writingMode: isMobile ? 'vertical-rl' : 'horizontal-tb' }"
+        >
           喵咪记事簿
         </div>
       </div>
@@ -212,7 +257,8 @@ const TextList = [
         }
 
         &:after {
-          animation: glitch-it 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) reverse both infinite;
+          animation: glitch-it 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) reverse both
+            infinite;
           color: #ff00ff;
           z-index: -2;
         }
@@ -232,7 +278,8 @@ const TextList = [
 
     .message-btn {
       span {
-        background: linear-gradient(to right, var(--el-color-primary), #61c454) no-repeat right bottom;
+        background: linear-gradient(to right, var(--el-color-primary), #61c454) no-repeat
+          right bottom;
         background-size: 0 2px;
         transition: background-size 1000ms;
 

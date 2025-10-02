@@ -37,10 +37,10 @@ const serverMessage = [
 // 声明全局性能API类型
 declare const PerformanceObserver:
   | {
-    prototype: PerformanceObserver;
-    new(callback: PerformanceObserverCallback): PerformanceObserver;
-    supportedEntryTypes?: string[];
-  }
+      prototype: PerformanceObserver;
+      new (callback: PerformanceObserverCallback): PerformanceObserver;
+      supportedEntryTypes?: string[];
+    }
   | undefined;
 
 interface PerformanceMetrics {
@@ -213,10 +213,21 @@ onMounted(() => {
         <template #container>
           <h3>详细性能测试数据</h3>
           <div>
-            本次打开网页的速度击败全世界<span style="font-size: 16px; font-weight: bold" :style="{ color: getRandomColor() }">{{
-              rankNum }}</span>
-            <span style="font-size: 16px; font-weight: bold" :style="{ color: getRandomColor() }">{{ rankTen }}</span>
-            <span style="font-size: 16px; font-weight: bold" :style="{ color: getRandomColor() }">%</span>
+            本次打开网页的速度击败全世界<span
+              style="font-size: 16px; font-weight: bold"
+              :style="{ color: getRandomColor() }"
+              >{{ rankNum }}</span
+            >
+            <span
+              style="font-size: 16px; font-weight: bold"
+              :style="{ color: getRandomColor() }"
+              >{{ rankTen }}</span
+            >
+            <span
+              style="font-size: 16px; font-weight: bold"
+              :style="{ color: getRandomColor() }"
+              >%</span
+            >
             的人
           </div>
         </template>
@@ -224,11 +235,9 @@ onMounted(() => {
       <div style="background-color: rgb(194 194 194); width: 100%; height: 1px"></div>
 
       <Folding>
-        <span class="label font-class">性能测试结果:</span>
+        <span class="label font-class">地址信息:</span>
         <template #toggle>
-          <span :style="{ color: score_color[rankNum] }">
-            {{ score[rankTen] }}
-          </span>
+          {{ accessStore.getSimpleIP?.ip || "未知" }}
         </template>
         <template #container>
           <h3>IP 信息详情</h3>
@@ -236,71 +245,105 @@ onMounted(() => {
             <div class="table-row">
               <div class="table-cell">
                 <span class="cell-label">IP地址:</span>
-                <span class="cell-value"><el-text truncated>{{ accessStore.getSimpleIP?.ip || '未知' }}</el-text></span>
+                <span class="cell-value"
+                  ><el-text truncated>{{
+                    accessStore.getSimpleIP?.ip || "未知"
+                  }}</el-text></span
+                >
               </div>
             </div>
             <div class="table-row">
               <div class="table-cell">
                 <span class="cell-label">AS编号:</span>
-                <span class="cell-value"><el-text truncated>{{ accessStore.getSimpleIP?.as?.number || '未知'
-                }}</el-text></span>
+                <span class="cell-value"
+                  ><el-text truncated>{{
+                    accessStore.getSimpleIP?.as?.number || "未知"
+                  }}</el-text></span
+                >
               </div>
             </div>
             <div class="table-row">
               <div class="table-cell">
                 <span class="cell-label">AS名称:</span>
-                <span class="cell-value"><el-text truncated>{{ accessStore.getSimpleIP?.as?.name || '未知'
-                }}</el-text></span>
+                <span class="cell-value"
+                  ><el-text truncated>{{
+                    accessStore.getSimpleIP?.as?.name || "未知"
+                  }}</el-text></span
+                >
               </div>
             </div>
             <div class="table-row">
               <div class="table-cell">
                 <span class="cell-label">运营商:</span>
-                <span class="cell-value"><el-text truncated>{{ accessStore.getSimpleIP?.as?.info || '未知'
-                }}</el-text></span>
+                <span class="cell-value"
+                  ><el-text truncated>{{
+                    accessStore.getSimpleIP?.as?.info || "未知"
+                  }}</el-text></span
+                >
               </div>
             </div>
             <div class="table-row">
               <div class="table-cell">
                 <span class="cell-label">地址段:</span>
-                <span class="cell-value"><el-text truncated>{{ accessStore.getSimpleIP?.addr || '未知' }}</el-text></span>
+                <span class="cell-value"
+                  ><el-text truncated>{{
+                    accessStore.getSimpleIP?.addr || "未知"
+                  }}</el-text></span
+                >
               </div>
             </div>
             <div class="table-row">
               <div class="table-cell">
                 <span class="cell-label">国家:</span>
-                <span class="cell-value"><el-text truncated>{{ accessStore.getSimpleIP?.country?.name || '未知' }} ({{
-                  accessStore.getSimpleIP?.country?.code || '未知'
-                }})</el-text></span>
+                <span class="cell-value"
+                  ><el-text truncated
+                    >{{ accessStore.getSimpleIP?.country?.name || "未知" }} ({{
+                      accessStore.getSimpleIP?.country?.code || "未知"
+                    }})</el-text
+                  ></span
+                >
               </div>
             </div>
             <div class="table-row">
               <div class="table-cell">
                 <span class="cell-label">注册国家:</span>
-                <span class="cell-value"><el-text truncated>{{ accessStore.getSimpleIP?.registeredCountry?.name || '未知'
-                }}
-                    ({{
-                      accessStore.getSimpleIP?.registeredCountry?.code || '未知' }})</el-text></span>
+                <span class="cell-value"
+                  ><el-text truncated
+                    >{{ accessStore.getSimpleIP?.registeredCountry?.name || "未知" }} ({{
+                      accessStore.getSimpleIP?.registeredCountry?.code || "未知"
+                    }})</el-text
+                  ></span
+                >
               </div>
             </div>
             <div class="table-row">
               <div class="table-cell">
                 <span class="cell-label">地区:</span>
-                <span class="cell-value"><el-text truncated>{{ (accessStore.getSimpleIP?.regions || []).join(' / ') ||
-                  '未知' }}</el-text></span>
+                <span class="cell-value"
+                  ><el-text truncated>{{
+                    (accessStore.getSimpleIP?.regions || []).join(" / ") || "未知"
+                  }}</el-text></span
+                >
               </div>
             </div>
             <div class="table-row">
               <div class="table-cell">
                 <span class="cell-label">地区简称:</span>
-                <span class="cell-value"><el-text truncated>{{ (accessStore.getSimpleIP?.regionsShort || []).join(' / ')
-                  || '未知' }}</el-text></span>
+                <span class="cell-value"
+                  ><el-text truncated>{{
+                    (accessStore.getSimpleIP?.regionsShort || []).join(" / ") || "未知"
+                  }}</el-text></span
+                >
               </div>
             </div>
             <div class="table-row">
               <div class="table-cell">
                 <span class="cell-label">连接类型:</span>
-                <span class="cell-value"><el-text truncated>{{ accessStore.getSimpleIP?.type || '未知' }}</el-text></span>
+                <span class="cell-value"
+                  ><el-text truncated>{{
+                    accessStore.getSimpleIP?.type || "未知"
+                  }}</el-text></span
+                >
               </div>
             </div>
           </div>
@@ -453,7 +496,6 @@ h3 {
 
 /* 移动端适配 */
 @media (max-width: 768px) {
-
   .ip-info-card {
     border-radius: 10px;
   }
@@ -510,7 +552,6 @@ h3 {
     }
   }
 }
-
 
 @keyframes center-to {
   100% {

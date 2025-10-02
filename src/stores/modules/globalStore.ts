@@ -92,37 +92,37 @@ export const useGlobalStore = defineStore(
   "global",
   () => {
     //菜单折叠
-    const isCollapse = ref < boolean > (false);
+    const isCollapse = ref<boolean>(false);
     // header折叠
-    const isHeader = ref < boolean > (false);
+    const isHeader = ref<boolean>(false);
     //菜单宽度
-    const menuWidth = ref < number > (200);
+    const menuWidth = ref<number>(200);
     //是否全屏
-    const isFullScreen = ref < boolean > (false);
+    const isFullScreen = ref<boolean>(false);
     //是否暗黑模式
-    const isDark = ref < boolean > (false);
+    const isDark = ref<boolean>(false);
     //ElementPlus 尺寸大小
-    const dimension = ref < string > ("default");
+    const dimension = ref<string>("default");
     //当前页面是否全屏
-    const maximize = ref < boolean > (false);
+    const maximize = ref<boolean>(false);
     //当前系统语言[默认中文]
-    const language = ref < string > ("zh");
+    const language = ref<string>("zh");
     //选择主题[默认兔子坦克形态]
-    const themeColor = ref < string > (DEFAULT_THEME);
+    const themeColor = ref<string>(DEFAULT_THEME);
     //布局模式 (纵向：vertical | 经典：classic | 横向：horizontal | 分栏：column)
-    const layout = ref < string > ("columns");
+    const layout = ref<string>("columns");
     //路由动画
-    const transition = ref < string > ("fade-scale");
+    const transition = ref<string>("fade-scale");
     //菜单是否可展开单个[默认：true仅仅一个]
-    const uniqueOpened = ref < boolean > (true);
+    const uniqueOpened = ref<boolean>(true);
     //灰色模式
-    const isGrey = ref < boolean > (false);
+    const isGrey = ref<boolean>(false);
     //色弱模式
-    const isWeak = ref < boolean > (false);
+    const isWeak = ref<boolean>(false);
     // 暗黑模式
-    const asideInverted = ref < boolean > (false);
+    const asideInverted = ref<boolean>(false);
     // 侧边栏
-    const headerInverted = ref < boolean > (false);
+    const headerInverted = ref<boolean>(false);
     // 创建状态对象集合（关键修改）
     const state = {
       isCollapse,
@@ -146,7 +146,7 @@ export const useGlobalStore = defineStore(
     type GlobalStateKey = keyof typeof state;
 
     // 设置全局状态（修正实现）
-    function setGlobal < K extends GlobalStateKey > (
+    function setGlobal<K extends GlobalStateKey>(
       key: K,
       value: (typeof state)[K]["value"]
     ) {
@@ -175,7 +175,7 @@ export const useGlobalStore = defineStore(
       ...state,
       setGlobal,
       setDimension,
-      setCollapse, 
+      setCollapse,
       setHeader,
       setMenuWidth,
     };

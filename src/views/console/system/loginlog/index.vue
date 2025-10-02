@@ -3,55 +3,18 @@ import { ref, onMounted } from "vue";
 import {
   meowNoticeSuccess,
   meowNoticeError,
-  meowMsgWarning,
+  // meowMsgWarning,
   meowMsgBox,
   meowMsgInfo,
   meowMsgError,
 } from "@/utils/message";
-
+import { useAccessStore } from "@/stores";
+const accessStore = useAccessStore();
+const { queryIpAccessLog } = useAccessStore();
 // 表格加载动画Loading
 const loading = ref(false);
 // 是否显示搜索表单[默认显示]
 const showSearch = ref<boolean>(true); // 默认显示搜索条件
-// 表格数据
-const tableList = ref<any>([
-  {
-    loginId: 1,
-    loginName: "YU-ADMIN🌻",
-    ipAddress: "127.0.0.1",
-    loginAddress: "河南省 郑州市",
-    loginStatus: "0",
-    deviceName: "PC",
-    browser: "Chrome 11",
-    os: "Windows 10",
-    message: "YU-ADMIN🌻",
-    loginTime: "2023-08-08 23:00:00",
-  },
-  {
-    loginId: 2,
-    loginName: "张大仙🌻",
-    ipAddress: "127.0.0.1",
-    loginAddress: "河南省 郑州市",
-    loginStatus: "0",
-    deviceName: "PC",
-    browser: "Chrome 11",
-    os: "Windows 10",
-    message: "YU-ADMIN🌻",
-    loginTime: "2023-08-08 23:00:00",
-  },
-  {
-    loginId: 3,
-    loginName: "王将🌻",
-    ipAddress: "127.0.0.1",
-    loginAddress: "河南省 郑州市",
-    loginStatus: "0",
-    deviceName: "PC",
-    browser: "Chrome 11",
-    os: "Windows 10",
-    message: "YU-ADMIN🌻",
-    loginTime: "2023-08-08 23:00:00",
-  },
-]);
 
 // 查询参数
 const searchParams = ref({
@@ -131,8 +94,10 @@ const handleStaticPage = () => {
   // listPage(searchParams.value);
 };
 
-onMounted(() => {
+onMounted(async () => {
   // 获取表格数据
+  await queryIpAccessLog();
+  console.log("accessStore", useAccessStore().getIpAccessLog);
   handleListPage();
 });
 
@@ -149,51 +114,51 @@ const handleSelectionChange = (selection: any) => {
 };
 
 /** 状态开关 */
-const handleSwitch = (row: any) => {
-  let text = row.loginStatus === "0" ? "启用" : "停用";
-  meowMsgBox("确认要[" + text + "]-[" + row.loginName + "]吗？")
-    .then(async () => {
-      if (!row.loginId || !row.loginStatus) {
-        meowMsgWarning("请选择需要修改的数据🌻");
-        return;
-      }
-      try {
-        // await updateStatus(row.loginId, row.loginStatus);
-        meowNoticeSuccess("修改成功🌻");
-      } catch (error) {
-        console.log(error);
-        handleTableData();
-        meowNoticeError("修改失败，请刷新重试🌻");
-      }
-    })
-    .catch(() => {
-      meowMsgError("已取消🌻");
-    });
-};
+// const handleSwitch = (row: any) => {
+//   let text = row.loginStatus === "0" ? "启用" : "停用";
+//   meowMsgBox("确认要[" + text + "]-[" + row.loginName + "]吗？")
+//     .then(async () => {
+//       if (!row.loginId || !row.loginStatus) {
+//         meowMsgWarning("请选择需要修改的数据🌻");
+//         return;
+//       }
+//       try {
+//         // await updateStatus(row.loginId, row.loginStatus);
+//         meowNoticeSuccess("修改成功🌻");
+//       } catch (error) {
+//         console.log(error);
+//         handleTableData();
+//         meowNoticeError("修改失败，请刷新重试🌻");
+//       }
+//     })
+//     .catch(() => {
+//       meowMsgError("已取消🌻");
+//     });
+// };
 
 /** 删除 */
-const handleDelete = (row: any) => {
-  const id = row.loginId;
-  if (id == null || id == "") {
-    meowMsgWarning("请选择需要删除的数据🌻");
-    return;
-  }
-  meowMsgBox("您确认需要删除用户名称[" + row.loginName + "]么？")
-    .then(async () => {
-      try {
-        // await deleteById(id);
-        handleTableData();
-        meowNoticeSuccess("删除成功🌻");
-      } catch (error) {
-        console.log(error);
-        handleTableData();
-        meowNoticeError("删除失败，请刷新重试🌻");
-      }
-    })
-    .catch(() => {
-      meowMsgError("已取消🌻");
-    });
-};
+// const handleDelete = (row: any) => {
+//   const id = row.loginId;
+//   if (id == null || id == "") {
+//     meowMsgWarning("请选择需要删除的数据🌻");
+//     return;
+//   }
+//   meowMsgBox("您确认需要删除用户名称[" + row.loginName + "]么？")
+//     .then(async () => {
+//       try {
+//         // await deleteById(id);
+//         handleTableData();
+//         meowNoticeSuccess("删除成功🌻");
+//       } catch (error) {
+//         console.log(error);
+//         handleTableData();
+//         meowNoticeError("删除失败，请刷新重试🌻");
+//       }
+//     })
+//     .catch(() => {
+//       meowMsgError("已取消🌻");
+//     });
+// };
 
 /** 批量删除 */
 const handleBatchDelete = () => {
@@ -301,131 +266,167 @@ const handleBatchDelete = () => {
       <el-table
         v-loading="loading"
         border
-        :data="tableList"
+        :data="accessStore.getIpAccessLog"
         empty-text="暂时没有数据哟🌻"
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column
           label="序号"
-          prop="loginId"
+          prop="id"
           width="80px"
           align="center"
-          type="index"
+          type="id"
         ></el-table-column>
         <el-table-column
-          label="登录用户"
-          prop="loginName"
+          label="匿名化标识"
+          prop="ipId"
+          width="130px"
+          align="center"
+          :show-overflow-tooltip="true"
+        ></el-table-column
+        ><el-table-column
+          label="客户端IP地址"
+          prop="ipAddress"
           width="130px"
           align="center"
           :show-overflow-tooltip="true"
         ></el-table-column>
         <el-table-column
-          label="IP地址"
-          prop="ipAddress"
-          width="160px"
+          label="客户端浏览器/设备信息"
+          prop="userAgent"
+          width="130px"
           align="center"
           :show-overflow-tooltip="true"
         ></el-table-column>
         <el-table-column
-          label="登录地址"
-          prop="loginAddress"
-          width="260px"
+          label="请求体内容（敏感信息需脱敏）"
+          prop="requestBody"
+          width="130px"
           align="center"
           :show-overflow-tooltip="true"
         ></el-table-column>
         <el-table-column
-          label="登录状态"
-          prop="loginStatus"
-          width="100px"
-          align="center"
-          :show-overflow-tooltip="true"
-        >
-          <template #default="scope">
-            <el-tag
-              :type="
-                scope.row.loginStatus == '0'
-                  ? 'primary'
-                  : scope.row.loginStatus == '1'
-                  ? 'danger'
-                  : 'warning'
-              "
-            >
-              <!-- :type是用来判断块状的颜色 -->
-              <!-- 里面填写内容 -->
-              {{
-                scope.row.loginStatus == "0"
-                  ? "登录成功"
-                  : scope.row.loginStatus == "1"
-                  ? "登录失败"
-                  : "未知状态"
-              }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="设备名称"
-          prop="deviceName"
-          width="150px"
+          label="请求时间（精确到毫秒）"
+          prop="requestTime"
+          width="130px"
           align="center"
           :show-overflow-tooltip="true"
         ></el-table-column>
         <el-table-column
-          label="浏览器"
-          prop="browser"
-          width="150px"
+          label="HTTP请求方法"
+          prop="requestMethod"
+          width="130px"
           align="center"
           :show-overflow-tooltip="true"
         ></el-table-column>
         <el-table-column
-          label="操作系统"
-          prop="os"
-          width="150px"
+          label="完整请求路径（含查询参数）"
+          prop="requestUrl"
+          width="130px"
           align="center"
           :show-overflow-tooltip="true"
         ></el-table-column>
         <el-table-column
-          label="登录信息"
-          prop="message"
-          width="150px"
+          label="HTTP协议版本"
+          prop="httpVersion"
+          width="130px"
           align="center"
           :show-overflow-tooltip="true"
         ></el-table-column>
-        <!-- 注意：如果后端数据返回的是字符串"0" OR "1"，这里的active-value AND inactive-value不需要加冒号，会认为是字符串，否则：后端返回是0 AND 1数字，则需要添加冒号 -->
-        <el-table-column label="是否冻结" prop="loginStatus" width="100px" align="center">
-          <template #default="scope">
-            <el-switch
-              v-model="scope.row.loginStatus"
-              active-text="启用"
-              inactive-text="停用"
-              active-value="0"
-              inactive-value="1"
-              :inline-prompt="true"
-              @change="handleSwitch(scope.row)"
-            >
-            </el-switch>
-          </template>
-        </el-table-column>
+        <!-- /** * ，示例：200（成功）、404（未找到）、500（服务器错误） */ -->
         <el-table-column
-          label="登录时间"
-          prop="loginTime"
-          width="180px"
+          label="服务器响应状态码"
+          prop="responseStatus"
+          width="130px"
           align="center"
+          :show-overflow-tooltip="true"
         ></el-table-column>
-        <el-table-column label="操作" align="center" width="120" fixed="right">
-          <template #default="{ row }">
-            <el-tooltip content="删除🌻" placement="top">
-              <el-button
-                type="danger"
-                icon="Delete"
-                circle
-                plain
-                @click="handleDelete(row)"
-                v-auth="['system:role:delete']"
-              ></el-button>
-            </el-tooltip>
-          </template>
-        </el-table-column>
+        <el-table-column
+          label="服务器处理请求耗时（毫秒）"
+          prop="responseTimeMs"
+          width="130px"
+          align="center"
+          :show-overflow-tooltip="true"
+        ></el-table-column>
+        <el-table-column
+          label="来源页面URL（可选）"
+          prop="referer"
+          width="130px"
+          align="center"
+          :show-overflow-tooltip="true"
+        ></el-table-column
+        ><el-table-column
+          label="请求头信息（JSON格式）"
+          prop="headers"
+          width="130px"
+          align="center"
+          :show-overflow-tooltip="true"
+        ></el-table-column
+        ><el-table-column
+          label="IP地理位置信息（JSON格式）"
+          prop="geoLocation"
+          width="130px"
+          align="center"
+          :show-overflow-tooltip="true"
+        ></el-table-column>
+        <el-table-column
+          label="设备类型（通过User-Agent解析）"
+          prop="deviceType"
+          width="130px"
+          align="center"
+          :show-overflow-tooltip="true"
+        ></el-table-column>
+        <el-table-column
+          label="操作系统名称及版本"
+          prop="osName"
+          width="130px"
+          align="center"
+          :show-overflow-tooltip="true"
+        ></el-table-column>
+        <el-table-column
+          label="浏览器名称及版本"
+          prop="browserName"
+          width="130px"
+          align="center"
+          :show-overflow-tooltip="true"
+        ></el-table-column>
+        <el-table-column
+          label="是否为爬虫/机器人请求"
+          prop="isBot"
+          width="130px"
+          align="center"
+          :show-overflow-tooltip="true"
+        ></el-table-column
+        ><el-table-column
+          label="威胁等级（0-5）"
+          prop="threatLevel"
+          width="130px"
+          align="center"
+          :show-overflow-tooltip="true"
+        ></el-table-column>
+        <!-- 0=正常，3=可疑，5=攻击行为  -->
+        <el-table-column
+          label="用户会话ID（如有）"
+          prop="sessionId"
+          width="130px"
+          align="center"
+          :show-overflow-tooltip="true"
+        ></el-table-column>
+        <el-table-column
+          label="关联用户ID（如已登录）"
+          prop="userId"
+          width="130px"
+          align="center"
+          :show-overflow-tooltip="true"
+        ></el-table-column>
+        <el-table-column
+          label="备注信息（如攻击类型）"
+          prop="extraNotes"
+          width="130px"
+          align="center"
+          :show-overflow-tooltip="true"
+        ></el-table-column>
       </el-table>
 
       <div class="h-20px" style="height: 20px"></div>

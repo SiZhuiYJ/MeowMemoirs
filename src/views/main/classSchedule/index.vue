@@ -202,7 +202,6 @@ onMounted(async () => {
   }
 
   @media (max-width: 768px) {
-    padding: 30px 0 0;
     flex-direction: column;
   }
 }

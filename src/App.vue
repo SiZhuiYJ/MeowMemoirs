@@ -1,19 +1,9 @@
 <script setup lang="ts">
-import { meowNoticeSuccess } from '@/utils/message'
-import {
-  ref,
-  onMounted,
-  nextTick,
-  computed,
-  onUnmounted
-} from "vue";
+import { ref, onMounted, nextTick, computed, onUnmounted, watch } from "vue";
 import { setCursor } from "@/utils/cursor";
 import { useTheme } from "@/utils/theme.ts";
 
-import {
-  useGlobalStore,
-  useAccessStore
-} from "@/stores";
+import { useGlobalStore, useAccessStore } from "@/stores";
 import { useScreenStore } from "@/utils/screen";
 import zhCn from "element-plus/es/locale/lang/zh-cn";
 // 初始化日历语言
@@ -21,8 +11,13 @@ import dayjs from "dayjs";
 import "dayjs/locale/zh-cn";
 dayjs.locale("zh-cn");
 
+// {
+//   "type": "RainbowId",
+//   "identifier": "admin_rainbow",
+//   "password": "Admin@123456"
+// }
 const globalStore = useGlobalStore();
-const accessStore = useAccessStore();
+const { setGlobal } = useGlobalStore();
 const { initializeData } = useAccessStore();
 
 const dimension = computed(() => globalStore.dimension);
@@ -46,19 +41,16 @@ function flowerOnClick(event: { pageX: number; pageY: number }) {
     h = maxH / 10 + 10;
   const maxW = document.body.scrollWidth,
     w = 20;
-  v.setAttribute("class",
-    "virtual-container");
+  v.setAttribute("class", "virtual-container");
   v.style.left = event.pageX - 8 + "px";
   v.style.top = event.pageY - 8 + "px";
   v.style.width = event.pageX + 20 + 8 > maxW ? maxW - event.pageX + 8 + "px" : w + "px";
   v.style.height = event.pageY + h + 8 > maxH ? maxH - event.pageY + 8 + "px" : h + "px";
   let e = document.createElement("div");
-  e.setAttribute("class",
-    "click-star");
+  e.setAttribute("class", "click-star");
   v.appendChild(e);
   document.body.appendChild(v);
-  setTimeout(() => document.body.removeChild(v),
-    1000);
+  setTimeout(() => document.body.removeChild(v), 1000);
 }
 // 标题数组
 const titles = [
@@ -114,6 +106,14 @@ const setupEventListeners = () => {
   });
 };
 
+// element-plus默认组件大小
+watch(
+  () => useScreenStore().isMobile.value,
+  (size) => {
+    if (size) setGlobal("dimension", "small");
+    else setGlobal("dimension", "default");
+  }
+);
 onMounted(async () => {
   // 初始化主题配置
   handleThemeConfig();
@@ -122,14 +122,12 @@ onMounted(async () => {
   // handleAutoUpdate();
 
   // 添加点击效果
-  document.addEventListener("click",
-    flowerOnClick);
+  document.addEventListener("click", flowerOnClick);
 
   setTitle(0); // 初始设置欢迎标题
 
   // 设置页面可见性监听
-  document.addEventListener("visibilitychange",
-    handleVisibilityChange);
+  document.addEventListener("visibilitychange", handleVisibilityChange);
 
   // 设置用户操作监听
   setupEventListeners();
@@ -147,18 +145,6 @@ onMounted(async () => {
     setTimeout(() => handleCursor(), 2000);
   }
   await initializeData();
-  meowNoticeSuccess(`
-      IP地址:${accessStore.getSimpleIP?.ip || '未知'}<br>
-      AS编号:${accessStore.getSimpleIP?.as?.number || '未知'}<br>
-      AS名称:${accessStore.getSimpleIP?.as?.name || '未知'}<br>
-      运营商:${accessStore.getSimpleIP?.as?.info || '未知'}<br>
-      地址段:${accessStore.getSimpleIP?.addr || '未知'}<br>
-      国家:${accessStore.getSimpleIP?.country?.name || '未知'}(${accessStore.getSimpleIP?.country?.code || '未知'}<br>
-      注册国家:${accessStore.getSimpleIP?.registeredCountry?.name || '未知'}(${accessStore.getSimpleIP?.registeredCountry?.code || '未知'})<br>
-      地区:${(accessStore.getSimpleIP?.regions || []).join(' / ') || '未知'}<br>
-      地区简称:${(accessStore.getSimpleIP?.regionsShort || []).join(' / ') || '未知'}<br>
-      连接类型:${accessStore.getSimpleIP?.type || '未知'}<br>
-      `, "欢迎使用喵喵系统", 4000, "success", true);
 });
 
 onUnmounted(() => {

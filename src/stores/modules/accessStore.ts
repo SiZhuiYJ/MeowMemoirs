@@ -9,13 +9,19 @@ import type {
   IPLocation,
   IPInfo
 } from "@/libs/api/access/type";
+import type {
+  IpAccessLog
+} from "@/libs/api/system/loginlog/type";
 import {
   LocationApi
 } from "@/libs/api/access";
+import { AccessLogApi } from "@/libs/api/system/loginlog";
+
 
 export const useAccessStore = defineStore("access", () => {
   const accessStore = ref<IPLocation>();
   const SimpleIP = ref<IPInfo>();
+  const IpAccessLog = ref<IpAccessLog[]>();
 
 
   async function initializeData() {
@@ -46,7 +52,18 @@ export const useAccessStore = defineStore("access", () => {
     } catch (error) {
       console.log(error);
     }
+  }
 
+  // 登录日志
+  async function queryIpAccessLog() {
+    try {
+      const {
+        data
+      } = await AccessLogApi.MMPostIpAccessLog();
+      IpAccessLog.value = data.ipAccessLogs;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async function steAccess(access: IPLocation) {
@@ -58,13 +75,16 @@ export const useAccessStore = defineStore("access", () => {
 
   const getAccess = computed(() => accessStore.value);
   const getSimpleIP = computed(() => SimpleIP.value);
+  const getIpAccessLog = computed(() => IpAccessLog.value);
 
   return {
     initializeData,
     queryLocation,
+    queryIpAccessLog,
     steAccess,
     setSimpleIP,
     getAccess,
-    getSimpleIP
+    getSimpleIP,
+    getIpAccessLog
   };
 });

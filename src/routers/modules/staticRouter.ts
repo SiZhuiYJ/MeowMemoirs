@@ -45,6 +45,7 @@ export const layoutRouter: RouteRecordRaw[] = [
         meta: {
           title: "首页", // 标题
           enName: "Master Station", // 英文名称
+          isHeader: "0",// 代表路由在头部显示[0隐藏，1显示]
           icon: "HomeFilled", // 图标
           isHide: "1", // 代表路由在菜单中是否隐藏，是否隐藏[0隐藏，1显示]
           isLink: "", // 是否外链[有值则是外链]
@@ -60,6 +61,7 @@ export const layoutRouter: RouteRecordRaw[] = [
         meta: {
           title: "文档",
           enName: "blogPost",
+          isHeader: "0",
           icon: "Clock",
           isHide: "1",
           isLink: "",
@@ -74,6 +76,7 @@ export const layoutRouter: RouteRecordRaw[] = [
         meta: {
           title: "课表",
           enName: "classSchedule",
+          isHeader: "0",
           icon: "Calendar",
           isHide: "1",
           isLink: "",
@@ -88,6 +91,7 @@ export const layoutRouter: RouteRecordRaw[] = [
         meta: {
           title: "博客内容",
           enName: "blogPost",
+          isHeader: "0",
           icon: "Clock",
           isHide: "0",
           isLink: "",
@@ -119,6 +123,7 @@ export const layoutRouter: RouteRecordRaw[] = [
             meta: {
               title: "时间",
               enName: "TimeStyle",
+              isHeader: "0",
               icon: "Clock",
               isHide: "1",
               isLink: "",
@@ -134,6 +139,7 @@ export const layoutRouter: RouteRecordRaw[] = [
             meta: {
               title: "星空",
               enName: "StarrySky",
+              isHeader: "0",
               icon: "Star",
               isHide: "1",
               isLink: "",
@@ -150,6 +156,7 @@ export const layoutRouter: RouteRecordRaw[] = [
               title: "蛋糕",
               enName: "banner",
               icon: "IceTea",
+              isHeader: "0",
               isHide: "1",
               isLink: "",
               isKeepAlive: "0",
@@ -164,6 +171,7 @@ export const layoutRouter: RouteRecordRaw[] = [
               title: "爱心",
               enName: "love",
               icon: "MeowMemoirs-love",
+              isHeader: "0",
               isHide: "1",
               isLink: "",
               isKeepAlive: "0",
@@ -195,6 +203,7 @@ export const layoutRouter: RouteRecordRaw[] = [
               title: "表白",
               enName: "love",
               icon: "MeowMemoirs-cute",
+              isHeader: "0",
               isHide: "1",
               isLink: "",
               isKeepAlive: "0",
@@ -210,6 +219,7 @@ export const layoutRouter: RouteRecordRaw[] = [
               title: "表白证书",
               enName: "certificate",
               icon: "MeowMemoirs-marriage-certificate",
+              isHeader: "0",
               isHide: "1",
               isLink: "",
               isKeepAlive: "0",
@@ -224,6 +234,7 @@ export const layoutRouter: RouteRecordRaw[] = [
             meta: {
               title: "设置",
               enName: "settings",
+              isHeader: "0",
               icon: "Tools",
               isHide: "1",
               isLink: "",
@@ -257,6 +268,7 @@ export const layoutRouter: RouteRecordRaw[] = [
               title: "记事",
               enName: "notes",
               icon: "MeowMemoirs-memorandum",
+              isHeader: "0",
               isHide: "1",
               isLink: "",
               isKeepAlive: "0",
@@ -271,6 +283,7 @@ export const layoutRouter: RouteRecordRaw[] = [
               title: "待办",
               enName: "todo",
               icon: "MeowMemoirs-to-do",
+              isHeader: "0",
               isHide: "1",
               isLink: "",
               isKeepAlive: "0",
@@ -302,6 +315,7 @@ export const layoutRouter: RouteRecordRaw[] = [
               title: "地址解析",
               enName: "ipLocation",
               icon: "MeowMemoirs-memorandum",
+              isHeader: "0",
               isHide: "1",
               isLink: "",
               isKeepAlive: "0",
