@@ -113,3 +113,26 @@ export interface IpAccessLog {
     ExtraNotes: string | null;
 
 }
+export interface IpInfo {
+    AS: {
+        Info: string;
+        Name: string;
+        Number: number;
+    };
+    Addr: string;
+    Country:
+    {
+        Code: string;
+        Name: string;
+    };
+    IP: string;
+    Regions: string[];
+
+    RegionsShort: string[];
+
+    RegisteredCountry: {
+        Code: string;
+        Name: string;
+    };
+    Type: string;
+}

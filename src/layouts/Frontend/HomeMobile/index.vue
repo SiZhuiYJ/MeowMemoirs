@@ -34,15 +34,9 @@ const mobileDrawer = ref(false);
 </script>
 <template>
     <el-container class="lay-content">
-        <el-header
-            class="el-header"
-            :style="{ top: globalStore.isHeader ? '-30px' : '0px' }"
-        >
+        <el-header class="el-header" :style="{ top: globalStore.isHeader ? '-30px' : '0px' }">
             <div class="common-header">
-                <Refresh
-                    style="width: 20px; height: 20px"
-                    class="refresh"
-                ></Refresh>
+                <Refresh style="width: 20px; height: 20px" class="refresh"></Refresh>
 
                 <el-breadcrumb separator="/" class="bread">
                     <el-breadcrumb-item :to="{ path: '/' }" class="bread-item">
@@ -54,16 +48,9 @@ const mobileDrawer = ref(false);
                 </div>
             </div>
             <div class="drop-btn" @click="toggleIsHeader()">
-                <GlobalIcon
-                    name="ArrowUp"
-                    class="drop-icon"
-                    :style="{
-                        transform: !useGlobalStore().isHeader
-                            ? 'rotate(0)'
-                            : 'rotate(180deg)'
-                    }"
-                    size="16"
-                >
+                <GlobalIcon name="ArrowUp" class="drop-icon" :style="{
+                    transform: !useGlobalStore().isHeader ? 'rotate(0)' : 'rotate(180deg)',
+                }" size="16">
                 </GlobalIcon>
             </div>
         </el-header>
@@ -79,13 +66,8 @@ const mobileDrawer = ref(false);
             <Logo layout="mobile"></Logo>
             <el-scrollbar class="layout-scrollbar">
                 <!-- :unique-opened="true" 子菜单不能同时展开 -->
-                <el-menu
-                    :default-active="activeMenu"
-                    :collapse-transition="false"
-                    :uniqueOpened="globalStore.uniqueOpened"
-                    :router="false"
-                    :class="menuAnimate"
-                >
+                <el-menu :default-active="activeMenu" :collapse-transition="false"
+                    :uniqueOpened="globalStore.uniqueOpened" :router="false" :class="menuAnimate">
                     <ColumnSubMenu :menuList="menuList"></ColumnSubMenu>
                 </el-menu>
             </el-scrollbar>
@@ -99,10 +81,12 @@ const mobileDrawer = ref(false);
     flex-direction: column;
     box-sizing: border-box;
 }
+
 .mobile-drawer {
     position: absolute;
     width: 100%;
     height: calc(100vh - 88px);
+
     .common-footer {
         position: relative;
         bottom: 0;
@@ -122,6 +106,7 @@ const mobileDrawer = ref(false);
     transition: all 0.3s;
     background: rgba(255, 255, 255, 0);
     backdrop-filter: blur(2px);
+
     .common-header {
         display: flex;
         flex-direction: row;
@@ -129,12 +114,15 @@ const mobileDrawer = ref(false);
         justify-content: space-between;
         padding: 5px;
         height: 20px;
+
         .refresh {
             transition: all 0.3s;
+
             &:hover {
                 transform: rotate(360deg);
             }
         }
+
         .menu-btn {
             width: 20px;
             height: 20px;
@@ -146,15 +134,19 @@ const mobileDrawer = ref(false);
             background-color: transparent;
             transition: all 0.3s;
             padding: 0;
+
             &:hover {
                 border: 1px solid var(--el-text-color-regular);
                 padding: 1px;
+
                 .menu-icon {
                     height: 4px;
+
                     &::before {
                         height: 1px;
                         margin-top: -4px;
                     }
+
                     &::after {
                         height: 1px;
                         margin-top: 7px;
@@ -179,6 +171,7 @@ const mobileDrawer = ref(false);
                 /* 使用transform属性将元素垂直居中*/
                 animation: to-hamburger 0.3s forwards ease-in-out;
                 transition: all 0.3s;
+
                 /* 设置动画效果 */
                 /* 定义名为content的类中的btn类中的span元素的before和after伪元素*/
                 &::before,
@@ -215,6 +208,7 @@ const mobileDrawer = ref(false);
             }
         }
     }
+
     .drop-btn {
         position: absolute;
         // right: calc(50% - 8px);
@@ -228,6 +222,7 @@ const mobileDrawer = ref(false);
         justify-content: center;
         pointer-events: none;
         border-top: 1px solid rgba(255, 255, 255, 0.2);
+
         .drop-icon {
             pointer-events: auto;
             transition: all 0.3s;
@@ -237,12 +232,15 @@ const mobileDrawer = ref(false);
         }
     }
 }
+
 .bread {
     padding: 2px;
     border: 2px solid var(--el-text-color-regular);
     border-radius: 5px;
-   &:deep(.bread-item) {
+
+    &:deep(.bread-item) {
         width: 100%;
+
         span {
             width: 150px;
             white-space: nowrap;
@@ -251,15 +249,18 @@ const mobileDrawer = ref(false);
         }
     }
 }
+
 .main {
     padding: 0;
     margin: 0;
     width: 100%;
     overflow: clip;
 }
+
 .dark .main {
     background-color: rgb(33, 33, 33);
 }
+
 .el-footer {
     background: #f5f5f5;
 }

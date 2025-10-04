@@ -9,6 +9,8 @@ import {
   meowMsgError,
 } from "@/utils/message";
 import { useAccessStore } from "@/stores";
+import type { IpInfo } from "@/libs/api/system/loginlog/type";
+import { parseUserAgent } from "@/utils/http";
 const accessStore = useAccessStore();
 const { queryIpAccessLog } = useAccessStore();
 // 表格加载动画Loading
@@ -183,6 +185,11 @@ const handleBatchDelete = () => {
       meowMsgError("已取消🌻");
     });
 };
+// string => json
+const toJson = (str: string): IpInfo => {
+  const ipInfo: IpInfo = JSON.parse(str);
+  return ipInfo;
+};
 </script>
 
 <template>
@@ -192,48 +199,26 @@ const handleBatchDelete = () => {
       <!-- 搜索条件 -->
       <el-form v-show="showSearch" :inline="true">
         <el-form-item label="用户名称" prop="loginName">
-          <el-input
-            placeholder="请输入用户名称"
-            v-model="searchParams.loginName"
-            style="width: 200px"
-            clearable
-            @keyup.enter.native="handleListPage"
-          ></el-input>
+          <el-input placeholder="请输入用户名称" v-model="searchParams.loginName" style="width: 200px" clearable
+            @keyup.enter.native="handleListPage"></el-input>
         </el-form-item>
         <el-form-item label="IP地址" prop="ipAddress">
-          <el-input
-            placeholder="请输入IP地址"
-            v-model="searchParams.ipAddress"
-            style="width: 200px"
-            clearable
-            @keyup.enter.native="handleListPage"
-          ></el-input>
+          <el-input placeholder="请输入IP地址" v-model="searchParams.ipAddress" style="width: 200px" clearable
+            @keyup.enter.native="handleListPage"></el-input>
         </el-form-item>
         <el-form-item label="登录状态" prop="loginStatus">
-          <el-select
-            placeholder="请选择日志状态"
-            v-model="searchParams.loginStatus"
-            style="width: 200px"
-            clearable
-            @keyup.enter.native="handleListPage"
-          >
+          <el-select placeholder="请选择日志状态" v-model="searchParams.loginStatus" style="width: 200px" clearable
+            @keyup.enter.native="handleListPage">
             <el-option label="登录成功" value="0" />
             <el-option label="登录失败" value="1" />
           </el-select>
         </el-form-item>
         <el-form-item label="访问时间" prop="loginTime">
-          <el-date-picker
-            v-model="dateRange"
-            type="datetimerange"
-            value-format="YYYY-MM-DD HH:mm:ss"
-            start-placeholder="开始日期"
-            range-separator="至"
-            end-placeholder="结束日期"
-            :default-time="[
+          <el-date-picker v-model="dateRange" type="datetimerange" value-format="YYYY-MM-DD HH:mm:ss"
+            start-placeholder="开始日期" range-separator="至" end-placeholder="结束日期" :default-time="[
               new Date(2000, 1, 1, 0, 0, 0),
               new Date(2000, 1, 1, 23, 59, 59),
-            ]"
-          />
+            ]" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="search" plain v-debounce="handleSearch">
@@ -248,13 +233,7 @@ const handleBatchDelete = () => {
       <!-- 表格头部按钮 -->
       <el-row :gutter="10">
         <el-col :span="1.5" v-auth="['system:role:delete']">
-          <el-button
-            type="danger"
-            icon="delete"
-            plain
-            @click="handleBatchDelete()"
-            :disabled="multiple"
-          >
+          <el-button type="danger" icon="delete" plain @click="handleBatchDelete()" :disabled="multiple">
             删除
           </el-button>
         </el-col>
@@ -263,186 +242,89 @@ const handleBatchDelete = () => {
 
       <div class="h-20px" style="height: 20px"></div>
       <!-- 数据表格 -->
-      <el-table
-        v-loading="loading"
-        border
-        :data="accessStore.getIpAccessLog"
-        empty-text="暂时没有数据哟🌻"
-        @selection-change="handleSelectionChange"
-      >
+      <el-table v-loading="loading" border :data="accessStore.getIpAccessLog" empty-text="暂时没有数据哟🌻"
+        @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column
-          label="序号"
-          prop="id"
-          width="80px"
-          align="center"
-          type="id"
-        ></el-table-column>
-        <el-table-column
-          label="匿名化标识"
-          prop="ipId"
-          width="130px"
-          align="center"
-          :show-overflow-tooltip="true"
-        ></el-table-column
-        ><el-table-column
-          label="客户端IP地址"
-          prop="ipAddress"
-          width="130px"
-          align="center"
-          :show-overflow-tooltip="true"
-        ></el-table-column>
-        <el-table-column
-          label="客户端浏览器/设备信息"
-          prop="userAgent"
-          width="130px"
-          align="center"
-          :show-overflow-tooltip="true"
-        ></el-table-column>
-        <el-table-column
-          label="请求体内容（敏感信息需脱敏）"
-          prop="requestBody"
-          width="130px"
-          align="center"
-          :show-overflow-tooltip="true"
-        ></el-table-column>
-        <el-table-column
-          label="请求时间（精确到毫秒）"
-          prop="requestTime"
-          width="130px"
-          align="center"
-          :show-overflow-tooltip="true"
-        ></el-table-column>
-        <el-table-column
-          label="HTTP请求方法"
-          prop="requestMethod"
-          width="130px"
-          align="center"
-          :show-overflow-tooltip="true"
-        ></el-table-column>
-        <el-table-column
-          label="完整请求路径（含查询参数）"
-          prop="requestUrl"
-          width="130px"
-          align="center"
-          :show-overflow-tooltip="true"
-        ></el-table-column>
-        <el-table-column
-          label="HTTP协议版本"
-          prop="httpVersion"
-          width="130px"
-          align="center"
-          :show-overflow-tooltip="true"
-        ></el-table-column>
+        <el-table-column label="序号" prop="id" width="80px" align="center" type="id"></el-table-column>
+        <el-table-column label="匿名化标识" prop="ipId" width="130px" align="center"
+          :show-overflow-tooltip="true"></el-table-column>
+        <el-table-column label="客户端IP地址" prop="ipAddress" width="130px" align="center"
+          :show-overflow-tooltip="true"></el-table-column>
+        <!-- （通过User-Agent解析） -->
+        <el-table-column label="设备类型" prop="deviceType" width="130px" align="center" :show-overflow-tooltip="true">
+          <template #default="scope">
+            {{ parseUserAgent(scope.row.userAgent).deviceType || "未知" }}
+          </template>
+        </el-table-column>
+        <el-table-column label="操作系统名称及版本" prop="osName" width="250px" align="center" :show-overflow-tooltip="true">
+          <template #default="scope">
+            {{ parseUserAgent(scope.row.userAgent).browser.name || "未知" }}-
+            {{ parseUserAgent(scope.row.userAgent).browser.version || "未知" }}
+          </template></el-table-column>
+        <el-table-column label="浏览器名称及版本" prop="browserName" width="180px" align="center" :show-overflow-tooltip="true">
+          <template #default="scope">
+            {{ parseUserAgent(scope.row.userAgent).os.name || "未知" }}-
+            {{ parseUserAgent(scope.row.userAgent).os.version || "未知" }}
+          </template></el-table-column>
+        <el-table-column label="客户端浏览器/设备信息" prop="userAgent" width="130px" align="center"
+          :show-overflow-tooltip="true"></el-table-column>
+        <el-table-column label="请求体内容（敏感信息需脱敏）" prop="requestBody" width="130px" align="center"
+          :show-overflow-tooltip="true"></el-table-column>
+        <el-table-column label="请求时间（精确到毫秒）" prop="requestTime" width="200px" align="center"
+          :show-overflow-tooltip="true"></el-table-column>
+        <el-table-column label="HTTP请求方法" prop="requestMethod" width="100px" align="center"
+          :show-overflow-tooltip="true"></el-table-column>
+        <el-table-column label="HTTP协议版本" prop="httpVersion" width="130px" align="center"
+          :show-overflow-tooltip="true"></el-table-column>
+        <el-table-column label="来源页面URL（可选）" prop="referer" width="130px" align="center"
+          :show-overflow-tooltip="true"></el-table-column>
+        <el-table-column label="完整请求路径（含查询参数）" prop="requestUrl" width="130px" align="center"
+          :show-overflow-tooltip="true"></el-table-column>
         <!-- /** * ，示例：200（成功）、404（未找到）、500（服务器错误） */ -->
-        <el-table-column
-          label="服务器响应状态码"
-          prop="responseStatus"
-          width="130px"
-          align="center"
-          :show-overflow-tooltip="true"
-        ></el-table-column>
-        <el-table-column
-          label="服务器处理请求耗时（毫秒）"
-          prop="responseTimeMs"
-          width="130px"
-          align="center"
-          :show-overflow-tooltip="true"
-        ></el-table-column>
-        <el-table-column
-          label="来源页面URL（可选）"
-          prop="referer"
-          width="130px"
-          align="center"
-          :show-overflow-tooltip="true"
-        ></el-table-column
-        ><el-table-column
-          label="请求头信息（JSON格式）"
-          prop="headers"
-          width="130px"
-          align="center"
-          :show-overflow-tooltip="true"
-        ></el-table-column
-        ><el-table-column
-          label="IP地理位置信息（JSON格式）"
-          prop="geoLocation"
-          width="130px"
-          align="center"
-          :show-overflow-tooltip="true"
-        ></el-table-column>
-        <el-table-column
-          label="设备类型（通过User-Agent解析）"
-          prop="deviceType"
-          width="130px"
-          align="center"
-          :show-overflow-tooltip="true"
-        ></el-table-column>
-        <el-table-column
-          label="操作系统名称及版本"
-          prop="osName"
-          width="130px"
-          align="center"
-          :show-overflow-tooltip="true"
-        ></el-table-column>
-        <el-table-column
-          label="浏览器名称及版本"
-          prop="browserName"
-          width="130px"
-          align="center"
-          :show-overflow-tooltip="true"
-        ></el-table-column>
-        <el-table-column
-          label="是否为爬虫/机器人请求"
-          prop="isBot"
-          width="130px"
-          align="center"
-          :show-overflow-tooltip="true"
-        ></el-table-column
-        ><el-table-column
-          label="威胁等级（0-5）"
-          prop="threatLevel"
-          width="130px"
-          align="center"
-          :show-overflow-tooltip="true"
-        ></el-table-column>
+        <el-table-column label="服务器响应状态码" prop="responseStatus" width="90px" align="center"
+          :show-overflow-tooltip="true">
+          <template #default="scope">
+            <el-tag
+              :type="scope.row.responseStatus >= '500' ? 'warning' : scope.row.responseStatus >= '400' ? 'danger' : 'primary'">
+              <!-- :type是用来判断块状的颜色 -->
+              <!-- 里面填写内容 -->
+              {{ scope.row.responseStatus || "未知" }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="服务器处理请求耗时（毫秒）" prop="responseTimeMs" width="90px" align="center"
+          :show-overflow-tooltip="true">
+          <template #default="scope">
+            <el-tag
+              :type="scope.row.responseTimeMs >= '200' ? 'danger' : scope.row.responseTimeMs >= '100' ? 'warning' : 'primary'">
+              {{ scope.row.responseTimeMs }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="IP地理位置信息" prop="geoLocation" width="300px" align="center" :show-overflow-tooltip="true">
+          <template #default="scope">
+            {{ toJson(scope.row.geoLocation).AS?.Info || "未知" }}-
+            {{ toJson(scope.row.geoLocation).Country?.Name || "未知" }}-
+            {{ (toJson(scope.row.geoLocation).Regions || []).join(" / ") || "未知" }}-
+            {{ toJson(scope.row.geoLocation).Type || "未知" }}
+          </template>
+        </el-table-column>
+        <el-table-column label="是否为爬虫/机器人请求" prop="isBot" width="130px" align="center"
+          :show-overflow-tooltip="true"></el-table-column>
+        <el-table-column label="威胁等级（0-5）" prop="threatLevel" width="90px" align="center"
+          :show-overflow-tooltip="true"></el-table-column>
         <!-- 0=正常，3=可疑，5=攻击行为  -->
-        <el-table-column
-          label="用户会话ID（如有）"
-          prop="sessionId"
-          width="130px"
-          align="center"
-          :show-overflow-tooltip="true"
-        ></el-table-column>
-        <el-table-column
-          label="关联用户ID（如已登录）"
-          prop="userId"
-          width="130px"
-          align="center"
-          :show-overflow-tooltip="true"
-        ></el-table-column>
-        <el-table-column
-          label="备注信息（如攻击类型）"
-          prop="extraNotes"
-          width="130px"
-          align="center"
-          :show-overflow-tooltip="true"
-        ></el-table-column>
+        <el-table-column label="用户会话ID（如有）" prop="sessionId" width="130px" align="center"
+          :show-overflow-tooltip="true"></el-table-column>
+        <el-table-column label="关联用户ID（如已登录）" prop="userId" width="130px" align="center"
+          :show-overflow-tooltip="true"></el-table-column>
+        <el-table-column label="IP地理位置信息（JSON格式）" prop="geoLocation" width="130px" align="center"
+          :show-overflow-tooltip="true"></el-table-column>
+        <el-table-column label="请求头信息（JSON格式）" prop="headers" width="130px" align="center"
+          :show-overflow-tooltip="true"></el-table-column>
+        <el-table-column label="备注信息（如攻击类型）" prop="extraNotes" width="130px" align="center"
+          :show-overflow-tooltip="true"></el-table-column>
       </el-table>
-
-      <div class="h-20px" style="height: 20px"></div>
-      <!-- {{ searchParams.pageNo }} --- {{ searchParams.pageSize }} -->
-      <!-- 分页 -->
-      <el-pagination
-        background
-        v-model:current-page="searchParams.pageNo"
-        v-model:page-size="searchParams.pageSize"
-        v-show="total > 0"
-        :page-sizes="[10, 20, 50, 100, 200]"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
-        @size-change="handleListPage"
-        @current-change="handleListPage"
-      />
     </MeowCard>
   </div>
 </template>
