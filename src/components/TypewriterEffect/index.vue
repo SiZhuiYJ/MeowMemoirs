@@ -1,7 +1,7 @@
 <template>
   <div class="typewriter-container">
-    <span ref="textElement" class="typewriter-text" :style="textStyle">
-      {{ displayText }}
+    <span ref="textElement" class="typewriter-text" :style="textStyle" >
+    {{textTitle}}{{ displayText }}
       <span class="cursor" :class="{ blinking: isTyping }">|</span>
     </span>
   </div>
@@ -11,6 +11,7 @@
 import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 
 interface TypewriterProps {
+textTitle?:string;// 打字标题
   messages: string[]; // 打字文本列表
   typeSpeed?: number; // 打字速度（毫秒）
   deleteSpeed?: number; // 删除速度（毫秒）
@@ -29,6 +30,7 @@ const props = withDefaults(defineProps<TypewriterProps>(), {
   fontSize: 16,
   cursorColor: "currentColor",
   textColor: "currentColor",
+  textTitle:"",
 });
 
 const textElement = ref<HTMLElement | null>(null);

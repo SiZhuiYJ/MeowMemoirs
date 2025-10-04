@@ -1,31 +1,47 @@
 <script setup lang="ts">
-import { useUserStore } from "@/stores";
-import { useRouter } from "vue-router";
-import { useScreenStore } from "@/utils/screen";
-import PersonalDataCard from "./PersonalDataCard/index.vue";
-import ToHome from "./ToHome/index.vue";
-import useApiUrl from "@/libs/useApiUrl/index";
-const { getStaticFileUrl } = useApiUrl();
-const { isMobile } = useScreenStore();
-const router = useRouter();
-const outLogin = () => {
-  useUserStore().setToken(null);
-};
-const login = () => {
-  router.push("/login");
-};
-const TextList = [
-  "🐾「爪印轻点，心事成册——喵咪记事簿，记录你的每一份柔软」",
-  "📸「毛茸茸的时光机，一键收藏与主子的独家记忆」",
-  "🌙「深夜emo时，翻开和TA的暖心备忘录」",
-  "🎨「涂鸦、便签、喵星语翻译——你的撸猫日常，我们承包了！」",
-  "📅「喵生大事提醒：绝育？驱虫？打疫苗？本簿替你记牢！」",
-  "✨「比猫肚皮更软的，是这里存下的温柔时光」",
-  "💌「给未来的一封信：当TA老去，这里还有年轻的模样」",
-  "🚀「懒人福音！语音记事+自动生成喵星日记」",
-  "🌸「每一页都是猫薄荷——让记录变成享受」",
-  "👫「独居青年的云养猫搭子，社恐的秘密树洞」",
-];
+  import { useUserStore } from "@/stores";
+  import { useRouter } from "vue-router";
+  import { useScreenStore } from "@/utils/screen";
+  import PersonalDataCard from "./PersonalDataCard/index.vue";
+  import ToHome from "./ToHome/index.vue";
+  import useApiUrl from "@/libs/useApiUrl/index";
+  const { getStaticFileUrl } = useApiUrl();
+  const { isMobile } = useScreenStore();
+  const router = useRouter();
+  const outLogin = () => {
+    useUserStore().setToken(null);
+  };
+  const login = () => {
+    router.push("/login");
+  };
+  const TextIcon = "涩话📢:";
+  const TextList = [
+    //"🐾「爪印轻点，心事成册——喵咪记事簿，记录你的每一份柔软」",
+    //"📸「毛茸茸的时光机，一键收藏与主子的独家记忆」",
+    //"🌙「深夜emo时，翻开和TA的暖心备忘录」",
+    //"🎨「涂鸦、便签、喵星语翻译——你的撸猫日常，我们承包了！」",
+    // "📅「喵生大事提醒：绝育？驱虫？打疫苗？本簿替你记牢！」",
+    //"✨「比猫肚皮更软的，是这里存下的温柔时光」",
+    //"💌「给未来的一封信：当TA老去，这里还有年轻的模样」",
+    //"🚀「懒人福音！语音记事+自动生成喵星日记」",
+    //"🌸「每一页都是猫薄荷——让记录变成享受」",
+    //"👫「独居青年的云养猫搭子，社恐的秘密树洞」",
+    "当你认为自己一无所有时，你至少还有时间，时间能抚平一切创伤，所以请不要流泪。",
+    "心结，不是你没能力打开它，而是你没勇气离开它。",
+    "在追求完美的过程中，享受生活，在享受生活的过程中，追求完美。",
+    "低头走人生的上坡路，抬头走人生的下坡路。顺其自然。对待人生，应当尽己力以安天命，对于任何结果，都要能坦然接受。",
+    "人生五大发展阶段：首先自己要行;其次要有人说你行;再次，说你行的人要行;然后，你说谁行谁就行;最后，谁敢说你不行。",
+    "牵手的时候，相信春天很近，幸福不远，放手的时候，相信春天来过，花期很短。爱情，有时候就是一季的花朵，还没等我们好好欣赏就匆匆留下余香枯萎了。",
+    "年轻时候，不太容易爱上一个人;爱上之后，不太容易说放手;不得不放手的时，又不太容易重新开始。有的人留在原地，有的人走到尽头，有的人念念不忘，有的人从来不曾记起。",
+    "若我会见到你，事隔经年。我如何和你招呼，以眼泪，以沉默。",
+    "有三样东西有助于缓解生命的辛劳：希望，睡眠和笑。",
+    "人生就是这样充满了大起大合，你永远不会知道下一刻会发生什么，也不会明白命运为何这样待你。",
+    "人生这本书，慢慢读。因为未知，所以好奇，因为好奇，所以惊喜，因为惊喜，所以幸福，因为幸福，才能读懂人生，才会过好生活。",
+    "如果你看见了自己面前的影子，那是因为你的身后有阳光。",
+    "我希望，自己今后能以一朵花的姿态行走，穿越季节轮回，在无声中不颓废，不失色，一生，花开成景，花落成诗。",
+    "人生只有三天，活在昨天的人迷惑；活在明天的人等待；活在今天的人最踏实。",
+    "当一切成了惯性，那种热恋时的紧张感会放松。但并不是爱不存在了，它只是沉底了。",
+  ];
 </script>
 
 <template>
@@ -33,35 +49,36 @@ const TextList = [
     <!-- 封面 -->
     <div class="cover">
       <img
-        class="preview"
-        :src="getStaticFileUrl(`img/home/_${isMobile ? '9' : '1'}.webp`)"
-        v-progressive.lazy="
-          getStaticFileUrl(`img/home/_${isMobile ? '9' : '1'}-720p.webp`)
-        "
+      class="preview"
+      :src="getStaticFileUrl(`img/home/_${isMobile ? '9': '1'}.webp`)"
+      v-progressive.lazy="
+      getStaticFileUrl(`img/home/_${isMobile ? '9': '1'}-720p.webp`)
+      "
         alt="封面"
       />
 
       <!-- 打字机宣传语 -->
       <div
         class="typing"
-        :style="{
+        :style=" {
           left: isMobile ? '5%' : '20%',
           width: isMobile ? '' : 'auto',
-        }"
+          }"
       >
-        <div class="typing-title">
-          欢迎来到<span style="font-size: 30px; color: #e3c0df">喵咪记事簿</span>
+          <div class="typing-title">
+          欢迎来到<span style="font-size: 30px; color: #e3c0df;">喵咪记事簿</span>
         </div>
         <ToHome class="typing-btn" />
         <TypewriterEffect
+          :text-title="TextIcon"
           :messages="TextList"
           :type-speed="80"
           :delete-speed="40"
           :pause-duration="3000"
           :empty-pause="300"
-          :font-size="isMobile ? 25 : 30"
+          :font-size="isMobile ? 25: 30"
           style="color: #fff"
-        />
+          />
       </div>
       <!-- 向下标 -->
       <div class="down-arrow">
@@ -77,12 +94,12 @@ const TextList = [
             xmlns:xlink="http://www.w3.org/1999/xlink"
             width="40"
             height="40"
-          >
+            >
             <path
               d="M512 817.664l264.832-264.832-60.330667-60.330667L512 697.002667l-204.501333-204.501334-60.330667 60.330667L512 817.664z m0-241.066667l264.832-264.832-60.330667-60.330666L512 455.936 307.498667 251.434667 247.168 311.765333 512 576.597333z"
               fill="#FFF"
               p-id="4446"
-            ></path>
+              ></path>
           </svg>
         </div>
       </div>
@@ -91,23 +108,23 @@ const TextList = [
     <!-- 封页 -->
     <div class="page-break">
       <img
-        class="preview"
-        :src="getStaticFileUrl(`img/home/_${isMobile ? '1' : '9'}.webp`)"
-        v-progressive.lazy="
-          getStaticFileUrl(`img/home/_${isMobile ? '1' : '9'}-720p.webp`)
-        "
+      class="preview"
+      :src="getStaticFileUrl(`img/home/_${isMobile ? '1': '9'}.webp`)"
+      v-progressive.lazy="
+      getStaticFileUrl(`img/home/_${isMobile ? '1': '9'}-720p.webp`)
+      "
         alt="尾页"
       />
-    </div>
-    <div class="page-break">
-      <img
+      </div>
+      <div class="page-break">
+        <img
         class="preview"
         :src="getStaticFileUrl(`img/home/_10.webp`)"
         v-progressive.lazy="getStaticFileUrl(`img/home/_10.webp`)"
         alt="尾页"
-      />
+        />
     </div>
-    <div :class="isMobile ? 'mobile' : 'message'">
+    <div :class="isMobile ? 'mobile': 'message'">
       <div class="message-btn">
         <span>欢迎参观我的小破网站</span>
         <button @click="outLogin">退出登录</button>
@@ -116,12 +133,12 @@ const TextList = [
 
       <PersonalDataCard />
 
-      <div :class="isMobile ? 'mobile-box' : 'login-box'">
+      <div :class="isMobile ? 'mobile-box': 'login-box'">
         <div
           class="glitch"
           data-text="喵咪记事簿"
-          :style="{ writingMode: isMobile ? 'vertical-rl' : 'horizontal-tb' }"
-        >
+          :style=" { writingMode: isMobile ? 'vertical-rl': 'horizontal-tb' }"
+          >
           喵咪记事簿
         </div>
       </div>
@@ -134,237 +151,237 @@ const TextList = [
   </div>
 </template>
 <style scoped lang="scss">
-.progressive-container {
-  width: 100vw;
+  .progressive-container {
+    width: 100vw;
 
-  .cover {
-    width: 100%;
-    position: relative;
-    height: 100vh;
-
-    img {
+    .cover {
       width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+      position: relative;
+      height: 100vh;
 
-    .typing {
-      position: absolute;
-      top: 50%;
-      transform: translate(-150%, -50%);
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      color: #fff;
-      font-size: 20px;
-      padding: 10px;
-      background: rgba(0, 0, 0, 0.1);
-      backdrop-filter: blur(2px);
-      border-radius: 20px;
-      animation: center-to 1s forwards ease-in-out;
-      width: calc(100vw - 10% - 20px);
-
-      .typing-title {
-        font-size: 30px;
-        padding: 0 10px;
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
       }
 
-      .typing-btn {
-        padding: 20px 0;
-      }
-    }
-
-    .down-arrow {
-      position: absolute;
-      left: 50%;
-      bottom: -200px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      animation: bottom-to 1s forwards ease-in-out;
-
-      .arrow-title {
-        width: calc(100vw - 10%);
-        color: #fff;
+      .typing {
+        position: absolute;
+        top: 50%;
+        transform: translate(-150%, -50%);
         display: flex;
-        justify-content: center;
-      }
-
-      .arrow-down {
-        width: 40px;
-        height: 40px;
-      }
-    }
-  }
-
-  .page-break {
-    background-color: #f5f5f5;
-    width: calc(100vw - 20px);
-    padding: 10px 10px 0;
-
-    img {
-      width: 100%;
-    }
-  }
-
-  .message {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-around;
-  }
-
-  .mobile {
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
-  }
-
-  .info,
-  .mobile,
-  .message {
-    width: 100%;
-    display: flex;
-    text-align: center;
-    position: relative;
-    height: 400px;
-
-    .login-box,
-    .mobile-box {
-      position: absolute;
-
-      .glitch {
-        position: relative;
-        font-size: 50px;
-        font-weight: bold;
-        color: #ffffff;
-        letter-spacing: 3px;
-        z-index: 1;
-
-        &:before,
-        &:after {
-          display: block;
-          content: attr(data-text);
-          position: absolute;
-          top: 0;
-          left: 0;
-          opacity: 0.8;
-        }
-
-        &:before {
-          animation: glitch-it 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
-          color: #00ffff;
-          z-index: -1;
-        }
-
-        &:after {
-          animation: glitch-it 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) reverse both
-            infinite;
-          color: #ff00ff;
-          z-index: -2;
-        }
-      }
-    }
-
-    .login-box {
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    .mobile-box {
-      top: 0;
-      left: 0;
-    }
-
-    .message-btn {
-      span {
-        background: linear-gradient(to right, var(--el-color-primary), #61c454) no-repeat
-          right bottom;
-        background-size: 0 2px;
-        transition: background-size 1000ms;
-
-        &:hover {
-          background-position-x: left;
-          background-size: 100% 2px;
-        }
-      }
-    }
-  }
-
-  .info {
-    align-items: center;
-    justify-content: center;
-    height: 80px;
-    background-color: #000;
-
-    p {
-      a {
+        flex-direction: column;
+        align-items: flex-start;
         color: #fff;
-        font-family: "宋体";
-        position: relative;
-        text-decoration: none;
-
-        &:before {
-          content: "";
-          position: absolute;
-          left: 50%;
-          bottom: -2px;
-          width: 0;
-          height: 2px;
-          background: var(--el-color-primary);
-          transition: all 0.3s;
+        font-size: 20px;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(2px);
+        border-radius: 20px;
+        animation: center-to 1s forwards ease-in-out;
+        width: calc(100vw - 10% - 20px);
+        border:1px solid rgba(255,255,255,.2);
+        .typing-title {
+          font-size: 30px;
+          padding: 0 10px;
         }
 
-        &:hover:before {
-          width: 100%;
-          left: 0;
-          right: 0;
+        .typing-btn {
+          padding: 20px 0;
+        }
+      }
+
+      .down-arrow {
+        position: absolute;
+        left: 50%;
+        bottom: -200px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        animation: bottom-to 1s forwards ease-in-out;
+
+        .arrow-title {
+          width: calc(100vw - 10%);
+          color: #fff;
+          display: flex;
+          justify-content: center;
+        }
+
+        .arrow-down {
+          width: 40px;
+          height: 40px;
+        }
+      }
+    }
+
+    .page-break {
+      background-color: #f5f5f5;
+      width: calc(100vw - 20px);
+      padding: 10px 10px 0;
+
+      img {
+        width: 100%;
+      }
+    }
+
+    .message {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-around;
+    }
+
+    .mobile {
+      flex-direction: column;
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    .info,
+    .mobile,
+    .message {
+      width: 100%;
+      display: flex;
+      text-align: center;
+      position: relative;
+      height: 400px;
+
+      .login-box,
+      .mobile-box {
+        position: absolute;
+
+        .glitch {
+          position: relative;
+          font-size: 50px;
+          font-weight: bold;
+          color: #ffffff;
+          letter-spacing: 3px;
+          z-index: 1;
+
+          &:before,
+          &:after {
+            display: block;
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0.8;
+          }
+
+          &:before {
+            animation: glitch-it 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+            color: #00ffff;
+            z-index: -1;
+          }
+
+          &:after {
+            animation: glitch-it 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) reverse both
+            infinite;
+            color: #ff00ff;
+            z-index: -2;
+          }
+        }
+      }
+
+      .login-box {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .mobile-box {
+        top: 0;
+        left: 0;
+      }
+
+      .message-btn {
+        span {
+          background: linear-gradient(to right, var(--el-color-primary), #61c454) no-repeat
+          right bottom;
+          background-size: 0 2px;
+          transition: background-size 1000ms;
+
+          &:hover {
+            background-position-x: left;
+            background-size: 100% 2px;
+          }
+        }
+      }
+    }
+
+    .info {
+      align-items: center;
+      justify-content: center;
+      height: 80px;
+      background-color: #000;
+
+      p {
+        a {
+          color: #fff;
+          font-family: "宋体";
+          position: relative;
+          text-decoration: none;
+
+          &:before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            bottom: -2px;
+            width: 0;
+            height: 2px;
+            background: var(--el-color-primary);
+            transition: all 0.3s;
+          }
+
+          &:hover:before {
+            width: 100%;
+            left: 0;
+            right: 0;
+          }
         }
       }
     }
   }
-}
 
-@keyframes center-to {
-  100% {
-    transform: translate(0, -50%);
-  }
-}
-
-@keyframes bottom-to {
-  0% {
-    transform: translate(-50%, 0);
+  @keyframes center-to {
+    100% {
+      transform: translate(0, -50%);
+    }
   }
 
-  100% {
-    // 向上移200px
-    transform: translate(-50%, -200px);
-  }
-}
+  @keyframes bottom-to {
+    0% {
+      transform: translate(-50%, 0);
+    }
 
-@keyframes glitch-it {
-  0% {
-    transform: translate(0);
-  }
-
-  20% {
-    transform: translate(-2px, 2px);
+    100% {
+      // 向上移200px
+      transform: translate(-50%, -200px);
+    }
   }
 
-  40% {
-    transform: translate(-2px, -2px);
-  }
+  @keyframes glitch-it {
+    0% {
+      transform: translate(0);
+    }
 
-  60% {
-    transform: translate(2px, 2px);
-  }
+    20% {
+      transform: translate(-2px, 2px);
+    }
 
-  80% {
-    transform: translate(2px, -2px);
-  }
+    40% {
+      transform: translate(-2px, -2px);
+    }
 
-  to {
-    transform: translate(0);
+    60% {
+      transform: translate(2px, 2px);
+    }
+
+    80% {
+      transform: translate(2px, -2px);
+    }
+
+    to {
+      transform: translate(0);
+    }
   }
-}
 </style>
