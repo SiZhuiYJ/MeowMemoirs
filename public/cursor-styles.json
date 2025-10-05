@@ -39,8 +39,6 @@
       ".el-message-box__headerbtn",
       ".el-month-table td",
       ".el-notification .el-notification__closeBtn",
-      ".el-pager li",
-      ".el-pagination button",
       ".el-picker-panel__btn",
       ".el-picker-panel__icon-btn",
       ".el-picker-panel__icon-btn .el-icon",
@@ -106,8 +104,6 @@
       ".el-input.is-disabled .el-input__wrapper",
       ".el-menu-item.is-disabled",
       ".el-month-table td.disabled .el-date-table-cell__text",
-      ".el-pager li.is-disabled,.el-pager li:disabled",
-      ".el-pagination button.is-disabled,.el-pagination button:disabled",
       ".el-picker-panel__btn[disabled]",
       ".el-picker-panel__icon-btn.is-disabled:hover",
       ".el-radio-button__original-radio:disabled+.el-radio-button__inner",
@@ -129,18 +125,6 @@
     ]
   },
   {
-    "name": "default",
-    "list": [
-      ".CodeMirror-gutter-elt",
-      ".clock",
-      ".el-image-viewer__actions__inner",
-      ".el-image-viewer__progress",
-      ".el-pager li.is-active",
-      ".el-pagination button.is-active",
-      ".el-time-spinner__wrapper.is-arrow .el-time-spinner__item:hover:not(.is-disabled):not(.is-active)"
-    ]
-  },
-  {
     "name": "text",
     "list": [
       ".CodeMirror-lines",
@@ -149,6 +133,16 @@
       ".el-input__wrapper",
       ".el-select__wrapper.is-filterable",
       ".v-md-editor__editor-wrapper"
+    ]
+  },
+  {
+    "name": "default",
+    "list": [
+      ".CodeMirror-gutter-elt",
+      ".clock",
+      ".el-image-viewer__actions__inner",
+      ".el-image-viewer__progress",
+      ".el-time-spinner__wrapper.is-arrow .el-time-spinner__item:hover:not(.is-disabled):not(.is-active)"
     ]
   },
   {
