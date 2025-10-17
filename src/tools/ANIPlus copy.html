@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ANI文件解析器</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        background-color: #f0f0f0;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        text-align: center;
+        color: #333;
+      }
+      .drop-area {
+        border: 2px dashed #ccc;
+        padding: 40px;
+        text-align: center;
+        cursor: pointer;
+        background-color: #fafafa;
+        transition: border-color 0.3s;
+      }
+      .drop-area:hover,
+      .drop-area.dragover {
+        border-color: #007bff;
+      }
+      .controls {
+        margin: 20px 0;
+      }
+      .controls label {
+        display: block;
+        margin: 8px 0;
+      }
+      .controls input,
+      .controls select {
+        width: 100%;
+        padding: 5px;
+        margin-top: 2px;
+      }
+      .file-info,
+      .frame-preview {
+        margin-top: 20px;
+      }
+      .file-info h3,
+      .frame-preview h3 {
+        color: #555;
+      }
+      .preview-area {
+        width: 300px;
+        height: 200px;
+        border: 1px solid #ddd;
+        margin: 10px 0;
+        background-color: #eee;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+      button {
+        margin-top: 10px;
+        padding: 8px 16px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 4px;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>ANI文件解析器</h1>
+
+      <div id="dropArea" class="drop-area">
+        <p>拖拽 .ani 文件到此处或点击选择文件</p>
+        <input type="file" id="fileInput" accept=".ani" style="display: none" />
+      </div>
+
+      <div class="controls">
+        <label
+          >光标回退类型 (cursorType):
+          <select id="cursorTypeInput">
+            <option value="auto">auto</option>
+            <option value="default">default</option>
+            <option value="pointer">pointer</option>
+            <option value="crosshair">crosshair</option>
+            <option value="move">move</option>
+            <option value="text">text</option>
+            <option value="wait">wait</option>
+            <option value="help">help</option>
+            <option value="progress">progress</option>
+            <option value="not-allowed">not-allowed</option>
+            <option value="zoom-in">zoom-in</option>
+            <option value="zoom-out">zoom-out</option>
+          </select>
+        </label>
+        <label
+          >光标宽度 (width):
+          <input type="number" id="widthInput" value="32" min="1" max="256" />
+        </label>
+        <label
+          >光标高度 (height):
+          <input type="number" id="heightInput" value="32" min="1" max="256" />
+        </label>
+      </div>
+
+      <div class="file-info">
+        <h3>文件信息</h3>
+        <p>文件名: <span id="fileName">-</span></p>
+        <p>帧数: <span id="frameCount">-</span></p>
+        <p>总循环时间: <span id="totalTime">-</span> ms</p>
+      </div>
+
+      <div class="frame-preview">
+        <h3>预览区域（应用动画光标）</h3>
+        <div id="previewArea" class="preview-area">
+          鼠标移入此处预览光标效果
+        </div>
+      </div>
+
+      <button id="applyToBodyBtn">应用到整个页面</button>
+      <button id="resetCursorBtn">重置光标</button>
+    </div>
+
+    <!-- 模拟 ani-cursor-plus.ts 的功能 -->
+    <script>
+      // 模拟 ani-cursor-plus.ts 的实例
+      // 实际使用时需要替换为真实的 import
+      const ANIMousePlusInstance = {
+        LoadANICursorPromise: function (
+          aniURL,
+          cursorType = "auto",
+          width = 32,
+          height = 32
+        ) {
+          return new Promise((resolve, reject) => {
+            // 模拟加载过程，这里应该调用真实的解析逻辑
+            // 为了演示，我们直接返回一个模拟的 aniInfo
+            setTimeout(() => {
+              const mockAniInfo = {
+                KeyFrameContent: `/* 模拟关键帧内容，实际由解析器生成 */`,
+                aniURLRegexClassName: `cursor-animation-${aniURL.replace(
+                  /[^a-zA-Z0-9-]/g,
+                  "-"
+                )}`,
+                keyframesName: `mock-keyframes-${Date.now()}`,
+                totalRoundTime: 1000, // 模拟1秒
+              };
+              resolve(mockAniInfo);
+            }, 500);
+          });
+        },
+        setANICursor: function (
+          elementSelector,
+          aniURL,
+          cursorType = "auto",
+          width = 32,
+          height = 32
+        ) {
+          // 模拟应用光标
+          const elements = document.querySelectorAll(elementSelector);
+          if (elements.length > 0) {
+            elements.forEach((el) => {
+              el.style.cursor = `url(${aniURL}) ${width} ${height}, ${cursorType}`;
+              // 在实际代码中，这里会注入CSS动画
+              console.log(
+                `Applied cursor to ${elementSelector} with type: ${cursorType}, size: ${width}x${height}`
+              );
+            });
+          }
+        },
+      };
+    </script>
+
+    <script>
+      const dropArea = document.getElementById("dropArea");
+      const fileInput = document.getElementById("fileInput");
+      const fileNameSpan = document.getElementById("fileName");
+      const frameCountSpan = document.getElementById("frameCount");
+      const totalTimeSpan = document.getElementById("totalTime");
+      const previewArea = document.getElementById("previewArea");
+      const cursorTypeInput = document.getElementById("cursorTypeInput");
+      const widthInput = document.getElementById("widthInput");
+      const heightInput = document.getElementById("heightInput");
+      const applyToBodyBtn = document.getElementById("applyToBodyBtn");
+      const resetCursorBtn = document.getElementById("resetCursorBtn");
+
+      let currentAniUrl = null;
+
+      // 文件拖放事件
+      dropArea.addEventListener("click", () => fileInput.click());
+      fileInput.addEventListener("change", handleFileSelect);
+
+      ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+        dropArea.addEventListener(eventName, preventDefaults, false);
+      });
+
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      ["dragenter", "dragover"].forEach((eventName) => {
+        dropArea.addEventListener(eventName, highlight, false);
+      });
+
+      ["dragleave", "drop"].forEach((eventName) => {
+        dropArea.addEventListener(eventName, unhighlight, false);
+      });
+
+      function highlight() {
+        dropArea.classList.add("dragover");
+      }
+
+      function unhighlight() {
+        dropArea.classList.remove("dragover");
+      }
+
+      dropArea.addEventListener("drop", handleDrop, false);
+
+      function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if (files.length) {
+          handleFiles(files);
+        }
+      }
+
+      function handleFileSelect(e) {
+        const files = e.target.files;
+        if (files.length) {
+          handleFiles(files);
+        }
+      }
+
+      async function handleFiles(files) {
+        const file = files[0];
+        if (file && file.name.toLowerCase().endsWith(".ani")) {
+          const url = URL.createObjectURL(file);
+          await loadAndPreviewAni(url, file.name);
+        } else {
+          alert("请选择一个 .ani 文件");
+        }
+      }
+
+      async function loadAndPreviewAni(aniUrl, fileName) {
+        try {
+          fileNameSpan.textContent = fileName;
+          frameCountSpan.textContent = "解析中...";
+          totalTimeSpan.textContent = "-";
+
+          // 调用 ANIMousePlusInstance.LoadANICursorPromise
+          // 注意：这里传入的参数是解析时的默认值，实际渲染时会用下面 applyCursorToPreviewArea 的参数
+          const aniInfo = await ANIMousePlusInstance.LoadANICursorPromise(
+            aniUrl,
+            "auto", // 解析时默认值
+            32,
+            32
+          );
+
+          // 模拟帧数（实际应由解析器提供）
+          frameCountSpan.textContent = "N/A (由解析器提供)";
+          totalTimeSpan.textContent = Math.round(
+            aniInfo.totalRoundTime || 1000
+          ); // 使用模拟值
+
+          // 保存当前ANI URL用于后续应用
+          currentAniUrl = aniUrl;
+
+          // 应用到预览区域
+          applyCursorToPreviewArea();
+        } catch (error) {
+          console.error("加载ANI文件失败:", error);
+          alert("加载ANI文件失败，请检查文件格式或控制台错误信息。");
+          fileNameSpan.textContent = "-";
+          frameCountSpan.textContent = "-";
+          totalTimeSpan.textContent = "-";
+        }
+      }
+
+      function applyCursorToPreviewArea() {
+        if (!currentAniUrl) {
+          previewArea.style.cursor = "default";
+          return;
+        }
+
+        const cursorType = cursorTypeInput.value;
+        const width = parseInt(widthInput.value) || 32;
+        const height = parseInt(heightInput.value) || 32;
+
+        // 清除之前可能的动画类或光标样式
+        previewArea.style.cursor = "none"; // 先清空，再设置
+
+        // 直接应用光标样式到预览区域 (模拟 setANICursor)
+        // 在实际代码中，setANICursor 会注入CSS动画
+        // 这里简化为直接设置 cursor 样式
+        previewArea.style.cursor = `url(${currentAniUrl}) ${width} ${height}, ${cursorType}`;
+
+        // 也可以通过 setANICursor 方法应用
+        ANIMousePlusInstance.setANICursor(
+          "#previewArea",
+          currentAniUrl,
+          cursorType,
+          width,
+          height
+        );
+      }
+
+      applyToBodyBtn.addEventListener("click", () => {
+        if (!currentAniUrl) {
+          alert("请先上传一个ANI文件");
+          return;
+        }
+        const cursorType = cursorTypeInput.value;
+        const width = parseInt(widthInput.value) || 32;
+        const height = parseInt(heightInput.value) || 32;
+
+        // 清除预览区域的直接光标样式
+        previewArea.style.cursor = "none";
+        // 应用到body
+        ANIMousePlusInstance.setANICursor(
+          "body",
+          currentAniUrl,
+          cursorType,
+          width,
+          height
+        );
+      });
+
+      resetCursorBtn.addEventListener("click", () => {
+        // 移除应用到body的样式（如果有的话）- 模拟
+        document.body.style.cursor = "";
+        // 重置预览区域
+        previewArea.style.cursor = "default";
+        // 重新应用预览区域的动画（如果之前有ANI）
+        if (currentAniUrl) {
+          applyCursorToPreviewArea();
+        }
+      });
+
+      // 监听参数变化，实时更新预览
+      cursorTypeInput.addEventListener("change", applyCursorToPreviewArea);
+      widthInput.addEventListener("input", applyCursorToPreviewArea);
+      heightInput.addEventListener("input", applyCursorToPreviewArea);
+    </script>
+  </body>
+</html>

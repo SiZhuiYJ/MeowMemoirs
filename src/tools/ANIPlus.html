@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ANI文件解析器</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #ffffff;
+        margin: 0;
+        padding: 20px;
+      }
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        border: 1px solid #ddd;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        text-align: center;
+        color: #333;
+      }
+      .upload-area {
+        border: 2px dashed #ccc;
+        border-radius: 8px;
+        padding: 40px;
+        text-align: center;
+        margin-bottom: 20px;
+        cursor: pointer;
+        transition: border-color 0.3s;
+      }
+      .upload-area:hover,
+      .upload-area.dragover {
+        border-color: #3498db;
+      }
+      .upload-area p {
+        font-size: 16px;
+        color: #666;
+        margin: 0;
+      }
+      .file-input {
+        display: none;
+      }
+      .status-message {
+        text-align: center;
+        font-size: 16px;
+        padding: 10px;
+        margin: 10px 0;
+      }
+      .info-section {
+        margin: 20px 0;
+        padding: 15px;
+        background-color: #f9f9f9;
+        border-radius: 5px;
+        display: none;
+      }
+      .frames-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        max-height: 400px;
+        overflow-y: auto;
+        padding: 10px;
+        border: 1px solid #eee;
+        margin: 20px 0;
+      }
+      .frame-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 120px;
+      }
+      .frame-image {
+        width: 64px;
+        height: 64px;
+        object-fit: contain;
+        border: 1px solid #ddd;
+        padding: 5px;
+      }
+      .frame-name {
+        font-size: 12px;
+        margin-top: 5px;
+        word-break: break-all;
+      }
+      .download-btn {
+        display: block;
+        width: 200px;
+        margin: 20px auto;
+        padding: 12px;
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        text-align: center;
+      }
+      .download-btn:hover {
+        background-color: #2980b9;
+      }
+      .download-btn:disabled {
+        background-color: #bdc3c7;
+        cursor: not-allowed;
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>ANI 文件解析器</h1>
+
+      <div class="upload-area" id="uploadArea">
+        <p>拖拽 .ani 文件到此处或点击选择文件</p>
+        <input type="file" id="fileInput" class="file-input" accept=".ani" />
+      </div>
+
+      <div class="status-message" id="statusMessage"></div>
+
+      <div class="info-section" id="infoSection">
+        <h3>文件信息</h3>
+        <p>文件名: <span id="fileName"></span></p>
+        <p>帧数: <span id="frameCount"></span></p>
+        <p>总循环时间: <span id="totalRoundTime"></span> ms</p>
+      </div>
+
+      <h3>帧预览</h3>
+      <div class="frames-container" id="framesContainer"></div>
+
+      <button class="download-btn hidden" id="downloadBtn">下载解析结果</button>
+    </div>
+
+    <script>
+      // 引入 JSZip 库用于创建压缩包
+      const script = document.createElement("script");
+      script.src =
+        "https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js";
+      document.head.appendChild(script);
+
+      // 等待 JSZip 加载完成
+      script.onload = function () {
+        // DOM 元素
+        const uploadArea = document.getElementById("uploadArea");
+        const fileInput = document.getElementById("fileInput");
+        const statusMessage = document.getElementById("statusMessage");
+        const infoSection = document.getElementById("infoSection");
+        const fileNameEl = document.getElementById("fileName");
+        const frameCountEl = document.getElementById("frameCount");
+        const totalRoundTimeEl = document.getElementById("totalRoundTime");
+        const framesContainer = document.getElementById("framesContainer");
+        const downloadBtn = document.getElementById("downloadBtn");
+
+        // 全局变量
+        let currentFile = null;
+        let frameImages = [];
+        let aniInfo = null;
+
+        // 拖拽事件
+        uploadArea.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          uploadArea.classList.add("dragover");
+        });
+
+        uploadArea.addEventListener("dragleave", () => {
+          uploadArea.classList.remove("dragover");
+        });
+
+        uploadArea.addEventListener("drop", (e) => {
+          e.preventDefault();
+          uploadArea.classList.remove("dragover");
+
+          const files = e.dataTransfer.files;
+          if (files.length > 0) {
+            handleFile(files[0]);
+          }
+        });
+
+        // 点击上传区域选择文件
+        uploadArea.addEventListener("click", () => {
+          fileInput.click();
+        });
+
+        // 文件选择事件
+        fileInput.addEventListener("change", (e) => {
+          if (e.target.files.length > 0) {
+            handleFile(e.target.files[0]);
+          }
+        });
+
+        // 处理文件
+        function handleFile(file) {
+          if (!file.name.toLowerCase().endsWith(".ani")) {
+            showStatus("请选择 .ani 文件", "error");
+            return;
+          }
+
+          currentFile = file;
+          showStatus("正在解析文件...", "info");
+
+          const reader = new FileReader();
+          reader.onload = function (event) {
+            parseAniFile(event.target.result, file.name);
+          };
+          reader.readAsArrayBuffer(file);
+        }
+
+        // 解析 ANI 文件
+        function parseAniFile(arrayBuffer, fileName) {
+          try {
+            const buffer = new Uint8Array(arrayBuffer);
+            const view = new DataView(arrayBuffer);
+
+            // 验证 RIFF 头
+            const header = String.fromCharCode(...buffer.slice(0, 4));
+            if (header !== "RIFF") {
+              throw new Error("无效的 ANI 文件");
+            }
+
+            // 查找 anih 块
+            const anihChunk = findChunk(buffer, "anih");
+            if (!anihChunk) {
+              throw new Error("无效的 ANI 文件: anih 块未找到");
+            }
+
+            const anihStart = anihChunk.start;
+            const frameNum = view.getUint32(anihStart + 4, true);
+            const cursorPlayOrderNum = view.getUint32(anihStart + 8, true);
+            const frameDurationInHead = view.getUint32(anihStart + 28, true);
+
+            // 解析帧信息
+            const seqChunk = findChunk(buffer, "seq ");
+            const rateChunk = findChunk(buffer, "rate");
+
+            const frameInfo = [];
+            if (seqChunk) {
+              const seqStart = seqChunk.start;
+              if (rateChunk) {
+                const rateStart = rateChunk.start;
+                for (let i = 0; i < cursorPlayOrderNum; i++) {
+                  frameInfo.push({
+                    frameIndex: view.getUint32(seqStart + i * 4, true),
+                    framDuration:
+                      (view.getUint32(rateStart + i * 4, true) * 1000) / 60,
+                  });
+                }
+              } else {
+                for (let i = 0; i < cursorPlayOrderNum; i++) {
+                  frameInfo.push({
+                    frameIndex: view.getUint32(seqStart + i * 4, true),
+                    framDuration: (frameDurationInHead * 1000) / 60,
+                  });
+                }
+              }
+            } else {
+              for (let i = 0; i < frameNum; i++) {
+                frameInfo.push({
+                  frameIndex: i,
+                  framDuration: (frameDurationInHead * 1000) / 60,
+                });
+              }
+            }
+
+            // 查找帧数据
+            const listChunks = [];
+            let position = 12;
+            while (position < buffer.length - 8) {
+              const chunk = findChunk(buffer, "LIST", position);
+              if (!chunk) break;
+
+              const listType = String.fromCharCode(
+                ...buffer.slice(chunk.start - 4, chunk.start)
+              );
+              if (listType === "fram") {
+                const subChunks = findListSubChunks(buffer, chunk.start - 4);
+                listChunks.push(...subChunks);
+              }
+
+              position = chunk.start + chunk.size;
+            }
+
+            // 如果没有找到 LIST 块，尝试直接查找图标数据
+            if (listChunks.length === 0) {
+              let iconPosition = 12;
+              while (iconPosition < buffer.length - 8) {
+                const chunkId = String.fromCharCode(
+                  ...buffer.slice(iconPosition, iconPosition + 4)
+                );
+                if (chunkId === "icon") {
+                  const size = view.getUint32(iconPosition + 4, true);
+                  listChunks.push({ start: iconPosition + 8, size });
+                }
+                iconPosition += 8;
+              }
+            }
+
+            // 提取帧图像
+            frameImages = [];
+            const fileNameWithoutExt = fileName.replace(/\.[^/.]+$/, "");
+            let totalRoundTime = 0;
+
+            for (
+              let i = 0;
+              i < Math.min(frameInfo.length, listChunks.length);
+              i++
+            ) {
+              const chunk = listChunks[i];
+              const icoData = new Uint8Array(
+                arrayBuffer,
+                chunk.start,
+                chunk.size
+              );
+              const blob = new Blob([icoData], { type: "image/x-icon" });
+              const url = URL.createObjectURL(blob);
+
+              frameImages.push({
+                url: url,
+                name: `frame-${i}.ico`,
+                serverPath: `/MeowMemoirs/File/DownloadFile?path=StaticFile/mouse/${fileNameWithoutExt}/${`frame-${i}.ico`}`,
+              });
+            }
+
+            // 计算总循环时间
+            totalRoundTime = frameInfo.reduce(
+              (sum, frame) => sum + frame.framDuration,
+              0
+            );
+
+            // 生成关键帧内容
+            const aniURLRegexClassName =
+              "cursor-animation-" + fileName.replace(/[^a-zA-Z0-9-]+/g, "-");
+            const keyframesName = `${aniURLRegexClassName}-keyframes`;
+
+            let keyframeContent = `@keyframes ${keyframesName} {\n`;
+            let pos = 0;
+
+            for (const frame of frameInfo) {
+              if (frameImages[frame.frameIndex]) {
+                const percentage = (frame.framDuration / totalRoundTime) * 100;
+                keyframeContent += `  ${pos.toFixed(2)}% { cursor: url("${
+                  frameImages[frame.frameIndex].serverPath
+                }"), auto; }\n`;
+                pos += percentage;
+              }
+            }
+
+            // 确保动画循环
+            if (pos < 100) {
+              keyframeContent += `  100% { cursor: url("${frameImages[0].serverPath}"), auto; }\n`;
+            }
+
+            keyframeContent += "}";
+
+            // 生成 ANIInfo
+            aniInfo = {
+              KeyFrameContent: keyframeContent,
+              aniURLRegexClassName: aniURLRegexClassName,
+              keyframesName: keyframesName,
+              totalRoundTime: totalRoundTime,
+              frameCount: frameImages.length,
+              frames: frameImages.map((frame) => frame.serverPath),
+            };
+
+            // 更新界面
+            fileNameEl.textContent = fileName;
+            frameCountEl.textContent = frameImages.length;
+            totalRoundTimeEl.textContent = totalRoundTime;
+            infoSection.style.display = "block";
+
+            // 显示帧预览
+            displayFrames();
+
+            // 显示下载按钮
+            downloadBtn.classList.remove("hidden");
+
+            showStatus(`成功解析 ${frameImages.length} 帧`, "success");
+          } catch (error) {
+            console.error("解析错误:", error);
+            showStatus(`解析失败: ${error.message}`, "error");
+          }
+        }
+
+        // 查找 RIFF 块
+        function findChunk(buffer, chunkId, startIndex = 0) {
+          const idBytes = new TextEncoder().encode(chunkId);
+          for (let i = startIndex; i < buffer.length - 8; i++) {
+            let match = true;
+            for (let j = 0; j < 4; j++) {
+              if (buffer[i + j] !== idBytes[j]) {
+                match = false;
+                break;
+              }
+            }
+            if (match) {
+              const size = new DataView(buffer.buffer).getUint32(i + 4, true);
+              return { start: i + 8, size };
+            }
+          }
+          return null;
+        }
+
+        // 查找 LIST 块中的子块
+        function findListSubChunks(buffer, listStart) {
+          const subChunks = [];
+          let position = listStart + 4;
+
+          while (position < buffer.length - 8) {
+            const chunkId = String.fromCharCode(
+              ...buffer.slice(position, position + 4)
+            );
+            if (chunkId === "fram") {
+              const size = new DataView(buffer.buffer).getUint32(
+                position + 4,
+                true
+              );
+              subChunks.push({ start: position + 8, size });
+              position += 8 + size;
+              if (size % 2 !== 0) position++;
+            } else {
+              break;
+            }
+          }
+
+          return subChunks;
+        }
+
+        // 显示帧预览
+        function displayFrames() {
+          framesContainer.innerHTML = "";
+          frameImages.forEach((frame, index) => {
+            const frameItem = document.createElement("div");
+            frameItem.className = "frame-item";
+
+            const img = document.createElement("img");
+            img.src = frame.url;
+            img.alt = `Frame ${index}`;
+            img.className = "frame-image";
+
+            const nameDiv = document.createElement("div");
+            nameDiv.className = "frame-name";
+            nameDiv.textContent = frame.name;
+
+            frameItem.appendChild(img);
+            frameItem.appendChild(nameDiv);
+            framesContainer.appendChild(frameItem);
+          });
+        }
+
+        // 下载按钮事件
+        downloadBtn.addEventListener("click", async () => {
+          if (!JSZip) {
+            showStatus("JSZip 库未加载", "error");
+            return;
+          }
+
+          showStatus("正在准备下载...", "info");
+
+          try {
+            const zip = new JSZip();
+
+            // 添加帧图像到压缩包
+            for (const frame of frameImages) {
+              // 从 URL 获取 Blob 数据
+              const response = await fetch(frame.url);
+              const blob = await response.blob();
+              zip.file(frame.name, blob);
+            }
+
+            // 创建并添加 config.json
+            const configContent = JSON.stringify(aniInfo, null, 2);
+            zip.file("config.json", configContent);
+
+            // 生成压缩包
+            const content = await zip.generateAsync({ type: "blob" });
+
+            // 创建下载链接
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(content);
+            link.download = currentFile.name.replace(".ani", ".zip");
+            link.click();
+
+            showStatus("下载完成", "success");
+          } catch (error) {
+            console.error("下载错误:", error);
+            showStatus(`下载失败: ${error.message}`, "error");
+          }
+        });
+
+        // 显示状态信息
+        function showStatus(message, type) {
+          statusMessage.textContent = message;
+          statusMessage.className = "status-message";
+          if (type) {
+            statusMessage.classList.add(type);
+          }
+        }
+      };
+    </script>
+  </body>
+</html>

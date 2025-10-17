@@ -1,197 +1,113 @@
 // ani-cursor-plus.ts
-// ANI光标动画工具类 - 无依赖版本
 
 /**
  * 帧信息接口
+ * 定义ANI动画中每一帧的基本信息
  */
 interface FrameInfo {
-    frameIndex: number;    // 帧索引
-    framDuration: number;  // 帧持续时间（毫秒）
+    frameIndex: number; // 帧索引
+    framDuration: number; // 帧持续时间
 }
 
 /**
- * ANI文件信息接口
+ * ANI信息接口
+ * 存储已加载ANI文件的相关信息
  */
-interface ANIInfo {
-    KeyFrameContent: string;      // CSS关键帧动画内容
-    aniURLRegexClassName: string; // 生成的CSS类名
-    keyframesName: string;        // 关键帧动画名称
-    totalRoundTime: number;       // 动画总时长（毫秒）
+export interface ANIInfo {
+    KeyFrameContent: string;// 关键帧内容
+    aniURLRegexClassName: string;// 用于CSS类名的正则化URL
+    keyframesName: string;// 关键帧动画名称
+    totalRoundTime: number;// 总循环时间
 }
 
 /**
- * RIFF块信息接口
- */
-interface RIFFChunk {
-    id: string;           // 块标识（4字符）
-    size: number;         // 块大小
-    start: number;        // 块数据起始位置
-    subChunks?: RIFFChunk[]; // 子块列表（仅LIST块有）
-}
-
-/**
- * ANI鼠标光标动画类
- * 支持加载和显示Windows ANI格式的光标动画文件
+ * ANI光标加载和管理类
+ * 负责加载ANI光标文件，解析其内容，并应用到指定元素上
  */
 class ANIMousePlus {
-    private LoadedANIs: ANIInfo[] = []; // 已加载的ANI文件缓存
-    private URLPathReg: RegExp = /[^a-zA-Z0-9-]+/g; // URL路径正则，用于生成类名
+    /**
+     * 已加载的ANI文件信息数组
+     * 用于缓存已加载的ANI光标，避免重复加载
+     */
+    private LoadedANIs: ANIInfo[] = [];
 
+    /**
+     * URL路径正则表达式
+     * 用于将URL转换为合法的CSS类名
+     */
+    private URLPathReg: RegExp = /[^a-zA-Z0-9-]+/g;
+
+    /**
+     * 构造函数
+     * 绑定类方法到当前实例，确保方法中的this指向正确
+     */
     constructor() {
-        // 绑定方法上下文
+        // 绑定方法
         this.LoadANICursorPromise = this.LoadANICursorPromise.bind(this);
         this.setLoadedCursorToElement = this.setLoadedCursorToElement.bind(this);
         this.setLoadedCursorDefault = this.setLoadedCursorDefault.bind(this);
         this.setANICursor = this.setANICursor.bind(this);
         this.setANICursorWithGroupElement = this.setANICursorWithGroupElement.bind(this);
+        this.setLoadedCursorToMultipleElements = this.setLoadedCursorToMultipleElements.bind(this);
     }
 
     /**
-     * 解析RIFF文件结构
-     * @param buffer ArrayBuffer格式的文件数据
-     * @returns RIFF块结构数组
-     */
-    private parseRIFF(buffer: ArrayBuffer): RIFFChunk[] {
-        const chunks: RIFFChunk[] = [];
-        const view = new DataView(buffer);
-        let offset = 0;
-
-        // 检查文件头签名
-        const signature = this.readString(view, 0, 4);
-        if (signature !== 'RIFF') {
-            throw new Error('Invalid RIFF file signature');
-        }
-
-        // const fileSize = view.getUint32(4, true);
-        const fileType = this.readString(view, 8, 4);
-
-        if (fileType !== 'ACON') {
-            throw new Error('Not an ANI file (ACON signature missing)');
-        }
-
-        offset = 12; // 跳过RIFF头
-
-        // 解析所有块
-        while (offset < buffer.byteLength - 8) {
-            const chunkId = this.readString(view, offset, 4);
-            const chunkSize = view.getUint32(offset + 4, true);
-
-            const chunk: RIFFChunk = {
-                id: chunkId,
-                size: chunkSize,
-                start: offset + 8
-            };
-
-            // 如果是LIST块，解析子块
-            if (chunkId === 'LIST') {
-                // const listType = this.readString(view, chunk.start, 4);
-                chunk.subChunks = this.parseListChunks(view, chunk.start + 4, chunkSize - 4);
+  * 查找RIFF文件中的指定块
+  * @param buffer 文件数据缓冲区
+  * @param chunkId 要查找的块ID
+  * @param startIndex 查找起始位置，默认为0
+  * @returns 返回找到的块信息，包括起始位置和大小，未找到返回null
+  */
+    private findChunk(buffer: Uint8Array, chunkId: string, startIndex: number = 0): { start: number; size: number } | null {
+        const idBytes = new TextEncoder().encode(chunkId);
+        for (let i = startIndex; i < buffer.length - 8; i++) {
+            let match = true;
+            for (let j = 0; j < 4; j++) {
+                if (buffer[i + j] !== idBytes[j]) {
+                    match = false;
+                    break;
+                }
             }
-
-            chunks.push(chunk);
-            offset += 8 + chunkSize;
-
-            // 块数据需要2字节对齐
-            if (offset % 2 !== 0) offset++;
-        }
-
-        return chunks;
-    }
-
-    /**
-     * 解析LIST块中的子块
-     * @param view DataView对象
-     * @param startOffset 起始偏移量
-     * @param listSize LIST块大小
-     * @returns 子块数组
-     */
-    private parseListChunks(view: DataView, startOffset: number, listSize: number): RIFFChunk[] {
-        const subChunks: RIFFChunk[] = [];
-        let offset = startOffset;
-        const endOffset = startOffset + listSize;
-
-        while (offset < endOffset - 8) {
-            const chunkId = this.readString(view, offset, 4);
-            const chunkSize = view.getUint32(offset + 4, true);
-
-            subChunks.push({
-                id: chunkId,
-                size: chunkSize,
-                start: offset + 8
-            });
-
-            offset += 8 + chunkSize;
-            if (offset % 2 !== 0) offset++;
-        }
-
-        return subChunks;
-    }
-
-    /**
-     * 从DataView读取字符串
-     * @param view DataView对象
-     * @param offset 偏移量
-     * @param length 长度
-     * @returns 读取的字符串
-     */
-    private readString(view: DataView, offset: number, length: number): string {
-        let result = '';
-        for (let i = 0; i < length; i++) {
-            const charCode = view.getUint8(offset + i);
-            if (charCode === 0) break;
-            result += String.fromCharCode(charCode);
-        }
-        return result;
-    }
-
-    /**
-     * 查找指定ID的块
-     * @param chunks 块数组
-     * @param chunkId 要查找的块ID
-     * @returns 找到的块或null
-     */
-    private findChunk(chunks: RIFFChunk[], chunkId: string): RIFFChunk | null {
-        for (const chunk of chunks) {
-            if (chunk.id === chunkId) {
-                return chunk;
-            }
-            // 递归查找子块
-            if (chunk.subChunks) {
-                const found = this.findChunk(chunk.subChunks, chunkId);
-                if (found) return found;
+            if (match) {
+                const size = new DataView(buffer.buffer).getUint32(i + 4, true);
+                return { start: i + 8, size };
             }
         }
         return null;
     }
 
     /**
-     * 查找所有指定ID的块
-     * @param chunks 块数组
-     * @param chunkId 要查找的块ID
-     * @returns 找到的块数组
+     * 查找LIST块中的所有子块
+     * @param buffer 文件数据缓冲区
+     * @param listStart LIST块起始位置
+     * @returns 返回所有子块的信息数组
      */
-    private findAllChunks(chunks: RIFFChunk[], chunkId: string): RIFFChunk[] {
-        const result: RIFFChunk[] = [];
+    private findListSubChunks(buffer: Uint8Array, listStart: number): { start: number; size: number }[] {
+        const subChunks: { start: number; size: number }[] = [];
+        let position = listStart + 4; // 跳过 'LIST' 类型标识
 
-        for (const chunk of chunks) {
-            if (chunk.id === chunkId) {
-                result.push(chunk);
-            }
-            // 递归查找子块
-            if (chunk.subChunks) {
-                result.push(...this.findAllChunks(chunk.subChunks, chunkId));
+        while (position < buffer.length - 8) {
+            const chunkId = String.fromCharCode(...buffer.slice(position, position + 4));
+            if (chunkId === 'fram') {
+                const size = new DataView(buffer.buffer).getUint32(position + 4, true);
+                subChunks.push({ start: position + 8, size });
+                position += 8 + size;
+                // 对齐到偶数字节
+                if (size % 2 !== 0) position++;
+            } else {
+                break;
             }
         }
 
-        return result;
+        return subChunks;
     }
 
     /**
-     * 调整ICO图标尺寸
-     * @param blobUrl 原始图标Blob URL
+     * 调整ICO图像大小
+     * @param blobUrl 原始ICO图像的Blob URL
      * @param newWidth 新宽度
      * @param newHeight 新高度
-     * @returns 调整后的Blob URL
+     * @returns 返回调整大小后的新图像Blob URL
      */
     private resizeIco(blobUrl: string, newWidth: number, newHeight: number): Promise<string> {
         return new Promise((resolve, reject) => {
@@ -205,21 +121,17 @@ class ANIMousePlus {
             }
 
             img.onload = () => {
-                try {
-                    canvas.width = newWidth;
-                    canvas.height = newHeight;
-                    ctx.drawImage(img, 0, 0, newWidth, newHeight);
-                    canvas.toBlob((blob) => {
-                        if (!blob) {
-                            reject(new Error("Failed to create blob"));
-                            return;
-                        }
-                        const url = URL.createObjectURL(blob);
-                        resolve(url);
-                    }, "image/x-icon");
-                } catch (error) {
-                    reject(error);
-                }
+                canvas.width = newWidth;
+                canvas.height = newHeight;
+                ctx.drawImage(img, 0, 0, newWidth, newHeight);
+                canvas.toBlob((blob) => {
+                    if (!blob) {
+                        reject(new Error("Failed to create blob"));
+                        return;
+                    }
+                    const url = URL.createObjectURL(blob);
+                    resolve(url);
+                }, "image/x-icon");
             };
 
             img.onerror = () => reject(new Error("Failed to load image"));
@@ -228,12 +140,12 @@ class ANIMousePlus {
     }
 
     /**
-     * 加载ANI光标文件并解析为动画信息
-     * @param aniURL ANI文件URL
-     * @param cursorType 光标类型（默认auto）
-     * @param width 光标宽度（默认32）
-     * @param height 光标高度（默认32）
-     * @returns 解析后的ANI信息Promise
+     * 加载ANI光标文件并返回Promise
+     * @param aniURL ANI文件URL地址
+     * @param cursorType 光标类型，默认为"auto"
+     * @param width 光标宽度，默认为32像素
+     * @param height 光标高度，默认为32像素
+     * @returns 返回包含ANI信息的Promise对象
      */
     public LoadANICursorPromise(
         aniURL: string,
@@ -241,187 +153,202 @@ class ANIMousePlus {
         width: number = 32,
         height: number = 32
     ): Promise<ANIInfo> {
-        return new Promise((resolve, reject) => {
-            // 生成唯一的CSS类名
+        return new Promise((topResolve, topReject) => {
+            // 将URL转换为合法的CSS类名
             const aniURLRegexClassName = "cursor-animation-" + aniURL.replace(this.URLPathReg, "-");
 
-            // 检查是否已加载过该ANI文件
+            // 检查是否已加载，避免重复加载同一ANI文件
             for (const aniInfo of this.LoadedANIs) {
                 if (aniInfo.aniURLRegexClassName === aniURLRegexClassName) {
-                    resolve(aniInfo);
+                    topResolve(aniInfo);
                     return;
                 }
             }
 
-            // 获取ANI文件
+            // 获取ANI文件数据
             fetch(aniURL)
                 .then((response) => {
                     if (!response.ok) {
-                        throw new Error(`Network response was not ok: ${response.status}`);
+                        throw new Error("Network response was not ok");
                     }
                     return response.arrayBuffer();
                 })
                 .then((arrayBuffer) => {
-                    try {
-                        // 解析RIFF结构
-                        const chunks = this.parseRIFF(arrayBuffer);
-                        const view = new DataView(arrayBuffer);
+                    const buffer = new Uint8Array(arrayBuffer);
+                    const view = new DataView(arrayBuffer);
 
-                        // 查找anih块（ANI头信息）
-                        const anihChunk = this.findChunk(chunks, 'anih');
-                        if (!anihChunk) {
-                            throw new Error("ANI header chunk (anih) not found");
-                        }
+                    // 验证文件头，确保是有效的RIFF文件
+                    const header = String.fromCharCode(...buffer.slice(0, 4));
+                    if (header !== 'RIFF') {
+                        throw new Error("Invalid ANI file: Not a RIFF file");
+                    }
 
-                        const anihStart = anihChunk.start;
+                    // 查找 anih 块（ANI文件头信息块）
+                    const anihChunk = this.findChunk(buffer, 'anih');
+                    if (!anihChunk) {
+                        throw new Error("Invalid ANI file: anih chunk not found");
+                    }
 
-                        // 读取ANI头信息
-                        const frameNum = view.getUint32(anihStart + 4, true);           // 帧数
-                        const cursorPlayOrderNum = view.getUint32(anihStart + 8, true); // 播放顺序数
-                        const frameDurationInHead = view.getUint32(anihStart + 28, true); // 帧持续时间
+                    // 解析ANI文件头信息
+                    const anihStart = anihChunk.start;
+                    const frameNum = view.getUint32(anihStart + 4, true);           // 帧数量
+                    const cursorPlayOrderNum = view.getUint32(anihStart + 8, true); // 播放顺序中的帧数
+                    const frameDurationInHead = view.getUint32(anihStart + 28, true); // 头部定义的帧持续时间
 
-                        const frameInfo: FrameInfo[] = [];
-                        const frameURLs: string[] = [];
+                    const frameInfo: FrameInfo[] = [];  // 存储帧信息
+                    const frameURLs: string[] = [];     // 存储帧图像URL
 
-                        // 解析序列信息（如果有seq块）
-                        const seqChunk = this.findChunk(chunks, 'seq');
-                        const rateChunk = this.findChunk(chunks, 'rate');
+                    // 处理序列和速率信息
+                    const seqChunk = this.findChunk(buffer, 'seq ');  // 序列块
+                    const rateChunk = this.findChunk(buffer, 'rate'); // 速率块
 
-                        if (seqChunk) {
-                            const seqStart = seqChunk.start;
+                    // 如果存在序列块
+                    if (seqChunk) {
+                        const seqStart = seqChunk.start;
 
-                            if (rateChunk) {
-                                // 有seq和rate块：使用自定义时序
-                                const rateStart = rateChunk.start;
-                                for (let i = 0; i < cursorPlayOrderNum; i++) {
-                                    frameInfo.push({
-                                        frameIndex: view.getUint32(seqStart + i * 4, true),
-                                        framDuration: (view.getUint32(rateStart + i * 4, true) * 1000) / 60,
-                                    });
-                                }
-                            } else {
-                                // 只有seq块：使用统一时序
-                                for (let i = 0; i < cursorPlayOrderNum; i++) {
-                                    frameInfo.push({
-                                        frameIndex: view.getUint32(seqStart + i * 4, true),
-                                        framDuration: (frameDurationInHead * 1000) / 60,
-                                    });
-                                }
+                        // 如果存在速率块
+                        if (rateChunk) {
+                            const rateStart = rateChunk.start;
+                            for (let i = 0; i < cursorPlayOrderNum; i++) {
+                                frameInfo.push({
+                                    frameIndex: view.getUint32(seqStart + i * 4, true),
+                                    framDuration: (view.getUint32(rateStart + i * 4, true) * 1000) / 60,
+                                });
                             }
                         } else {
-                            // 无seq块：简单顺序播放
-                            for (let i = 0; i < frameNum; i++) {
+                            // 使用头部定义的帧持续时间
+                            for (let i = 0; i < cursorPlayOrderNum; i++) {
                                 frameInfo.push({
-                                    frameIndex: i,
+                                    frameIndex: view.getUint32(seqStart + i * 4, true),
                                     framDuration: (frameDurationInHead * 1000) / 60,
                                 });
                             }
                         }
+                    } else {
+                        // 没有序列块，按顺序使用所有帧
+                        for (let i = 0; i < frameNum; i++) {
+                            frameInfo.push({
+                                frameIndex: i,
+                                framDuration: (frameDurationInHead * 1000) / 60,
+                            });
+                        }
+                    }
 
-                        // 查找所有图标帧
-                        const iconChunks = this.findAllChunks(chunks, 'icon');
-                        if (iconChunks.length === 0) {
-                            throw new Error("No icon frames found in ANI file");
+                    // 查找并处理图标帧
+                    const listChunks: { start: number; size: number }[] = [];
+                    let position = 12; // RIFF头之后开始搜索
+
+                    // 查找LIST块中的帧数据
+                    while (position < buffer.length - 8) {
+                        const chunk = this.findChunk(buffer, 'LIST', position);
+                        if (!chunk) break;
+
+                        const listType = String.fromCharCode(...buffer.slice(chunk.start - 4, chunk.start));
+                        if (listType === 'fram') {
+                            const subChunks = this.findListSubChunks(buffer, chunk.start - 4);
+                            listChunks.push(...subChunks);
                         }
 
-                        // 调整图标尺寸
-                        const resizePromises: Promise<{ index: number; url: string }>[] = [];
+                        position = chunk.start + chunk.size;
+                    }
 
-                        for (let i = 0; i < Math.min(cursorPlayOrderNum, iconChunks.length); i++) {
-                            const iconChunk = iconChunks[i];
-                            const iconData = new Uint8Array(arrayBuffer, iconChunk.start, iconChunk.size);
-                            const iconBlob = new Blob([iconData], { type: "image/x-icon" });
-                            const icourl = URL.createObjectURL(iconBlob);
-
-                            resizePromises.push(
-                                this.resizeIco(icourl, width, height).then((resizedUrl) => ({
-                                    index: i,
-                                    url: resizedUrl,
-                                }))
-                            );
+                    // 如果没有找到LIST块，尝试直接查找图标数据
+                    if (listChunks.length === 0) {
+                        let iconPosition = 12;
+                        while (iconPosition < buffer.length - 8) {
+                            const chunkId = String.fromCharCode(...buffer.slice(iconPosition, iconPosition + 4));
+                            if (chunkId === 'icon') {
+                                const size = view.getUint32(iconPosition + 4, true);
+                                listChunks.push({ start: iconPosition + 8, size });
+                            }
+                            iconPosition += 8;
                         }
+                    }
 
-                        // 等待所有图标调整完成
-                        Promise.all(resizePromises).then((results) => {
-                            // 组织帧URL
-                            results.forEach((result) => {
-                                frameURLs[result.index] = result.url;
+                    // 调整图标大小的Promise数组
+                    const ResizeIconGroup: Promise<{ index: number; url: string }>[] = [];
+                    const frameCount = Math.min(cursorPlayOrderNum, listChunks.length);
+
+                    // 处理每一帧图标数据
+                    for (let i = 0; i < frameCount; i++) {
+                        const chunk = listChunks[i];
+                        const icoData = new Uint8Array(arrayBuffer, chunk.start, chunk.size);
+                        const icourl = URL.createObjectURL(
+                            new Blob([icoData], { type: "image/x-icon" })
+                        );
+
+                        // 调整图标大小并添加到Promise数组
+                        ResizeIconGroup.push(
+                            this.resizeIco(icourl, width, height).then((resizedUrl) => ({
+                                index: i,
+                                url: resizedUrl,
+                            })).catch(() => ({ index: i, url: icourl })) // 如果调整大小失败，使用原始URL
+                        );
+                    }
+
+                    // 等待所有图标处理完成
+                    Promise.all(ResizeIconGroup).then((results) => {
+                        results.forEach((result) => {
+                            frameURLs[result.index] = result.url;
+                        });
+
+                        let totalRoundTime = 0;
+
+                        /**
+                         * 生成帧动画关键帧CSS内容
+                         * @returns 返回关键帧CSS内容字符串
+                         */
+                        function generateFrameAnimation(): string {
+                            let styleContent = "";
+                            let pos = 0;
+
+                            // 计算总动画时间
+                            frameInfo.forEach((frame) => {
+                                totalRoundTime += frame.framDuration;
                             });
 
-                            // 计算动画总时长
-                            let totalRoundTime = frameInfo.reduce((total, frame) => total + frame.framDuration, 0);
+                            // 生成每一帧的关键帧定义
+                            frameInfo.forEach((frame) => {
+                                if (frameURLs[frame.frameIndex]) {
+                                    styleContent += `${pos}% { cursor: url(${frameURLs[frame.frameIndex]
+                                        }),${cursorType};}\n`;
+                                    pos += (frame.framDuration / totalRoundTime) * 100;
+                                }
+                            });
 
-                            // 生成CSS关键帧动画
-                            const keyframesName = `${aniURLRegexClassName}-keyframes`;
-                            const keyframeContent = this.generateKeyframesCSS(
-                                frameInfo,
-                                frameURLs,
-                                keyframesName,
-                                cursorType,
-                                totalRoundTime
-                            );
+                            // 确保动画循环，添加最后一帧
+                            if (pos < 100) {
+                                styleContent += `100% { cursor: url(${frameURLs[0]}),${cursorType};}\n`;
+                            }
 
-                            // 创建ANI信息对象
-                            const ANIInfo: ANIInfo = {
-                                KeyFrameContent: keyframeContent,
-                                aniURLRegexClassName,
-                                keyframesName,
-                                totalRoundTime,
-                            };
+                            return styleContent;
+                        }
 
-                            // 缓存并返回结果
-                            this.LoadedANIs.push(ANIInfo);
-                            resolve(ANIInfo);
-                        }).catch(reject);
+                        // 生成关键帧动画名称和内容
+                        const keyframesName = `${aniURLRegexClassName}-keyframes`;
+                        const KeyFrameContent = `@keyframes ${keyframesName} { ${generateFrameAnimation()} }`;
 
-                    } catch (error) {
-                        reject(error);
-                    }
+                        // 创建ANI信息对象
+                        const ANIInfo: ANIInfo = {
+                            KeyFrameContent,
+                            aniURLRegexClassName,
+                            keyframesName,
+                            totalRoundTime,
+                        };
+
+                        // 添加到已加载数组并返回
+                        this.LoadedANIs.push(ANIInfo);
+                        topResolve(ANIInfo);
+                    }).catch(topReject);
                 })
-                .catch(reject);
+                .catch(topReject);
         });
     }
 
     /**
-     * 生成CSS关键帧动画
-     * @param frameInfo 帧信息数组
-     * @param frameURLs 帧URL数组
-     * @param keyframesName 关键帧名称
-     * @param cursorType 光标类型
-     * @param totalRoundTime 总时长
-     * @returns CSS关键帧动画字符串
-     */
-    private generateKeyframesCSS(
-        frameInfo: FrameInfo[],
-        frameURLs: string[],
-        keyframesName: string,
-        cursorType: string,
-        totalRoundTime: number
-    ): string {
-        let styleContent = `@keyframes ${keyframesName} { `;
-        let accumulatedPercent = 0;
-
-        for (let i = 0; i < frameInfo.length; i++) {
-            const frame = frameInfo[i];
-            const percent = accumulatedPercent;
-
-            styleContent += `${percent}% { cursor: url(${frameURLs[frame.frameIndex]}), ${cursorType}; } `;
-
-            // 计算下一帧的百分比位置
-            accumulatedPercent += (frame.framDuration / totalRoundTime) * 100;
-        }
-
-        // 添加100%关键帧确保动画循环平滑
-        styleContent += `100% { cursor: url(${frameURLs[frameInfo[0].frameIndex]}), ${cursorType}; } `;
-        styleContent += '}';
-
-        return styleContent;
-    }
-
-    /**
-     * 将已加载的光标动画应用到指定元素
-     * @param elementSelector CSS选择器
-     * @param loadedCursorPromise 已加载的光标Promise
+     * 将已加载的光标应用到指定元素
+     * @param elementSelector 元素选择器
+     * @param loadedCursorPromise 已加载光标的Promise对象
      */
     public setLoadedCursorToElement(
         elementSelector: string,
@@ -434,54 +361,103 @@ class ANIMousePlus {
                 keyframesName,
                 totalRoundTime,
             }) => {
-                // 创建样式并插入到文档中
-                const styleContent = `${KeyFrameContent} ${elementSelector} { 
-                animation: ${keyframesName} ${totalRoundTime}ms step-end infinite; 
-            }
-                .${aniURLRegexClassName} { 
-                animation: ${keyframesName} ${totalRoundTime}ms step-end infinite; 
-            }`;
+                // 构造CSS样式内容
+                const styleContent = `${KeyFrameContent}
+          ${elementSelector} { animation: ${keyframesName} ${totalRoundTime}ms step-end infinite; }
+          .${aniURLRegexClassName} { animation: ${keyframesName} ${totalRoundTime}ms step-end infinite; }`;
 
-                this.injectStyle(styleContent);
+                // 创建并添加样式元素到页面头部
+                const style = document.createElement("style");
+                style.innerHTML = styleContent;
+                document.head.appendChild(style);
             }
-        ).catch(console.error);
+        );
     }
 
     /**
-     * 设置默认光标样式
-     * @param loadedCursorPromise 已加载的光标Promise
-     * @returns 生成的CSS类名
+     * 将已加载的光标应用到多个元素（直接接收ANIInfo对象）
+     * @param elementSelectors 元素选择器数组
+     * @param aniInfo 已加载的ANI信息对象
+     */
+    /**
+     * 将已加载的光标应用到多个元素（直接接收ANIInfo对象）
+     * @param elementSelectors 元素选择器数组
+     * @param aniInfo 已加载的ANI信息对象
+     */
+    public setLoadedCursorToMultipleElements(
+        elementSelectors: string[],
+        aniInfo: ANIInfo
+    ): void {
+        const {
+            KeyFrameContent,
+            aniURLRegexClassName,
+            keyframesName,
+            totalRoundTime,
+        } = aniInfo;
+
+        // 将选择器数组合并为一个选择器字符串
+        const selectorString = elementSelectors.join(', ');
+
+        // 构造CSS样式内容 - 保持与旧版相同的格式
+        const styleContent = `${KeyFrameContent}
+          ${selectorString} { animation: ${keyframesName} ${totalRoundTime}ms step-end infinite; }
+          .${aniURLRegexClassName} { animation: ${keyframesName} ${totalRoundTime}ms step-end infinite; }`;
+
+        // 创建并添加样式元素到页面头部
+        const style = document.createElement("style");
+        style.innerHTML = styleContent;
+        document.head.appendChild(style);
+
+        console.log("Generated CSS:", styleContent); // 调试用
+    }
+
+    /**
+     * 设置默认光标类（直接接收ANIInfo对象）
+     * @param aniInfo 已加载的ANI信息对象
+     * @returns 返回生成的CSS类名
+     */
+    public setLoadedCursorDefaultWithInfo(aniInfo: ANIInfo): string {
+        const {
+            KeyFrameContent,
+            aniURLRegexClassName,
+            keyframesName,
+            totalRoundTime,
+        } = aniInfo;
+
+        // 构造CSS样式内容
+        const styleContent = `${KeyFrameContent}
+          .${aniURLRegexClassName} { animation: ${keyframesName} ${totalRoundTime}ms step-end infinite; }`;
+
+        // 创建并添加样式元素到页面头部
+        const style = document.createElement("style");
+        style.innerHTML = styleContent;
+        document.head.appendChild(style);
+
+        return aniURLRegexClassName;
+    }
+
+    /**
+     * 设置默认光标类
+     * @param loadedCursorPromise 已加载光标的Promise对象
+     * @returns 返回生成的CSS类名
      */
     public setLoadedCursorDefault(loadedCursorPromise: Promise<ANIInfo>): string {
         let defaultClass = "";
 
-        loadedCursorPromise.then(
-            ({
-                KeyFrameContent,
-                aniURLRegexClassName,
-                keyframesName,
-                totalRoundTime,
-            }) => {
-                const styleContent = `${KeyFrameContent}
-                .${aniURLRegexClassName} { 
-                animation: ${keyframesName} ${totalRoundTime}ms step-end infinite; 
-                }`;
-
-                this.injectStyle(styleContent);
-                defaultClass = aniURLRegexClassName;
-            }
-        ).catch(console.error);
+        loadedCursorPromise.then((aniInfo) => {
+            defaultClass = this.setLoadedCursorDefaultWithInfo(aniInfo);
+        });
 
         return defaultClass;
     }
 
     /**
-     * 直接将ANI光标应用到元素
-     * @param elementSelector CSS选择器
+     * 设置ANI光标到指定元素
+     * @param elementSelector 元素选择器
      * @param aniURL ANI文件URL
      * @param cursorType 光标类型
-     * @param width 宽度
-     * @param height 高度
+     * @param width 光标宽度
+     * @param height 光标高度
      */
     public setANICursor(
         elementSelector: string,
@@ -490,6 +466,7 @@ class ANIMousePlus {
         width: number = 32,
         height: number = 32
     ): void {
+        // 调用setLoadedCursorToElement方法应用光标
         this.setLoadedCursorToElement(
             elementSelector,
             this.LoadANICursorPromise(aniURL, cursorType, width, height)
@@ -497,12 +474,12 @@ class ANIMousePlus {
     }
 
     /**
-     * 将ANI光标应用到多个元素
+     * 为一组元素设置ANI光标
      * @param elementSelectorGroup 元素选择器数组
      * @param aniURL ANI文件URL
      * @param cursorType 光标类型
-     * @param width 宽度
-     * @param height 高度
+     * @param width 光标宽度
+     * @param height 光标高度
      */
     public setANICursorWithGroupElement(
         elementSelectorGroup: string[],
@@ -511,148 +488,34 @@ class ANIMousePlus {
         width: number = 32,
         height: number = 32
     ): void {
+        // 将选择器数组合并为一个选择器字符串
         const allElements = elementSelectorGroup.join(",");
         this.setANICursor(allElements, aniURL, cursorType, width, height);
     }
 
     /**
-     * 向文档中注入CSS样式
-     * @param styleContent CSS样式内容
+     * 清理已加载的ANI光标资源
+     * 释放内存中已加载的ANI文件信息
      */
-    private injectStyle(styleContent: string): void {
-        // 检查是否已存在相同样式
-        const existingStyle = document.querySelector(`style[data-ani-cursor]`);
-        if (existingStyle) {
-            existingStyle.innerHTML += styleContent;
-            return;
-        }
-
-        // 创建新样式元素
-        const style = document.createElement("style");
-        style.setAttribute('data-ani-cursor', 'true');
-        style.innerHTML = styleContent;
-        document.head.appendChild(style);
-    }
-
-    /**
-     * 清除所有已加载的ANI缓存
-     */
-    public clearCache(): void {
+    public cleanup(): void {
         this.LoadedANIs = [];
-    }
-
-    /**
-     * 获取已加载的ANI数量
-     * @returns 已加载的ANI文件数量
-     */
-    public getLoadedCount(): number {
-        return this.LoadedANIs.length;
-    }
-
-    public setPrecomputedCursor = (
-        elementSelectorGroup: string[],
-        frameUrls: string[],
-        frameDurations: number[],
-        cursorType: string = "auto",
-        totalDuration?: number
-    ): void => {
-        const allElements = elementSelectorGroup.join(",");
-
-        // 生成唯一的CSS类名
-        const uniqueId = this.generateUniqueId(frameUrls.join(''));
-        const aniURLRegexClassName = "cursor-precomputed-" + uniqueId;
-
-        // 检查是否已加载
-        for (const aniInfo of this.LoadedANIs) {
-            if (aniInfo.aniURLRegexClassName === aniURLRegexClassName) {
-                this.applyCursorStyle(allElements, aniInfo);
-                return;
-            }
-        }
-
-        // 计算总时长
-        const totalRoundTime = totalDuration || frameDurations.reduce((sum, duration) => sum + duration, 0);
-
-        // 构建帧信息
-        const frameInfo: FrameInfo[] = frameDurations.map((duration, index) => ({
-            frameIndex: index,
-            framDuration: duration
-        }));
-
-        // 生成关键帧动画
-        const keyframesName = `${aniURLRegexClassName}-keyframes`;
-        const keyframeContent = this.generateKeyframesCSS(
-            frameInfo,
-            frameUrls,
-            keyframesName,
-            cursorType,
-            totalRoundTime
-        );
-
-        const ANIInfo: ANIInfo = {
-            KeyFrameContent: keyframeContent,
-            aniURLRegexClassName,
-            keyframesName,
-            totalRoundTime,
-        };
-
-        this.LoadedANIs.push(ANIInfo);
-        this.applyCursorStyle(allElements, ANIInfo);
-    }
-    /**
-     * 生成唯一ID
-     */
-    private generateUniqueId(str: string): string {
-        let hash = 0;
-        for (let i = 0; i < str.length; i++) {
-            const char = str.charCodeAt(i);
-            hash = ((hash << 5) - hash) + char;
-            hash = hash & hash;
-        }
-        return Math.abs(hash).toString(36);
-    }
-
-    /**
-     * 应用光标样式
-     */
-    private applyCursorStyle(elementSelector: string, aniInfo: ANIInfo): void {
-        const styleContent = `${aniInfo.KeyFrameContent} 
-        ${elementSelector} { 
-            animation: ${aniInfo.keyframesName} ${aniInfo.totalRoundTime}ms step-end infinite; 
-        }
-        .${aniInfo.aniURLRegexClassName} { 
-            animation: ${aniInfo.keyframesName} ${aniInfo.totalRoundTime}ms step-end infinite; 
-        }`;
-
-        this.injectStyle(styleContent);
+        // 这里可以添加更多清理逻辑，如撤销URL对象
     }
 }
 
-// 创建单例实例
+// 创建ANIMousePlus实例
 const instance = new ANIMousePlus();
 
-// 确保所有方法都绑定到实例
-const boundMethods = {
-    LoadANICursorPromise: instance.LoadANICursorPromise.bind(instance),
-    setLoadedCursorToElement: instance.setLoadedCursorToElement.bind(instance),
-    setLoadedCursorDefault: instance.setLoadedCursorDefault.bind(instance),
-    setANICursor: instance.setANICursor.bind(instance),
-    setANICursorWithGroupElement: instance.setANICursorWithGroupElement.bind(instance),
-    setPrecomputedCursor: instance.setPrecomputedCursor.bind(instance),
-    clearCache: instance.clearCache.bind(instance),
-    getLoadedCount: instance.getLoadedCount.bind(instance),
-};
-
-// 导出绑定后的方法
+// 导出实例方法和默认实例
 export const {
     LoadANICursorPromise,
     setLoadedCursorToElement,
+    setLoadedCursorToMultipleElements,
     setLoadedCursorDefault,
+    setLoadedCursorDefaultWithInfo,
     setANICursor,
     setANICursorWithGroupElement,
-    setPrecomputedCursor,
-    clearCache,
-    getLoadedCount,
-} = boundMethods;
+    cleanup,
+} = instance;
 
 export default instance;

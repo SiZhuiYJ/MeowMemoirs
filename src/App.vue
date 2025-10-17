@@ -6,41 +6,70 @@ import { useTheme } from "@/utils/theme.ts";
 import { useGlobalStore, useAccessStore } from "@/stores";
 import { useScreenStore } from "@/utils/screen";
 import zhCn from "element-plus/es/locale/lang/zh-cn";
+
 // 初始化日历语言
 import dayjs from "dayjs";
 import "dayjs/locale/zh-cn";
 dayjs.locale("zh-cn");
 
-// {
-//   "type": "RainbowId",
-//   "identifier": "admin_rainbow",
-//   "password": "Admin@123456"
-// }
+/**
+ * 管理员账户信息
+ * {
+ *   "type": "RainbowId",
+ *   "identifier": "admin_rainbow",
+ *   "password": "Admin@123456"
+ * }
+ */
+
+// 获取全局状态存储实例
 const globalStore = useGlobalStore();
 const { setGlobal } = useGlobalStore();
+
+// 初始化访问数据
 const { initializeData } = useAccessStore();
 
+// 计算属性：获取当前设备维度设置（用于Element Plus组件尺寸）
 const dimension = computed(() => globalStore.dimension);
+
+// 初始化主题配置hook
 const { initThemeConfig } = useTheme();
-/** 初始化主题配置 */
+
+/**
+ * 初始化主题配置
+ * 在下一个DOM更新周期后执行主题初始化
+ */
 const handleThemeConfig = () => {
     nextTick(() => {
         initThemeConfig();
     });
 };
-/** 初始化鼠标样式 */
+
+/**
+ * 初始化鼠标样式
+ * 在下一个DOM更新周期后设置自定义鼠标样式（移动端除外）
+ */
 const handleCursor = () => {
     nextTick(() => {
         if (!useScreenStore().isMobile.value) setCursor();
     });
 };
-// 动画
+
+/**
+ * 点击动画效果函数
+ * 在用户点击页面时创建花瓣飘落效果
+ * @param event 点击事件对象
+ */
 function flowerOnClick(event: { pageX: number; pageY: number }) {
+    // 创建虚拟容器元素
     let v = document.createElement("div");
+    
+    // 计算最大高度和宽度
     const maxH = document.body.scrollHeight,
         h = maxH / 10 + 10;
     const maxW = document.body.scrollWidth,
         w = 20;
+        
+    // 设置容器样式和位置
     v.setAttribute("class", "virtual-container");
     v.style.left = event.pageX - 8 + "px";
     v.style.top = event.pageY - 8 + "px";
@@ -48,122 +77,156 @@ function flowerOnClick(event: { pageX: number; pageY: number }) {
         event.pageX + 20 + 8 > maxW ? maxW - event.pageX + 8 + "px" : w + "px";
     v.style.height =
         event.pageY + h + 8 > maxH ? maxH - event.pageY + 8 + "px" : h + "px";
+        
+    // 创建花瓣元素
     let e = document.createElement("div");
     e.setAttribute("class", "click-star");
     v.appendChild(e);
+    
+    // 添加到页面并设置自动移除
     document.body.appendChild(v);
     setTimeout(() => document.body.removeChild(v), 1000);
 }
-// 标题数组
+
+// 页面标题数组
 const titles = [
-    "(ฅ^•ﻌ•^ฅ)✧ 欢迎回来喵！",
-    "(ฅ•ω•ฅ)ﾉ♨ 去哪里了喵？",
-    "(=｀ω´=)~zzZ 休息一下喵~"
+    "(ฅ^•ﻌ•^ฅ)✧ 欢迎回来喵！",     // 活跃状态标题
+    "(ฅ•ω•ฅ)ﾉ♨ 去哪里了喵？",     // 离开页面标题
+    "(=｀ω´=)~zzZ 休息一下喵~"    // 空闲状态标题
 ];
-// 需要监听的事件
+
+// 需要监听的用户活动事件
 const events = ["mousemove", "keydown", "mousedown", "touchstart", "scroll"];
 
-// 状态管理
+// 用户活跃状态管理
 const isActive = ref(true);
 const idleTimer = ref<number | null>(null);
 
-// 设置标题的辅助函数
+/**
+ * 设置页面标题
+ * @param index 标题索引
+ */
 const setTitle = (index: number) => {
     document.title = titles[index];
 };
 
-// 重置无操作计时器
+/**
+ * 重置空闲计时器
+ * 用户活动时重置计时器，超过指定时间后标记为空闲状态
+ */
 const resetIdleTimer = () => {
+    // 清除现有计时器
     if (idleTimer.value) {
         clearTimeout(idleTimer.value);
     }
+    
+    // 设置新的空闲计时器（1分钟后触发）
     idleTimer.value = window.setTimeout(
         () => {
-            setTitle(2); // 无操作超过5分钟
+            setTitle(2); // 设置为空闲状态标题
         },
-        1 * 60 * 1000
-    ); // 5分钟
+        1 * 60 * 1000 // 1分钟空闲时间
+    );
 };
 
-// 页面可见性变化处理
+/**
+ * 处理页面可见性变化
+ * 当用户切换标签页时更新标题和计时器状态
+ */
 const handleVisibilityChange = () => {
+    // 更新活跃状态
     isActive.value = !document.hidden;
+    
     if (isActive.value) {
+        // 返回页面时设置欢迎标题并重置计时器
         setTitle(0);
-        resetIdleTimer(); // 用户返回页面时重置计时器
+        resetIdleTimer();
     } else {
+        // 离开页面时设置离开标题并清除计时器
         setTitle(1);
         if (idleTimer.value) {
-            clearTimeout(idleTimer.value); // 离开页面时清除计时器
+            clearTimeout(idleTimer.value);
         }
     }
 };
 
-// 用户操作事件监听
+/**
+ * 设置用户活动事件监听器
+ * 监听各种用户交互事件以保持活跃状态
+ */
 const setupEventListeners = () => {
     events.forEach(event => {
         window.addEventListener(event, () => {
             if (isActive.value) {
                 setTitle(0); // 用户操作时恢复欢迎标题
-                resetIdleTimer(); // 重置无操作计时器
+                resetIdleTimer(); // 重置空闲计时器
             }
         });
     });
 };
 
-// element-plus默认组件大小
+// 监听屏幕尺寸变化，自动调整组件尺寸
 watch(
     () => useScreenStore().isMobile.value,
     size => {
+        // 移动端使用小尺寸，桌面端使用默认尺寸
         if (size) setGlobal("dimension", "small");
         else setGlobal("dimension", "default");
     }
 );
+
+/**
+ * 组件挂载后的初始化操作
+ */
 onMounted(async () => {
     // 初始化主题配置
     handleThemeConfig();
 
-    // 自动检测更新
-    // handleAutoUpdate();
-
-    // 添加点击效果
+    // 添加点击动画效果监听器
     document.addEventListener("click", flowerOnClick);
 
-    setTitle(0); // 初始设置欢迎标题
+    // 设置初始页面标题
+    setTitle(0);
 
-    // 设置页面可见性监听
+    // 设置页面可见性变化监听器
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
-    // 设置用户操作监听
+    // 设置用户活动监听器
     setupEventListeners();
 
-    // 初始化无操作计时器
+    // 初始化空闲计时器
     resetIdleTimer();
 
-    // 初始化鼠标样式 - 使用requestIdleCallback避免阻塞关键资源
+    // 初始化鼠标样式（使用requestIdleCallback避免阻塞关键资源加载）
     if ("requestIdleCallback" in window) {
         requestIdleCallback(() => {
             handleCursor();
         });
     } else {
-        // 兼容旧浏览器
+        // 兼容不支持requestIdleCallback的浏览器
         setTimeout(() => handleCursor(), 2000);
     }
+    
+    // 初始化访问数据
     await initializeData();
 });
 
+/**
+ * 组件卸载前的清理工作
+ */
 onUnmounted(() => {
-    // 移除点击效果
+    // 移除点击效果监听器
     document.removeEventListener("click", flowerOnClick);
 
-    // 清理工作
+    // 清理页面可见性监听器
     document.removeEventListener("visibilitychange", handleVisibilityChange);
+    
+    // 清除空闲计时器
     if (idleTimer.value) {
         clearTimeout(idleTimer.value);
     }
 
-    // 移除所有用户操作监听器
-
+    // 移除所有用户活动监听器
     events.forEach(event => {
         window.removeEventListener(event, resetIdleTimer);
     });
@@ -171,19 +234,24 @@ onUnmounted(() => {
 </script>
 
 <template>
+    <!-- Element Plus全局配置组件 -->
     <el-config-provider :size="dimension" :locale="zhCn">
+        <!-- 路由视图容器 -->
         <router-view></router-view>
     </el-config-provider>
 </template>
 
 <style scoped lang="scss">
+// 移动端媒体查询
 @media (max-width: 600px) {
     .click-star {
         font-size: medium; // 调整字体大小以适应手机屏幕
     }
 }
 </style>
+
 <style lang="scss">
+// 虚拟容器样式（用于点击动画）
 .virtual-container {
     position: absolute;
     pointer-events: none;
@@ -191,6 +259,7 @@ onUnmounted(() => {
     overflow: hidden;
 }
 
+// 点击星标样式（花瓣效果）
 .click-star {
     position: absolute;
     font-size: large;
@@ -199,24 +268,26 @@ onUnmounted(() => {
     z-index: 999;
 
     &::before {
-        //content: "\1F338";
+        // 使用猫爪符号作为点击效果
         content: "🐾";
     }
 }
 
+// 点击动画关键帧
 @keyframes -snowflake-animate {
     0% {
-        // transform: translateY(0) rotate(0deg);
+        // 初始状态：透明度0.6，位于点击位置
         transform: translateY(0);
         opacity: 0.6;
     }
 
     60% {
+        // 中间状态：完全不透明
         opacity: 1;
     }
 
     100% {
-        // transform: translateY(10vh) rotate(90deg) rotateY(30deg);
+        // 结束状态：向上移动并逐渐消失
         transform: translateY(9vh);
         opacity: 0;
     }

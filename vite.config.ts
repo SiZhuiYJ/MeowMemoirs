@@ -13,43 +13,101 @@ import prismjs from "vite-plugin-prismjs";
 // https://vite.dev/config/
 import tsconfigPaths from "vite-tsconfig-paths"; //npm uninstall vite-tsconfig-paths
 import cssAnalyzer from "./plugins/vite-plugin-css-analyzer";
+
+/**
+ * Vite构建配置
+ * 
+ * 主要功能包括：
+ * 1. 配置开发服务器（HTTPS、端口等）
+ * 2. 设置构建选项（代码压缩、分块策略等）
+ * 3. 配置插件（Vue、SVG图标、自动导入等）
+ * 4. 设置路径别名
+ * 5. 配置资源处理规则
+ */
 export default defineConfig({
+  /**
+   * 配置需要使用的Vite插件
+   */
   plugins: [
+    // Vue官方插件，用于处理.vue文件
     vue(),
+    
+    // PrismJS插件，用于代码高亮
     prismjs({
       languages: ["json", "bash"],
     }),
-    tsconfigPaths(), //  配置tsconfig.json路径
-    cssAnalyzer(), //  配置css分析插件 鼠标
+    
+    // TS路径映射插件，使tsconfig.json中的paths配置生效
+    tsconfigPaths(),
+    
+    // 自定义CSS分析插件，用于处理鼠标相关样式
+    cssAnalyzer(),
+    
+    // SVG图标插件，用于处理SVG雪碧图
     createSvgIconsPlugin({
+      // 指定存放SVG图标的目录
       iconDirs: [path.resolve(process.cwd(), "src/assets/icons")],
+      // 指定symbolId格式
       symbolId: "icon-[dir]-[name]",
     }),
+    
+    // 打包可视化分析插件，用于分析打包文件大小
     visualizer({ open: true }),
+    
+    // 自动导入插件，自动导入常用API
     AutoImport({
+      // 配置需要自动导入的第三方库解析器
       resolvers: [ElementPlusResolver()],
     }),
+    
+    // 组件自动导入插件
     Components({
+      // 配置Element Plus组件解析器
       resolvers: [ElementPlusResolver()],
     }),
   ],
+  
+  /**
+   * 开发服务器配置
+   */
   server: {
-    // host: "catsdiary.com", //服务器主机名
-    host: "0.0.0.0", //本地测试时使用
-    port: 9191, //端口号
-    open: false, //启动后是否自动打开浏览器
+    // 服务器主机名，0.0.0.0表示允许外部访问
+    host: "0.0.0.0",
+    // 服务器端口号
+    port: 9191,
+    // 启动后是否自动打开浏览器
+    open: false,
+    // HTTPS配置
     https: {
+      // SSL证书私钥文件
       key: fs.readFileSync("certs/localhost+1-key.pem"),
+      // SSL证书文件
       cert: fs.readFileSync("certs/localhost+1.pem"),
     },
   },
+  
+  /**
+   * 构建配置
+   */
   build: {
+    // 指定生成静态资源的存放目录
     assetsDir: "assets",
-    outDir: "dist", // 输出目录
-    minify: "terser", // 压缩方式
-    cssCodeSplit: true, // CSS代码分割
+    // 指定输出目录
+    outDir: "dist",
+    // 指定压缩器
+    minify: "terser",
+    // 启用CSS代码分割
+    cssCodeSplit: true,
+    
+    /**
+     * Rollup打包选项
+     */
     rollupOptions: {
       output: {
+        /**
+         * 自定义chunks分组策略
+         * 将node_modules中的依赖分别打包成独立文件
+         */
         manualChunks(id) {
           if (id.includes("node_modules")) {
             // 让每个插件都打包成独立的文件
@@ -62,23 +120,42 @@ export default defineConfig({
         },
       },
     },
-    // 清除所有console和debugger
+    
+    /**
+     * Terser压缩选项
+     */
     terserOptions: {
       compress: {
+        // 是否删除console语句
         drop_console: false,
+        // 是否删除debugger语句
         drop_debugger: true,
       },
     },
   },
-  assetsInclude: ["**/*.ani"], // 添加 ANI 格式支持
+  
+  /**
+   * 静态资源处理配置
+   * 指定需要额外处理的静态资源类型
+   */
+  assetsInclude: ["**/*.ani"],
+  
+  /**
+   * CSS相关配置
+   */
   css: {
-    // 确保所有样式都被处理
+    // 启用CSS源映射，便于调试
     devSourcemap: true,
+    // PostCSS配置
     postcss: {
-      // 其他 PostCSS 插件可以在这里添加
+      // 可在此处添加其他PostCSS插件
     },
   },
-  //路径别名
+  
+  /**
+   * 路径解析配置
+   * 设置模块导入路径别名，提高代码可读性和维护性
+   */
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),
