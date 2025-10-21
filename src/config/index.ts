@@ -11,7 +11,7 @@ export const LOGIN_URL: string = "/login";
 // pinia仓库前缀
 export const CACHE_PREFIX: string = "MeowMemoirs-";
 
-// Svg本地图片使用 koi- 开头才会生效
+// Svg本地图片使用 - 开头才会生效
 export const SVG_PREFIX: string = "MeowMemoirs-";
 
 // 默认主题颜色

@@ -1,11 +1,7 @@
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
-import type { blogPost } from "@/libs/api/blogPost/type";
-
-import { useBlogStore } from "@/stores";
-const { selectBlog } = useBlogStore();
-
-const blogData = ref<blogPost>();
+import useCurrentBlog from "@/components/blogPost/useBlogCurrent"
+const { currentBlog, selectBlog } = useCurrentBlog()
 const blogContent = ref<string>();
 
 import { useRoute } from "vue-router";
@@ -20,16 +16,13 @@ onMounted(async () => {
     router.push("/main/blogPost");
     return;
   }
-  blogData.value = await selectBlog(Number(articleId.value));
-  console.log(blogData.value);
-  blogContent.value = blogData.value.content;
-  console.log(blogContent.value);
+  blogContent.value = (await selectBlog(Number(articleId.value))).content;
 });
 </script>
 <template>
   <div class="article">
-    <div v-if="blogContent" class="article-context">
-      <v-md-preview :text="blogContent"></v-md-preview>
+    <div v-if="currentBlog" class="article-context">
+      <v-md-preview :text="currentBlog.content"></v-md-preview>
     </div>
   </div>
 </template>
@@ -38,6 +31,7 @@ onMounted(async () => {
   width: 100vw;
   display: flex;
   justify-content: center;
+
   .article-context {
     padding: 20px;
     // width: 1000px;
@@ -45,6 +39,7 @@ onMounted(async () => {
     background-color: #fff;
   }
 }
+
 @media screen and (max-width: 500px) {
   .article {
     .article-context {

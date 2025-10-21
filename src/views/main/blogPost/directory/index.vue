@@ -1,23 +1,28 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import { useRouter } from "vue-router";
-import { useBlogStore } from "@/stores";
-import useApiUrl from "@/libs/useApiUrl";
-import type { blogPost, Tag } from "@/libs/api/blogPost/type";
+import { computed, onMounted } from "vue";
 import LoadingSpinner from "./LoadingSpinner.vue";
+
+import { useRouter } from "vue-router";
+const router = useRouter();
+
+import useApiUrl from "@/libs/useApiUrl";
+const { getStaticFileUrl } = useApiUrl();
+
+import type { blogPost, Tag } from "@/libs/api/blogPost/type";
+import useTag from "@/components/blogPost/useTag"
+const { blogTags, getTagList } = useTag()
+import useBlogList from "@/components/blogPost/useBlogList"
+const { blogList, getBlogList } = useBlogList()
+
 
 interface ProcessedBlogItem extends blogPost {
     TagList: Tag[];
     formattedDate: string;
 }
 
-const router = useRouter();
-const blogStore = useBlogStore();
-const { getStaticFileUrl } = useApiUrl();
-
 // 计算属性优化
 const processedBlogList = computed(() => {
-    return blogStore.blogList.map(item => ({
+    return blogList.value.map(item => ({
         ...item,
         TagList: getBlogTag(item.tags),
         formattedDate: formatDate(item.createdAt)
@@ -41,39 +46,32 @@ const getBlogTag = (tags: string): Tag[] => {
             if (isNaN(num)) throw new Error(`Invalid ID: ${id}`);
             return num;
         });
-        return blogStore.blogTags.filter(tag => ids.includes(tag.tagId));
+        return blogTags.value.filter(tag => ids.includes(tag.tagId));
     } catch (e) {
         console.error("Tag processing error:", e);
         return [];
     }
 };
 
-// 初始加载
-blogStore.getTagList();
-blogStore.getBlogList();
-
 // 导航处理
 const openBlog = (id: number) => {
     router.push(`/main/blogPost/article?id=${id}`);
 };
+
+onMounted(() => {
+    // 初始加载
+    getTagList();
+    getBlogList();
+})
 </script>
 
 <template>
     <div class="blog-selector">
-        <div
-            v-if="blogStore.blogList.length"
-            v-slide-in
-            v-for="item in processedBlogList"
-            :key="item.id"
-            class="blog-item"
-            @click="openBlog(item.id)"
-        >
+        <div v-if="blogList.length" v-slide-in v-for="item in processedBlogList" :key="item.id" class="blog-item"
+            @click="openBlog(item.id)">
             <div class="blog-content">
-                <ProgressiveImage
-                    class="preview"
-                    :placeholder="getStaticFileUrl('img/home/_3-720p.webp')"
-                    :origin="getStaticFileUrl('img/home/_3-4k.webp')"
-                />
+                <ProgressiveImage class="preview" :placeholder="getStaticFileUrl('img/home/_3-720p.webp')"
+                    :origin="getStaticFileUrl('img/home/_3-4k.webp')" />
 
                 <div class="blog-info">
                     <h3 class="blog-title">{{ item.title }}</h3>
@@ -81,30 +79,19 @@ const openBlog = (id: number) => {
 
                     <div class="blog-meta">
                         <div class="blog-tags">
-                            <span
-                                v-for="tag in item.TagList"
-                                :key="tag.tagId"
-                                class="blog-tag"
-                                :style="{ backgroundColor: tag.tagColor }"
-                            >
+                            <span v-for="tag in item.TagList" :key="tag.tagId" class="blog-tag"
+                                :style="{ backgroundColor: tag.tagColor }">
                                 {{ tag.tagName }}
                             </span>
                         </div>
 
                         <div class="blog-footer">
                             <div class="author-info">
-                                <img
-                                    class="author-avatar"
-                                    :src="
-                                        getStaticFileUrl('img/user/Avatar.webp')
-                                    "
-                                    alt="作者头像"
-                                />
+                                <img class="author-avatar" :src="getStaticFileUrl('img/user/Avatar.webp')
+                                    " alt="作者头像" />
                                 <span class="author-name">小叶子</span>
                             </div>
-                            <time class="blog-time"
-                                >发布时间:{{ item.formattedDate }}</time
-                            >
+                            <time class="blog-time">发布时间:{{ item.formattedDate }}</time>
                         </div>
                     </div>
                 </div>
@@ -117,6 +104,7 @@ const openBlog = (id: number) => {
 <style scoped lang="scss">
 .content {
     overflow-y: auto;
+
     .card {
         height: 200px;
         background-color: #000;
@@ -131,6 +119,7 @@ const openBlog = (id: number) => {
 .blog-selector {
     overflow-y: auto;
     height: 100vh;
+
     /* 为webkit浏览器设置纵向和横向滚动条宽度和高度 */
     &::-webkit-scrollbar {
         display: none;

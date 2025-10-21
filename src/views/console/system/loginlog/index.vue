@@ -66,21 +66,21 @@ const handleListPage = async () => {
   // try {
   //   loading.value = true;
   //   tableList.value = []; // 重置表格数据
-  //   const res: any = await listPage(koiDatePicker(searchParams.value, dateRange.value));
+  //   const res: any = await listPage(DatePicker(searchParams.value, dateRange.value));
   //   console.log("日志数据表格数据->", res.data);
   //   tableList.value = res.data.records;
   //   total.value = res.data.total;
   //   loading.value = false;
   // } catch (error) {
   //   console.log(error);
-  //   koiNoticeError("数据查询失败，请刷新重试🌻");
+  //   NoticeError("数据查询失败，请刷新重试🌻");
   // }
 };
 
 /** 数据表格[删除、批量删除等刷新使用] */
 const handleTableData = async () => {
   try {
-    // const res: any = await listPage(koiDatePicker(searchParams.value, dateRange.value));
+    // const res: any = await listPage(DatePicker(searchParams.value, dateRange.value));
     // console.log("日志数据表格数据->", res.data);
     // tableList.value = res.data.records;
     // total.value = res.data.total;

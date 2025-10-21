@@ -30,8 +30,8 @@ export const BlogPostApi = {
   MMPostBlogGetTags() {
     return http.get<ResponseData<BlogTags>>(`/Blog/GetBlogTags`);
   },
-  // 上传文章
-  MMPostBlogPostUpload(blog: blogPost, operation: operation) {
+  // 操作文章
+  MMPostBlogPostEdit(blog: blogPost, operation: operation) {
     return http.post<ResponseData<Blog>>(`/Blog/UploadBlog/${operation}`, blog);
   },
   // 添加标签

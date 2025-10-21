@@ -4,12 +4,12 @@ import { CACHE_PREFIX } from "@/config";
  * 封装获取用户信息的方法
  */
 export const getToken = () => {
-  const koiUser = window.localStorage.getItem(CACHE_PREFIX + "user");
-  if (koiUser != null && koiUser != "" && koiUser != undefined) {
-    const parseKoiUser = JSON.parse(koiUser).userStore;
-    const keys = Object.keys(parseKoiUser);
+  const User = window.localStorage.getItem(CACHE_PREFIX + "user");
+  if (User != null && User != "" && User != undefined) {
+    const parseUser = JSON.parse(User).userStore;
+    const keys = Object.keys(parseUser);
     if (keys.includes("token")) {
-      return parseKoiUser.token;
+      return parseUser.token;
     } else {
       return "";
     }
@@ -26,7 +26,7 @@ export const getToken = () => {
  * @method remove 移除会话缓存
  * @method clear 移除全部会话缓存
  */
-export const koiSessionStorage = {
+export const SessionStorage = {
   put(key: string, value: any) {
     window.sessionStorage.setItem(CACHE_PREFIX + key, value);
   },
@@ -62,7 +62,7 @@ export const koiSessionStorage = {
  * @method remove 移除
  * @method clear 移除全部
  */
-export const koiLocalStorage = {
+export const LocalStorage = {
   put(key: string, value: any) {
     window.localStorage.setItem(CACHE_PREFIX + key, value);
   },
@@ -79,13 +79,13 @@ export const koiLocalStorage = {
   clear() {
     window.localStorage.clear();
   },
-  putJSON(key: string, jsonValue: any) {
+  putJSON<T>(key: string, jsonValue: T) {
     window.localStorage.put(CACHE_PREFIX + key, JSON.stringify(jsonValue));
   },
-  setJSON(key: string, jsonValue: any) {
+  setJSON<T>(key: string, jsonValue: T) {
     window.localStorage.put(CACHE_PREFIX + key, JSON.stringify(jsonValue));
   },
-  getJSON(key: string) {
+  getJSON<T>(key: string): T {
     const jsonValue: any = window.localStorage.get(CACHE_PREFIX + key);
     return JSON.parse(jsonValue);
   }

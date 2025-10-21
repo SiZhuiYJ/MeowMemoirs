@@ -24,7 +24,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { koiSessionStorage, koiLocalStorage } from "@/utils/storage.ts";
+import { SessionStorage, LocalStorage } from "@/utils/storage.ts";
 import { useAuthStore } from "@/stores";
 import { LOGIN_URL } from "@/config";
 import { useRouter } from "vue-router";
@@ -34,12 +34,12 @@ const router = useRouter();
 
 // 退出登录
 const handleLayout = () => {
-  koiSessionStorage.clear();
+  SessionStorage.clear();
   // 如果不想要保存上次登录设置的全局颜色、布局等，则将下方第一行清空全部代码打开。
-  // koiLocalStorage.clear();
-  koiLocalStorage.remove("user");
-  koiLocalStorage.remove("keepAlive");
-  koiLocalStorage.remove("tabs");
+  // LocalStorage.clear();
+  LocalStorage.remove("user");
+  LocalStorage.remove("keepAlive");
+  LocalStorage.remove("tabs");
   // 退出登录。必须使用replace把页面缓存刷掉。
   window.location.replace(LOGIN_URL);
 };
@@ -68,12 +68,14 @@ const handleCommand = (command: string | number) => {
 // dropdown字体颜色
 .dropdown {
   color: var(--el-color-primary);
-  white-space: nowrap; /* 不换行 */
+  white-space: nowrap;
+  /* 不换行 */
   cursor: pointer;
   outline: none; // 去除伪元素
   display: flex;
   align-items: center;
 }
+
 .user-avatar {
   width: 34px;
   height: 34px;

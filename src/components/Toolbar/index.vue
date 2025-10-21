@@ -1,26 +1,16 @@
 <template>
-  <!-- 使用方式：<KoiToolbar v-model:showSearch="showSearch" @refreshTable="handleTableData"></KoiToolbar> -->
+  <!-- 使用方式：<Toolbar v-model:showSearch="showSearch" @refreshTable="handleTableData"></Toolbar> -->
   <div class="content-toolbar">
     <el-row>
-      <el-tooltip :content="showSearch ? '隐藏搜索' : '显示搜索'" placement="top">
-        <el-button circle icon="search" @click="toggleSearch()" />
+      <el-tooltip :content="(showSearch ? '隐藏' : '显示') + showTitle" placement="top">
+        <el-button circle icon="Sort" @click="toggleSearch()" />
       </el-tooltip>
       <el-tooltip :content="showView ? '详情' : '大图'" placement="top" v-if="isShowView">
         <el-button circle @click="toggleView()">
           <el-icon :size="20">
-            <svg-icon
-              icon-class="view-list"
-              size="20px"
-              v-if="showView"
-              style="color: var(--el-header-text-color-regular)"
-            />
-            <svg-icon
-              icon-class="view-old"
-              size="20px"
-              v-if="!showView"
-              style="color: var(--el-header-text-color-regular)"
-            /> </el-icon
-        ></el-button>
+            <svg-icon icon="Upload" size="20px" v-if="showView" style="color: var(--el-header-text-color-regular)" />
+            <svg-icon icon="Download" size="20px" v-if="!showView" style="color: var(--el-header-text-color-regular)" />
+          </el-icon></el-button>
       </el-tooltip>
       <el-tooltip content="刷新" placement="top">
         <el-button circle icon="refresh" @click="handleRefresh()" />
@@ -35,12 +25,14 @@ interface Props {
   showSearch: boolean; // 可选
   showView?: boolean; // 必填
   isShowView?: boolean; // 必填
+  showTitle?: string;// 必填
 }
 
 const props = withDefaults(defineProps<Props>(), {
   showSearch: true,
   showView: false,
   isShowView: false,
+  showTitle: '搜索',
 });
 const emits = defineEmits(["update:showSearch", "update:showView", "refreshTable"]);
 
