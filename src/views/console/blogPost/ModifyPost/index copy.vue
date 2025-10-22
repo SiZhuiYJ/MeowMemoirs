@@ -89,7 +89,7 @@ const handleImageClick = (images: string[], currentIndex: number) => {
 onMounted(() => {
     // 获取标签列表
     getTagList();
-    useEditBlog().editBlog = useEditBlog().editBlog;
+    useEditBlog().editBlog;
 });
 </script>
 

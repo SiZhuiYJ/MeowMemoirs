@@ -7,7 +7,7 @@ import useTag from "@/components/blogPost/useTag";
 const { blogTags, getTagList, addBlogTag } = useTag();
 
 import { useEditBlog } from "@/components/blogPost/useBlogEdit";
-const { currentCachedBlog, clearCachedBlog } = useEditBlog();
+const { currentCachedBlog, clearCachedBlog, uploadCurrentBlog } = useEditBlog();
 
 import type { options } from "@/libs/api/files/type";
 
@@ -122,18 +122,18 @@ const handleBlogSave = async () => {
     }
 
     console.log(useEditBlog().editBlog)
-    // loading.value = true;
-    // try {
-    //     currentCachedBlog(useEditBlog().editBlog);
-    //     const result = await uploadCurrentBlog();
-    //     Object.assign(useEditBlog().editBlog, result);
-    //     ElMessage.success("博客保存成功");
-    // } catch (error) {
-    //     console.error("保存博客失败:", error);
-    //     ElMessage.error("博客保存失败，请重试");
-    // } finally {
-    //     loading.value = false;
-    // }
+    loading.value = true;
+    try {
+        currentCachedBlog(useEditBlog().editBlog);
+        const result = await uploadCurrentBlog();
+        Object.assign(useEditBlog().editBlog, result);
+        ElMessage.success("博客保存成功");
+    } catch (error) {
+        console.error("保存博客失败:", error);
+        ElMessage.error("博客保存失败，请重试");
+    } finally {
+        loading.value = false;
+    }
 };
 
 // 添加标签
@@ -211,10 +211,6 @@ const handleKeydown = (event: KeyboardEvent) => {
 onMounted(() => {
     // 获取标签列表
     getTagList();
-
-    // 初始化表单数据
-    const { editBlog } = useEditBlog();
-    Object.assign(useEditBlog().editBlog, editBlog);
 
     // 添加键盘事件监听
     document.addEventListener('keydown', handleKeydown);
