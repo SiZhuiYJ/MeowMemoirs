@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-import type { blogPost, UploadBlog, EditBlog } from "@/libs/api/blogPost/type";
+import type { UploadBlog, EditBlog } from "@/libs/api/blogPost/type";
 import { defineStore } from 'pinia';
 import { CACHE_PREFIX } from "@/config";
 import { BlogPostApi } from "@/libs/api/blogPost";

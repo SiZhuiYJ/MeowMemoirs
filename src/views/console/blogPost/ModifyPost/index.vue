@@ -7,7 +7,7 @@ import useTag from "@/components/blogPost/useTag";
 const { blogTags, getTagList, addBlogTag } = useTag();
 
 import { useEditBlog } from "@/components/blogPost/useBlogEdit";
-const { currentCachedBlog, clearCachedBlog, uploadCurrentBlog } = useEditBlog();
+const { currentCachedBlog, clearCachedBlog } = useEditBlog();
 
 import type { options } from "@/libs/api/files/type";
 

@@ -5,6 +5,7 @@
       ".TopMao",
       ".btn",
       ".dropdown",
+      ".el-alert .el-alert__close-btn",
       ".el-breadcrumb__inner a:hover,.el-breadcrumb__inner.is-link:hover",
       ".el-button",
       ".el-calendar-table .el-calendar-day:hover",
@@ -23,6 +24,7 @@
       ".el-date-editor .el-range__close-icon",
       ".el-date-picker__header-label",
       ".el-date-picker__time-label",
+      ".el-date-range-picker__header-label",
       ".el-date-table td",
       ".el-dialog__headerbtn",
       ".el-drawer__close-btn",
@@ -43,7 +45,10 @@
       ".el-picker-panel__icon-btn",
       ".el-picker-panel__icon-btn .el-icon",
       ".el-picker-panel__shortcut",
+      ".el-radio",
       ".el-radio-button__inner",
+      ".el-radio__inner",
+      ".el-radio__input",
       ".el-scrollbar__thumb",
       ".el-select-dropdown__item",
       ".el-select__caret",
@@ -91,8 +96,13 @@
       ".el-checkbox__input.is-disabled .el-checkbox__inner",
       ".el-checkbox__input.is-disabled .el-checkbox__inner:after",
       ".el-checkbox__input.is-disabled+span.el-checkbox__label",
+      ".el-color-alpha-slider.is-disabled .el-color-alpha-slider__thumb",
+      ".el-color-picker-panel.is-disabled .el-color-alpha-slider,.el-color-picker-panel.is-disabled .el-color-predefine .el-color-predefine__color-selector",
+      ".el-color-picker-panel.is-disabled .el-color-hue-slider,.el-color-picker-panel.is-disabled .el-color-svpanel",
+      ".el-color-picker-panel.is-disabled .el-color-hue-slider__thumb",
       ".el-color-picker.is-disabled .el-color-picker__trigger",
-      ".el-color-picker__mask",
+      ".el-date-picker.is-disabled .el-date-picker__header-label:hover",
+      ".el-date-range-picker.is-disabled .el-date-range-picker__header-label:hover",
       ".el-date-table td.disabled .el-date-table-cell",
       ".el-dropdown-menu__item.is-disabled",
       ".el-dropdown.is-disabled",
@@ -104,9 +114,18 @@
       ".el-input.is-disabled .el-input__wrapper",
       ".el-menu-item.is-disabled",
       ".el-month-table td.disabled .el-date-table-cell__text",
+      ".el-picker-panel.is-disabled .el-picker-panel__icon-btn:hover",
+      ".el-picker-panel.is-disabled .el-picker-panel__next-btn:hover",
+      ".el-picker-panel.is-disabled .el-picker-panel__prev-btn:hover",
+      ".el-picker-panel.is-disabled .el-picker-panel__shortcut:hover",
       ".el-picker-panel__btn[disabled]",
       ".el-picker-panel__icon-btn.is-disabled:hover",
       ".el-radio-button__original-radio:disabled+.el-radio-button__inner",
+      ".el-radio.is-bordered.is-disabled",
+      ".el-radio__input.is-disabled .el-radio__inner",
+      ".el-radio__input.is-disabled .el-radio__inner+.el-radio__label",
+      ".el-radio__input.is-disabled .el-radio__inner:after",
+      ".el-radio__input.is-disabled+span.el-radio__label",
       ".el-range-editor.is-disabled",
       ".el-range-editor.is-disabled input",
       ".el-select-dropdown__item.is-disabled",
@@ -125,6 +144,29 @@
     ]
   },
   {
+    "name": "inherit",
+    "list": [
+      ".el-date-picker.is-disabled .el-date-picker__header-label .el-icon",
+      ".el-date-range-picker.is-disabled .el-date-range-picker__header-label .el-icon",
+      ".el-picker-panel.is-disabled .el-picker-panel__icon-btn .el-icon",
+      ".el-picker-panel.is-disabled .el-picker-panel__next-btn .el-icon",
+      ".el-picker-panel.is-disabled .el-picker-panel__prev-btn .el-icon",
+      ".el-picker-panel.is-disabled .el-picker-panel__shortcut .el-icon",
+      ".el-picker-panel__icon-btn.is-disabled .el-icon"
+    ]
+  },
+  {
+    "name": "default",
+    "list": [
+      ".CodeMirror-gutter-elt",
+      ".clock",
+      ".el-date-table td.week",
+      ".el-image-viewer__actions__inner",
+      ".el-image-viewer__progress",
+      ".el-time-spinner__wrapper.is-arrow .el-time-spinner__item:hover:not(.is-disabled):not(.is-active)"
+    ]
+  },
+  {
     "name": "text",
     "list": [
       ".CodeMirror-lines",
@@ -133,16 +175,6 @@
       ".el-input__wrapper",
       ".el-select__wrapper.is-filterable",
       ".v-md-editor__editor-wrapper"
-    ]
-  },
-  {
-    "name": "default",
-    "list": [
-      ".CodeMirror-gutter-elt",
-      ".clock",
-      ".el-image-viewer__actions__inner",
-      ".el-image-viewer__progress",
-      ".el-time-spinner__wrapper.is-arrow .el-time-spinner__item:hover:not(.is-disabled):not(.is-active)"
     ]
   },
   {
@@ -159,6 +191,12 @@
     ]
   },
   {
+    "name": "ew-resize",
+    "list": [
+      ".el-drawer.ltr>.el-drawer__dragger,.el-drawer.rtl>.el-drawer__dragger"
+    ]
+  },
+  {
     "name": "head",
     "list": [
       ".el-color-svpanel__cursor>div"
@@ -168,6 +206,12 @@
     "name": "help",
     "list": [
       ".vuepress-markdown-body .token.entity"
+    ]
+  },
+  {
+    "name": "ns-resize",
+    "list": [
+      ".el-drawer.btt>.el-drawer__dragger,.el-drawer.ttb>.el-drawer__dragger"
     ]
   }
 ]
