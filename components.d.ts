@@ -76,7 +76,4 @@ declare module 'vue' {
     TypewriterEffect: typeof import('./src/components/TypewriterEffect/index.vue')['default']
     WaterfallFlow: typeof import('./src/components/WaterfallFlow/index.vue')['default']
   }
-  export interface ComponentCustomProperties {
-    vLoading: typeof import('element-plus/es')['ElLoadingDirective']
-  }
 }

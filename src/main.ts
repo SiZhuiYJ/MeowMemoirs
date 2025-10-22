@@ -162,6 +162,11 @@ app.use(VMdEditor);
 
 // 注册Markdown预览组件
 app.use(VMdPreview);
+// main.js
+import VConsole from 'vconsole';
 
+if (process.env.NODE_ENV === 'development') {
+  new VConsole();
+}
 // 将应用挂载到DOM元素上
 app.mount("#app");
