@@ -9,7 +9,7 @@ Meow Memoirs
 
 ## 项目技术
 
-Vue 3 + TypeScript + Vite + Vue Router + Element Plus + Axios
+Vue 3 + TypeScript + Vite + Vue Router + Element Plus + Axios + Element-Plus + v-md-editor + Pinia
 
 学习制作自己的小网站“喵咪事件簿”
 

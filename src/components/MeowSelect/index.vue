@@ -1,35 +1,17 @@
 <template>
-  <el-select
-    v-model="value"
-    :placeholder="placeholder"
-    :multiple="multiple"
-    :clearable="clearable"
-    :collapse-tags="collapseTags"
-    :collapse-tags-tooltip="collapseTagsTooltip"
-    :style="{ width: width }"
-    :filterable="filterable"
-    @change="handleChange"
-  >
+  <el-select v-model="value" :placeholder="placeholder" :multiple="multiple" :clearable="clearable"
+    :collapse-tags="collapseTags" :collapse-tags-tooltip="collapseTagsTooltip" :style="{ width: width }"
+    :filterable="filterable" :max="max" @change="handleChange">
     <!-- 多选时显示全选 -->
     <template v-if="multiple" #header>
-      <el-checkbox
-        v-model="checkAll"
-        :indeterminate="indeterminate"
-        class="checkbox-all"
-        @change="handleCheckAll"
-      >
+      <el-checkbox v-model="checkAll" :indeterminate="indeterminate" class="checkbox-all" @change="handleCheckAll">
         {{ checkAllText }}
       </el-checkbox>
     </template>
 
     <!-- 自定义选项插槽 -->
-    <el-option
-      v-for="item in filteredOptions"
-      :key="item.value"
-      :value="item.value"
-      :label="item.label"
-      :disabled="item.disabled"
-    >
+    <el-option v-for="item in filteredOptions" :key="item.value" :value="item.value" :label="item.label"
+      :disabled="item.disabled">
       <slot name="option" :item="item">
         {{ item.label }}
       </slot>
@@ -40,20 +22,15 @@
       <div class="add-option-container">
         <template v-if="!isAdding">
           <el-button text bg size="small" @click="startAddOption">
-            <el-icon><Plus /></el-icon>
+            <el-icon>
+              <Plus />
+            </el-icon>
             {{ addButtonText }}
           </el-button>
         </template>
         <template v-else>
-          <el-input
-            ref="optionInputRef"
-            v-model="newOptionName"
-            size="small"
-            :placeholder="addPlaceholder"
-            class="option-input"
-            @keyup.enter="confirmAdd"
-            @keyup.esc="cancelAdd"
-          />
+          <el-input ref="optionInputRef" v-model="newOptionName" size="small" :placeholder="addPlaceholder"
+            class="option-input" @keyup.enter="confirmAdd" @keyup.esc="cancelAdd" />
           <div class="button-group">
             <el-button type="primary" size="small" @click="confirmAdd">
               {{ confirmButtonText }}
@@ -82,6 +59,7 @@ const props = withDefaults(
   defineProps<{
     modelValue: string | number | Array<string | number>; // 支持单选和多选类型
     options: Option[];
+    max?: number;
     multiple?: boolean;
     addable?: boolean;
     placeholder?: string;
@@ -100,6 +78,7 @@ const props = withDefaults(
   {
     multiple: false,
     addable: false,
+    max: 3,
     placeholder: "请选择",
     width: "200px",
     checkAllText: "全选",

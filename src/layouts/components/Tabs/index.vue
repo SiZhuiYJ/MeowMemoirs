@@ -145,34 +145,15 @@ const handleTabsMenuChildren = (path: any, value: any) => {
 </script>
 
 <template>
-  <el-tabs
-    v-model="activeTab"
-    type="card"
-    class="tabs"
-    @tab-remove="removeTab"
-    @tab-click="clickToggleTab"
-    @contextmenu.prevent="handleTabsMenuParent($event)"
-  >
+  <el-tabs v-model="activeTab" type="card" class="tabs" @tab-remove="removeTab" @tab-click="clickToggleTab"
+    @contextmenu.prevent="handleTabsMenuParent($event)">
     <!-- :closable="true" 显示关闭图标 -->
-    <el-tab-pane
-      v-for="item in tabList"
-      :key="item.path"
-      :label="item.title"
-      :name="item.path"
-      :closable="item.closeIcon"
-    >
+    <el-tab-pane v-for="item in tabList" :key="item.path" :label="item.title" :name="item.path"
+      :closable="item.closeIcon">
       <!-- 加载图标 -->
       <template #label>
-        <div
-          class="card-tab"
-          @contextmenu.prevent="handleTabsMenuChildren(item.path, $event)"
-        >
-          <GlobalIcon
-            style="margin-right: 2px"
-            v-show="item.icon"
-            :name="item.icon"
-            size="16"
-          ></GlobalIcon>
+        <div class="card-tab" @contextmenu.prevent="handleTabsMenuChildren(item.path, $event)">
+          <GlobalIcon style="margin-right: 2px" v-show="item.icon" :name="item.icon" size="16"></GlobalIcon>
           <div>{{ item?.title }}</div>
         </div>
       </template>
@@ -190,7 +171,6 @@ const handleTabsMenuChildren = (path: any, value: any) => {
 //   background-color: #000000;
 // }
 .tabs {
-  @apply dark:border-#313233;
   // 色弱模式
   background-color: var(--el-bg-color);
 }
@@ -224,7 +204,6 @@ const handleTabsMenuChildren = (path: any, value: any) => {
   margin-top: 1px;
   font-size: 14px;
   font-weight: 500;
-  @apply dark:text-#E0E0E0;
   border: 1px solid #d1d1da;
   border-radius: 4px;
 
@@ -260,6 +239,7 @@ const handleTabsMenuChildren = (path: any, value: any) => {
   height: 32px; // 高度越高，可以调整tab卡距离底部的高度
   border: none; //  去除左侧tabs边框
   border-radius: 4px;
+  align-items: center;
 }
 
 // 覆盖多余边框

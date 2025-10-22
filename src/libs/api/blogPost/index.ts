@@ -6,6 +6,7 @@ import type {
   operation,
   Tag,
   AddTag,
+  UploadBlog
 } from "@/libs/api/blogPost/type";
 
 interface BlogList {
@@ -31,8 +32,8 @@ export const BlogPostApi = {
     return http.get<ResponseData<BlogTags>>(`/Blog/GetBlogTags`);
   },
   // 操作文章
-  MMPostBlogPostEdit(blog: blogPost, operation: operation) {
-    return http.post<ResponseData<Blog>>(`/Blog/UploadBlog/${operation}`, blog);
+  MMPostBlogPostEdit(blog: UploadBlog, operation: operation) {
+    return http.post<ResponseData<Blog>>(`Blog/UploadBlog/${operation}`, blog);
   },
   // 添加标签
   MMPostBlogAddTag(blogTag: AddTag) {

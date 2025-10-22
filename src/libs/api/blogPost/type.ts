@@ -18,10 +18,11 @@ export interface Tag {
 }
 // 上传博客
 export interface UploadBlog {
-  title: string;
-  content: string;
-  tags: string;
-  coverContent: string;
+  id: number,
+  title: string,
+  coverContent: string,
+  content: string,
+  tags: string
 }
 // 添加标签
 export interface AddTag {
@@ -29,4 +30,12 @@ export interface AddTag {
   TagDescription: string;
   TagIcon: string;
   TagName: string;
+}
+
+export interface EditBlog {
+  id: number,
+  title: string,
+  coverContent: string,
+  content: string,
+  tags: string[]
 }
