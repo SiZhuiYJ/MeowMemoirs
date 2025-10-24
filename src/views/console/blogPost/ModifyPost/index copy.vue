@@ -29,7 +29,7 @@ const showSearch = ref<boolean>(true); // 默认显示搜索条件// 选择数�
 const multiple = computed(
     () =>
         useEditBlog().editBlog.content.length > 0 &&
-        useEditBlog().editBlog.coverContent.length > 0 &&
+        useEditBlog().editBlog.summary.length > 0 &&
         useEditBlog().editBlog.title.length > 0 &&
         useEditBlog().editBlog.tags.length > 0
 );
@@ -108,8 +108,8 @@ onMounted(() => {
                         filterable :max="10" collapseTags collapse-tags-tooltip placeholder="请选择图片类型" @add="addTag"
                         @change="() => { }" />
                 </el-form-item>
-                <el-form-item label="副标题" prop="coverContent">
-                    <el-input placeholder="请输入副标题" v-model="useEditBlog().editBlog.coverContent" style="width: 200px"
+                <el-form-item label="副标题" prop="summary">
+                    <el-input placeholder="请输入副标题" v-model="useEditBlog().editBlog.summary" style="width: 200px"
                         type="textarea" clearable @keyup.enter.native="handleBlogSave" :rows="1" maxlength="100"
                         show-word-limit></el-input>
                 </el-form-item>

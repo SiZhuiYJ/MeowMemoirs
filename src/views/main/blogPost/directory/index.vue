@@ -75,7 +75,7 @@ onMounted(() => {
 
                 <div class="blog-info">
                     <h3 class="blog-title">{{ item.title }}</h3>
-                    <p class="blog-intro">{{ item.coverContent }}</p>
+                    <p class="blog-intro">{{ item.summary }}</p>
 
                     <div class="blog-meta">
                         <div class="blog-tags">

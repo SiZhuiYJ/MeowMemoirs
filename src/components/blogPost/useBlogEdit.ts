@@ -8,7 +8,7 @@ export const useEditBlog = defineStore("editBlog", () => {
         id: 0,
         title: "",
         content: "",
-        coverContent: "",
+        summary: "",
         tags: [],
     }
     // 缓存当前编辑的博客文章
@@ -16,7 +16,7 @@ export const useEditBlog = defineStore("editBlog", () => {
         id: 0,
         title: "",
         content: "",
-        coverContent: "",
+        summary: "",
         tags: [],
     });
     // 临时缓存当前博客
@@ -34,7 +34,7 @@ export const useEditBlog = defineStore("editBlog", () => {
         const editBlogData: UploadBlog = {
             id: editBlog.value.id,
             title: editBlog.value.title,
-            coverContent: editBlog.value.coverContent,
+            summary: editBlog.value.summary,
             content: editBlog.value.content,
             tags: JSON.stringify(editBlog.value.tags)
         };
@@ -43,7 +43,7 @@ export const useEditBlog = defineStore("editBlog", () => {
             id: data.blog.id,
             title: data.blog.title,
             content: data.blog.content,
-            coverContent: data.blog.coverContent,
+            summary: data.blog.summary,
             tags: JSON.parse(data.blog.tags) as string[],
         };
         return editBlog.value;

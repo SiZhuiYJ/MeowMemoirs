@@ -26,7 +26,7 @@ const formRules = reactive<FormRules<typeof blogParams>>({
         { required: true, message: "请输入博客标题", trigger: "blur" },
         { min: 2, max: 100, message: "标题长度在 2 到 100 个字符", trigger: "blur" }
     ],
-    coverContent: [
+    summary: [
         { required: true, message: "请输入副标题", trigger: "blur" },
         { max: 100, message: "副标题不能超过 100 个字符", trigger: "blur" }
     ],
@@ -54,7 +54,7 @@ const showSearch = ref<boolean>(true);
 const isDDeleteFormComplete = computed(() => {
     return (
         useEditBlog().editBlog.content.length == 0 &&
-        useEditBlog().editBlog.coverContent.length == 0 &&
+        useEditBlog().editBlog.summary.length == 0 &&
         useEditBlog().editBlog.title.length == 0 &&
         useEditBlog().editBlog.tags.length == 0
     );
@@ -64,7 +64,7 @@ const isDDeleteFormComplete = computed(() => {
 const isFormComplete = computed(() => {
     return (
         useEditBlog().editBlog.content.length > 0 &&
-        useEditBlog().editBlog.coverContent.length > 0 &&
+        useEditBlog().editBlog.summary.length > 0 &&
         useEditBlog().editBlog.title.length > 0 &&
         useEditBlog().editBlog.tags.length > 0
     );
@@ -240,8 +240,8 @@ onUnmounted(() => {
                         filterable :max="10" collapseTags collapse-tags-tooltip placeholder="请选择标签" @add="addTag" />
                 </el-form-item>
 
-                <el-form-item label="副标题" prop="coverContent">
-                    <el-input placeholder="请输入副标题" v-model="useEditBlog().editBlog.coverContent" style="width: 200px"
+                <el-form-item label="副标题" prop="summary">
+                    <el-input placeholder="请输入副标题" v-model="useEditBlog().editBlog.summary" style="width: 200px"
                         type="textarea" clearable @keyup.enter="handleBlogSave" :rows="1" maxlength="100"
                         show-word-limit resize="none" />
                 </el-form-item>
