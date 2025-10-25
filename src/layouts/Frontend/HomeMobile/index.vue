@@ -34,9 +34,15 @@ const mobileDrawer = ref(false);
 </script>
 <template>
     <el-container class="lay-content">
-        <el-header class="el-header" :style="{ top: globalStore.isHeader ? '-30px' : '0px' }">
+        <el-header
+            class="el-header"
+            :style="{ top: globalStore.isHeader ? '-30px' : '0px' }"
+        >
             <div class="common-header">
-                <Refresh style="width: 20px; height: 20px" class="refresh"></Refresh>
+                <Refresh
+                    style="width: 20px; height: 20px"
+                    class="refresh"
+                ></Refresh>
 
                 <el-breadcrumb separator="/" class="bread">
                     <el-breadcrumb-item :to="{ path: '/' }" class="bread-item">
@@ -48,9 +54,16 @@ const mobileDrawer = ref(false);
                 </div>
             </div>
             <div class="drop-btn" @click="toggleIsHeader()">
-                <GlobalIcon name="ArrowUp" class="drop-icon" :style="{
-                    transform: !useGlobalStore().isHeader ? 'rotate(0)' : 'rotate(180deg)',
-                }" size="16">
+                <GlobalIcon
+                    name="ArrowUp"
+                    class="drop-icon"
+                    :style="{
+                        transform: !useGlobalStore().isHeader
+                            ? 'rotate(0)'
+                            : 'rotate(180deg)'
+                    }"
+                    size="16"
+                >
                 </GlobalIcon>
             </div>
         </el-header>
@@ -62,12 +75,17 @@ const mobileDrawer = ref(false);
     </el-container>
     <!-- 右侧侧抽屉菜单 -->
     <MobileDrawer style="width: 220px" v-model="mobileDrawer" placement="right">
-        <div class="transition-all mobile-drawer">
+        <div class=" mobile-drawer">
             <Logo layout="mobile"></Logo>
             <el-scrollbar class="layout-scrollbar">
                 <!-- :unique-opened="true" 子菜单不能同时展开 -->
-                <el-menu :default-active="activeMenu" :collapse-transition="false"
-                    :uniqueOpened="globalStore.uniqueOpened" :router="false" :class="menuAnimate">
+                <el-menu
+                    :default-active="activeMenu"
+                    :collapse-transition="false"
+                    :uniqueOpened="globalStore.uniqueOpened"
+                    :router="false"
+                    :class="menuAnimate"
+                >
                     <ColumnSubMenu :menuList="menuList"></ColumnSubMenu>
                 </el-menu>
             </el-scrollbar>
@@ -85,8 +103,8 @@ const mobileDrawer = ref(false);
 .mobile-drawer {
     position: absolute;
     width: 100%;
-    height: calc(100vh - 88px);
-
+    height: calc(100% - 88px);
+    transition-property: all;
     .common-footer {
         position: relative;
         bottom: 0;
