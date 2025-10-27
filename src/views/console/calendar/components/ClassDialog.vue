@@ -3,8 +3,10 @@ import { ref } from "vue";
 import type { Class } from "@/libs/api/class/type";
 import MeowDialog from "@/components/MeowDialog/index.vue";
 import { numberToChinese } from "@/utils/calendar";
-import { useClassStore } from "@/stores";
-const { getWeekTableByWeeklong, getTimeTable } = useClassStore();
+import useWeekData from "@/components/Curriculum/useWeekData"
+const { getWeekTableByWeeklong } = useWeekData()
+import useRoutine from "@/components/Curriculum/useRoutine"
+const { getTimeTable } = useRoutine()
 const props = withDefaults(
     defineProps<{
         title?: string; // 弹窗标题
@@ -55,147 +57,76 @@ defineExpose({
 });
 </script>
 <template>
-    <MeowDialog
-        ref="DialogRef"
-        :title="title"
-        @Confirm="handleConfirm"
-        @Cancel="handleCancel"
-        :loading="confirmLoading"
-        :footer-hidden="footerHidden"
-        :draggable="true"
-        :close-on-click-modal="true"
-        :height="500"
-    >
+    <MeowDialog ref="DialogRef" :title="title" @Confirm="handleConfirm" @Cancel="handleCancel" :loading="confirmLoading"
+        :footer-hidden="footerHidden" :draggable="true" :close-on-click-modal="true" :height="500">
         <template #content>
             <div class="class-details">
                 <div class="class-details-item">
-                    <span class="detail-label"
-                        >课程名称:{{ classDetail.name }}</span
-                    >
+                    <span class="detail-label">课程名称:{{ classDetail.name }}</span>
                     <div class="detail-value">
-                        <el-input
-                            :disabled="disabled"
-                            v-model="classDetail.name"
-                            placeholder="名称"
-                            suffix-icon="CollectionTag"
-                        />
+                        <el-input :disabled="disabled" v-model="classDetail.name" placeholder="名称"
+                            suffix-icon="CollectionTag" />
                     </div>
                 </div>
                 <div class="class-details-item">
-                    <span class="detail-label"
-                        >课程地点:{{ classDetail.location }}</span
-                    >
+                    <span class="detail-label">课程地点:{{ classDetail.location }}</span>
                     <div class="detail-value">
-                        <el-input
-                            :disabled="disabled"
-                            v-model="classDetail.location"
-                            placeholder="地点"
-                            suffix-icon="AddLocation"
-                        />
+                        <el-input :disabled="disabled" v-model="classDetail.location" placeholder="地点"
+                            suffix-icon="AddLocation" />
                     </div>
                 </div>
                 <div class="class-details-item">
-                    <span class="detail-label"
-                        >授课老师:{{ classDetail.teacher }}</span
-                    >
+                    <span class="detail-label">授课老师:{{ classDetail.teacher }}</span>
                     <div class="detail-value">
-                        <el-input
-                            :disabled="disabled"
-                            v-model="classDetail.teacher"
-                            placeholder="老师"
-                            suffix-icon="User"
-                        />
+                        <el-input :disabled="disabled" v-model="classDetail.teacher" placeholder="老师"
+                            suffix-icon="User" />
                     </div>
                 </div>
                 <div class="class-details-item">
-                    <span class="detail-label"
-                        >课程周几:{{ classDetail.dayOfWeek }}</span
-                    >
+                    <span class="detail-label">课程周几:{{ classDetail.dayOfWeek }}</span>
                     <div class="detail-value">
                         <el-radio-group v-model="classDetail.dayOfWeek">
-                            <el-radio-button
-                                :disabled="disabled"
-                                v-for="value in 7"
-                                :label="
-                                    value == 1
-                                        ? '日'
-                                        : numberToChinese(value - 1)
-                                "
-                                :value="value - 1"
-                                :key="value"
-                            />
+                            <el-radio-button :disabled="disabled" v-for="value in 7" :label="value == 7
+                                ? '日'
+                                : numberToChinese(value)
+                                " :value="value" :key="value" />
                         </el-radio-group>
                     </div>
                 </div>
                 <div class="class-details-item">
-                    <span class="detail-label"
-                        >课程周次:{{ classDetail.week }}</span
-                    >
+                    <span class="detail-label">课程周次:{{ classDetail.week }}</span>
                     <div class="detail-value">
-                        <el-select-v2
-                            :disabled="disabled"
-                            v-model="classDetail.week"
-                            :options="getWeekTableByWeeklong()"
-                            placeholder="多选"
-                            style="width: 315px"
-                            multiple
-                            collapse-tags
-                            collapse-tags-tooltip
-                            :max-collapse-tags="3"
-                        />
+                        <el-select-v2 :disabled="disabled" v-model="classDetail.week"
+                            :options="getWeekTableByWeeklong()" placeholder="多选" style="width: 315px" multiple
+                            collapse-tags collapse-tags-tooltip :max-collapse-tags="3" />
                     </div>
                 </div>
                 <div class="class-details-item">
-                    <span class="detail-label"
-                        >课程节次:{{ classDetail.number }}</span
-                    >
+                    <span class="detail-label">课程节次:{{ classDetail.number }}</span>
                     <div class="detail-value">
-                        <el-select-v2
-                            :disabled="disabled"
-                            v-model="classDetail.number"
-                            :options="getTimeTable()"
-                            placeholder="多选"
-                            style="width: 315px"
-                            multiple
-                            collapse-tags
-                            collapse-tags-tooltip
-                            :max-collapse-tags="3"
-                        />
+                        <el-select-v2 :disabled="disabled" v-model="classDetail.number" :options="getTimeTable()"
+                            placeholder="多选" style="width: 315px" multiple collapse-tags collapse-tags-tooltip
+                            :max-collapse-tags="3" />
                     </div>
                 </div>
                 <div class="class-details-item">
-                    <span class="detail-label"
-                        >课程颜色:{{ classDetail.color }}</span
-                    >
+                    <span class="detail-label">课程颜色:{{ classDetail.color }}</span>
                     <div class="detail-value">
                         <span class="color-picker">
-                            <el-color-picker
-                                :disabled="disabled"
-                                v-model="classDetail.color"
-                            />
-                            <p
-                                :style="{
-                                    backgroundColor: classDetail?.color
-                                }"
-                            >
+                            <el-color-picker :disabled="disabled" v-model="classDetail.color" />
+                            <p :style="{
+                                backgroundColor: classDetail?.color
+                            }">
                                 {{ classDetail?.color }}
                             </p>
                         </span>
                     </div>
                 </div>
                 <div class="class-details-item">
-                    <span class="detail-label"
-                        >课程备注:{{ classDetail.remark }}</span
-                    >
+                    <span class="detail-label">课程备注:{{ classDetail.remark }}</span>
                     <div class="detail-value">
-                        <el-input
-                            :disabled="disabled"
-                            v-model="classDetail.remark"
-                            style="width: 315px"
-                            :autosize="{ minRows: 2, maxRows: 4 }"
-                            type="textarea"
-                            placeholder="备注"
-                        />
+                        <el-input :disabled="disabled" v-model="classDetail.remark" style="width: 315px"
+                            :autosize="{ minRows: 2, maxRows: 4 }" type="textarea" placeholder="备注" />
                     </div>
                 </div>
             </div>

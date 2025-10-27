@@ -2,7 +2,6 @@ import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import { ClassApi } from "@/libs/api/class/index";
 import type { Class, Event } from "@/libs/api/class/type";
-import { numberToChinese } from "@/utils/calendar";
 import { ElLoading } from "element-plus";
 import { meowMsgError, meowMsgSuccess } from "@/utils/message";
 import { getDateFormatYYYYMMDD, getWeekNumber } from "@/utils/calendar";
@@ -115,21 +114,6 @@ export const useClassStore = defineStore("class", () => {
     async function AddClass(addClass: Class) {
         classes.value.push(addClass);
     }
-    // 获取节次表
-    function getTimeTable(): { label: string; value: number }[] {
-        return numberList.value.map(item => {
-            return { label: "第" + numberToChinese(item) + "节", value: item };
-        });
-    }
-    // 获取周次表按照weeklong生成
-    function getWeekTableByWeeklong(): { label: string; value: number }[] {
-        return Array.from({ length: weeklong.value }, (_, index) => {
-            return {
-                label: "第" + numberToChinese(index + 1) + "周",
-                value: index + 1
-            };
-        });
-    }
     function setWeekNumber(time: string) {
         weekNumber.value = new Date(time);
     }
@@ -168,8 +152,6 @@ export const useClassStore = defineStore("class", () => {
         initializeData, // 初始化数据
         AddClass, // 添加课程
         setWeekNumber, // 设置周数
-        getTimeTable, // 获取节次表
-        getWeekTableByWeeklong, // 获取周次表
         getClass // 获取周次某天某节课的课程
     };
 });
