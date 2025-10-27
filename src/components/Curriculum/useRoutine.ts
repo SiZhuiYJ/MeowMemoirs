@@ -16,7 +16,8 @@ export default function useRoutine() {
         "16:35-17:20",
         "18:30-19:15",
         "19:20-20:05",
-        "21:00-21:45",
+        "20:10-20:55",
+        "21:00-21:45"
     ]);
     async function initializeData() {
         const loading = ElLoading.service({
