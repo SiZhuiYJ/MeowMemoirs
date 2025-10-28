@@ -10,7 +10,7 @@ export default function useWeek() {
     async function setStartDate(newDate: Date) {
         startDate.value = newDate
     }
-    // 设置周数
+    // 设置当前周数
     function setWeekNumber(time: string) {
         weekNumber.value = new Date(time);
     }

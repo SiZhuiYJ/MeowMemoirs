@@ -35,7 +35,7 @@ export default function useClass() {
             console.log(error);
             meowMsgError("课表获取失败");
         }
-        console.log(classes.value)
+        console.log("课表集合", classes.value)
         loading.close();
     }
     async function AddClass(addClass: Class) {
@@ -50,6 +50,7 @@ export default function useClass() {
         dayOfWeek: number,
         number: number
     ): Class | undefined {
+        console.log({ "周次": week, "周几": dayOfWeek, "节次": number })
         return classes.value.find(
             item =>
                 item.week.includes(week) &&

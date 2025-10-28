@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import { ClassApi } from "@/libs/api/class/index";
+// import { ClassApi } from "@/libs/api/class/index";
 import { ElLoading } from "element-plus";
 import { meowMsgError, meowMsgSuccess } from "@/utils/message";
 import { numberToChinese } from "@/utils/calendar";
@@ -24,20 +24,20 @@ export default function useWeekData() {
             background: "rgba(0, 0, 0, 0.7)"
         });
         try {
-            const { data } = await ClassApi.MMPostClassesByID(1);
-            data.forEach(item => {
-                // classes.value.push({
-                //     id: item.id,
-                //     name: item.className,
-                //     location: item.location,
-                //     dayOfWeek: item.dayOfWeek,
-                //     week: JSON.parse(item.weekList),
-                //     number: JSON.parse(item.sessionList),
-                //     teacher: item.teacher,
-                //     color: item.color,
-                //     remark: item.remark
-                // });
-            });
+            // const { data } = await ClassApi.MMPostClassesByID(1);
+            // data.forEach(item => {
+            // classes.value.push({
+            //     id: item.id,
+            //     name: item.className,
+            //     location: item.location,
+            //     dayOfWeek: item.dayOfWeek,
+            //     week: JSON.parse(item.weekList),
+            //     number: JSON.parse(item.sessionList),
+            //     teacher: item.teacher,
+            //     color: item.color,
+            //     remark: item.remark
+            // });
+            // });
             meowMsgSuccess("课表获取成功");
         } catch (error) {
             console.log(error);
