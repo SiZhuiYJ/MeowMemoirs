@@ -13,16 +13,16 @@ import {
 } from "@/utils/calendar";
 import type { Class, Event } from "@/libs/api/class/type";
 import type { CalendarDateType, CalendarInstance } from "element-plus";
-import useClass from "@/components/Curriculum/useClass"
-const { getClass, initializeData, getClassById } = useClass()
-import useRoutine from "@/components/Curriculum/useRoutine"
-const { addRoutine } = useRoutine()
-import useWeek from "@/components/Curriculum/useWeek"
-const { setStartDate, setWeekNumber } = useWeek()
-import useMark from "@/components/Curriculum/useMark"
-const { addMark } = useMark()
-import useWeekData from "@/components/Curriculum/useWeekData"
-const { setWeeklong } = useWeekData()
+import useClass from "@/components/Curriculum/useClass";
+const { getClass, initializeData, getClassById } = useClass();
+import useRoutine from "@/components/Curriculum/useRoutine";
+const { addRoutine } = useRoutine();
+import useWeek from "@/components/Curriculum/useWeek";
+const { weekNumber, setStartDate, setWeekNumber } = useWeek();
+import useMark from "@/components/Curriculum/useMark";
+const { addMark } = useMark();
+import useWeekData from "@/components/Curriculum/useWeekData";
+const { setWeeklong } = useWeekData();
 
 // const { getClass, setWeekNumber, initializeData } = useClassStore();
 const calendar = ref<CalendarInstance>();
@@ -90,17 +90,21 @@ onMounted(async () => {
             </div>
             <template #toggle>
                 <div class="current-week">
-                    第{{ numberToChinese(useWeek().getCurrentWeek.value) }}周
+                    {{weekNumber}}  第{{ numberToChinese(useWeek().getCurrentWeek.value)
+                    }}周
                 </div>
             </template>
             <template #container>
-                <el-calendar v-model="useWeek().weekNumber.value">
+                <el-calendar v-model="weekNumber">
                     <template #date-cell="{ data }">
                         <div>
                             <div class="solar">
                                 {{ data.day.split("-")[2] }}
                             </div>
-                            <div class="lunar" :class="{ festival: isFestival(data) }">
+                            <div
+                                class="lunar"
+                                :class="{ festival: isFestival(data) }"
+                            >
                                 {{ solarToLunar(data) }}
                             </div>
                             <!-- 标记 -->
@@ -113,29 +117,54 @@ onMounted(async () => {
                     </template>
                 </el-calendar>
                 <div class="important-day">
-                    <i v-for="day in useMark().markDate.value" :key="day.id" :style="{ borderLeftColor: day.color }"
-                        class="day-item" @click="setWeekNumber(getdayByBirth(day))">
-                        {{ day.info }}·{{ day.date }}·{{ getDaysBetween(getdayByBirth(day), getDateFormatYYYYMMDD(new
-                            Date())) >= 0
-                            ? "还有"
-                            : "过去"
-                        }}{{ Math.abs(getDaysBetween(getdayByBirth(day), getDateFormatYYYYMMDD(new Date()))) }}天
+                    <i
+                        v-for="day in useMark().markDate.value"
+                        :key="day.id"
+                        :style="{ borderLeftColor: day.color }"
+                        class="day-item"
+                        @click="setWeekNumber(getdayByBirth(day))"
+                    >
+                        {{ day.info }}·{{ day.date }}·{{
+                            getDaysBetween(
+                                getdayByBirth(day),
+                                getDateFormatYYYYMMDD(new Date())
+                            ) >= 0
+                                ? "还有"
+                                : "过去"
+                        }}{{
+                            Math.abs(
+                                getDaysBetween(
+                                    getdayByBirth(day),
+                                    getDateFormatYYYYMMDD(new Date())
+                                )
+                            )
+                        }}天
                     </i>
                 </div>
             </template>
         </Folding>
         <div class="week-controller" v-else>
-            <el-calendar v-model="useWeek().weekNumber.value" ref="calendar">
+            <el-calendar v-model="weekNumber" ref="calendar">
                 <template #header="{ date }">
-                    <span>{{ date }}-上课第{{
-                        numberToChinese(useWeek().getCurrentWeek.value)
-                        }}周</span>
+                    <span
+                        >{{ date }}-上课第{{
+                            numberToChinese(useWeek().getCurrentWeek.value)
+                        }}周</span
+                    >
                     <el-button-group>
-                        <el-button size="small" @click="selectDate('prev-month')">
+                        <el-button
+                            size="small"
+                            @click="selectDate('prev-month')"
+                        >
                             上个月
                         </el-button>
-                        <el-button size="small" @click="selectDate('today')">今天</el-button>
-                        <el-button size="small" @click="selectDate('next-month')">
+                        <el-button size="small" @click="selectDate('today')"
+                            >今天</el-button
+                        >
+                        <el-button
+                            size="small"
+                            @click="selectDate('next-month')"
+                        >
                             下个月
                         </el-button>
                     </el-button-group>
@@ -143,7 +172,10 @@ onMounted(async () => {
                 <template #date-cell="{ data }">
                     <div>
                         <div class="solar">{{ data.day.split("-")[2] }}</div>
-                        <div class="lunar" :class="{ festival: isFestival(data) }">
+                        <div
+                            class="lunar"
+                            :class="{ festival: isFestival(data) }"
+                        >
                             {{ solarToLunar(data) }}
                         </div>
                         <!-- 标记 -->
@@ -156,13 +188,28 @@ onMounted(async () => {
                 </template>
             </el-calendar>
             <div class="important-day">
-                <i v-for="day in useMark().markDate.value" :key="day.id" :style="{ borderLeftColor: day.color }"
-                    class="day-item" @click="setWeekNumber(getdayByBirth(day))">
-                    {{ day.info }}·{{ day.date }}·{{ getDaysBetween(getdayByBirth(day), getDateFormatYYYYMMDD(new
-                        Date()))
-                        >= 0 ?
-                        "还有" : "过去"
-                    }}{{ Math.abs(getDaysBetween(getdayByBirth(day), getDateFormatYYYYMMDD(new Date()))) }}天
+                <i
+                    v-for="day in useMark().markDate.value"
+                    :key="day.id"
+                    :style="{ borderLeftColor: day.color }"
+                    class="day-item"
+                    @click="setWeekNumber(getdayByBirth(day))"
+                >
+                    {{ day.info }}·{{ day.date }}·{{
+                        getDaysBetween(
+                            getdayByBirth(day),
+                            getDateFormatYYYYMMDD(new Date())
+                        ) >= 0
+                            ? "还有"
+                            : "过去"
+                    }}{{
+                        Math.abs(
+                            getDaysBetween(
+                                getdayByBirth(day),
+                                getDateFormatYYYYMMDD(new Date())
+                            )
+                        )
+                    }}天
                 </i>
             </div>
         </div>
@@ -171,37 +218,116 @@ onMounted(async () => {
                 <div class="confession-time-item" key="-1">
                     <div class="time-header">节次</div>
                     <div class="date-header">日期</div>
-                    <div class="time-slot" v-for="(number, index) in useRoutine().routineList.value" :key="number">
-                        <span class="time-slot-number">{{ numberToChinese(index + 1) }}节</span>
+                    <div
+                        class="time-slot"
+                        v-for="(number, index) in useRoutine().routineList
+                            .value"
+                        :key="number"
+                    >
+                        <span class="time-slot-number"
+                            >{{ numberToChinese(index + 1) }}节</span
+                        >
                         <span class="time-slot-time">{{
                             "{" + number + "}"
                         }}</span>
                     </div>
                 </div>
                 <!-- 周次循环 -->
-                <div class="confession-class-item" v-for="(item, weekIndex) in useWeekData().weekList.value" :class="[
-                    useWeek().weekNumber.value.getDay() === (weekIndex + 1) % 7 ? 'class-activate' : '']"
-                    :key="weekIndex + 1" :title="useWeek().weekNumber.value.getDay() + ':' + ((weekIndex + 1) % 7)
-                        ">
-                    <div class="day-header">{{ item }}{{ weekIndex }}</div>
+                <div
+                    class="confession-class-item"
+                    v-for="(item, weekIndex) in useWeekData().weekList.value"
+                    :class="[
+                        useWeek().weekNumber.value.getDay() ===
+                        (weekIndex + 1) % 7
+                            ? 'class-activate'
+                            : ''
+                    ]"
+                    :key="weekIndex + 1"
+                    :title="
+                        useWeek().weekNumber.value.getDay() +
+                        ':' +
+                        ((weekIndex + 1) % 7)
+                    "
+                >
+                    <div class="day-header">{{ item }}</div>
                     <div class="date-header">
-                        {{ formatDateToMMDD(getDateDaysBefore(useWeek().weekNumber.value,
-                            useWeek().weekNumber.value.getDay() -
-                            weekIndex -
-                            1)) }}
+                        {{
+                            formatDateToMMDD(
+                                getDateDaysBefore(
+                                    useWeek().weekNumber.value,
+                                    useWeek().weekNumber.value.getDay() -
+                                        weekIndex -
+                                        1
+                                )
+                            )
+                        }}
                     </div>
-                    <div v-for="(number, index) in useRoutine().routineList.value" :key="index" class="course-slot">
-                        <template v-if="getClass(useWeek().getCurrentWeek.value, weekIndex + 1, index + 1)">
-                            <div class="course-item"
-                                :style="{ borderLeftColor: getClass(useWeek().getCurrentWeek.value, weekIndex + 1, index + 1)!.color }"
-                                @click="() => { showClassDetail((useWeek().getCurrentWeek.value, weekIndex + 1, index + 1)); console.log(getClass(useWeek().getCurrentWeek.value, weekIndex + 1, index + 1)); }">
+                    <div
+                        v-for="(number, index) in useRoutine().routineList
+                            .value"
+                        :key="index"
+                        class="course-slot"
+                    >
+                        <template
+                            v-if="
+                                getClass(
+                                    useWeek().getCurrentWeek.value,
+                                    weekIndex + 1,
+                                    index + 1
+                                )
+                            "
+                        >
+                            <div
+                                class="course-item"
+                                :style="{
+                                    borderLeftColor: getClass(
+                                        useWeek().getCurrentWeek.value,
+                                        weekIndex + 1,
+                                        index + 1
+                                    )!.color
+                                }"
+                                @click="
+                                    () => {
+                                        showClassDetail(
+                                            (useWeek().getCurrentWeek.value,
+                                            weekIndex + 1,
+                                            index + 1)
+                                        );
+                                        console.log(
+                                            getClass(
+                                                useWeek().getCurrentWeek.value,
+                                                weekIndex + 1,
+                                                index + 1
+                                            )
+                                        );
+                                    }
+                                "
+                            >
                                 <el-text class="course-name" line-clamp="1">
-                                    {{ getClass(useWeek().getCurrentWeek.value, weekIndex + 1, index + 1)?.name }}
+                                    {{
+                                        getClass(
+                                            useWeek().getCurrentWeek.value,
+                                            weekIndex + 1,
+                                            index + 1
+                                        )?.name
+                                    }}
                                 </el-text>
                                 <el-text class="course-details" line-clamp="3">
-                                    {{ getClass(useWeek().getCurrentWeek.value, weekIndex + 1, index + 1)?.location }}
+                                    {{
+                                        getClass(
+                                            useWeek().getCurrentWeek.value,
+                                            weekIndex + 1,
+                                            index + 1
+                                        )?.location
+                                    }}
                                     /
-                                    {{ getClass(useWeek().getCurrentWeek.value, weekIndex + 1, index + 1)?.teacher }}
+                                    {{
+                                        getClass(
+                                            useWeek().getCurrentWeek.value,
+                                            weekIndex + 1,
+                                            index + 1
+                                        )?.teacher
+                                    }}
                                 </el-text>
                             </div>
                         </template>
@@ -213,7 +339,12 @@ onMounted(async () => {
             </div>
         </div>
     </div>
-    <ClassDetail ref="ClassRef" title="课程详情" :disabled="false" :classDetail="classDetail!" />
+    <ClassDetail
+        ref="ClassRef"
+        title="课程详情"
+        :disabled="true"
+        :classDetail="classDetail!"
+    />
 </template>
 <style scoped lang="scss">
 .course-slot {
@@ -275,6 +406,7 @@ onMounted(async () => {
     width: 100%;
 
     .confession-class-grid {
+        // height: 100vh;
         display: grid;
         grid-template-columns: repeat(8, 1fr);
         gap: 1px;
@@ -324,7 +456,7 @@ onMounted(async () => {
                 text-align: center;
                 font-weight: 500;
 
-                >p {
+                > p {
                     font-size: 12px;
                 }
             }
@@ -344,7 +476,7 @@ onMounted(async () => {
             }
 
             .course-slot {
-                height: 50px;
+                min-height: 50px;
                 padding: 1px;
                 position: relative;
 

@@ -50,7 +50,6 @@ export default function useClass() {
         dayOfWeek: number,
         number: number
     ): Class | undefined {
-        console.log({ week: week, dayOfWeek: dayOfWeek, number: number });
         return classes.value.find(
             item =>
                 item.week.includes(week) &&
