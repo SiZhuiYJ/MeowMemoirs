@@ -3,10 +3,10 @@ import { ref, onMounted, computed, reactive } from "vue";
 import { useScreenStore } from "@/utils/screen";
 import MeowSelect from "@/components/MeowSelect/index.vue";
 
-import useTag from "@/components/blogPost/useTag";
+import useTag from "@/features/blogPost/useTag";
 const { blogTags, getTagList, addBlogTag } = useTag();
 
-import { useEditBlog } from "@/components/blogPost/useBlogEdit";
+import { useEditBlog } from "@/features/blogPost/useBlogEdit";
 const { currentCachedBlog, clearCachedBlog, uploadCurrentBlog } = useEditBlog();
 
 import type { options } from "@/libs/api/files/type";

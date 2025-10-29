@@ -13,18 +13,17 @@ import {
 } from "@/utils/calendar";
 import type { Class, Event } from "@/libs/api/class/type";
 import type { CalendarDateType, CalendarInstance } from "element-plus";
-import useClass from "@/components/Curriculum/useClass";
+import useClass from "@/features/Curriculum/useClass";
 const { getClass, initializeData, } = useClass();// getClassById
-import useRoutine from "@/components/Curriculum/useRoutine";
+import useRoutine from "@/features/Curriculum/useRoutine";
 // const { addRoutine } = useRoutine();
-import useWeek from "@/components/Curriculum/useWeek";
+import useWeek from "@/features/Curriculum/useWeek";
 const { weekNumber, getCurrentWeek, setWeekNumber } = useWeek();// , setStartDate
-import useMark from "@/components/Curriculum/useMark";
+import useMark from "@/features/Curriculum/useMark";
 // const { addMark } = useMark();
-import useWeekData from "@/components/Curriculum/useWeekData";
+import useWeekData from "@/features/Curriculum/useWeekData";
 const { weekList, } = useWeekData();//setWeeklong
 
-// const { getClass, setWeekNumber, initializeData } = useClassStore();
 const calendar = ref<CalendarInstance>();
 const selectDate = (val: CalendarDateType) => {
     if (!calendar.value) return;
@@ -150,7 +149,7 @@ onMounted(async () => {
                 <template #header="{ date }">
                     <span>{{ date }}-上课第{{
                         numberToChinese(getCurrentWeek)
-                    }}周</span>
+                        }}周</span>
                     <el-button-group>
                         <el-button size="small" @click="selectDate('prev-month')">
                             上个月
@@ -207,7 +206,7 @@ onMounted(async () => {
                         <span class="time-slot-number">{{ numberToChinese(index + 1) }}节</span>
                         <span class="time-slot-time">{{
                             "{" + number + "}"
-                            }}</span>
+                        }}</span>
                     </div>
                 </div>
                 <!-- 周次循环 -->

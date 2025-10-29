@@ -50,7 +50,7 @@ export default function useClass() {
         dayOfWeek: number,
         number: number
     ): Class | undefined {
-        console.log({ "周次": week, "周几": dayOfWeek, "节次": number })
+        // console.log({ "周次": week, "周几": dayOfWeek, "节次": number })
         return classes.value.find(
             item =>
                 item.week.includes(week) &&

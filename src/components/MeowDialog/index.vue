@@ -1,37 +1,18 @@
 <template>
   <!-- append-to-body 点击空白处不关闭弹窗 -->
-  <el-dialog
-    :model-value="visible"
-    :title="title"
-    :width="width"
-    :center="center"
-    :close-on-click-modal="closeOnClickModal"
-    append-to-body
-    draggable
-    :destroy-on-close="destroyOnClose"
-    :before-close="Close"
-    :fullscreen="fullscreen"
-    :loading="loading"
-    :footerHidden="footerHidden"
-    :overflow="true"
-  >
+  <el-dialog :model-value="visible" :title="title" :width="width" :center="center"
+    :close-on-click-modal="closeOnClickModal" append-to-body draggable :destroy-on-close="destroyOnClose"
+    :before-close="Close" :fullscreen="fullscreen" :loading="loading" :footerHidden="footerHidden" :overflow="true">
     <slot name="header"></slot>
-    <div
-      style="overflow-y: auto; overflow-x: initial"
-      :style="fullscreen ? { height: 'auto' } : { height: height + 'px' }"
-    >
+    <div style="overflow-y: auto; overflow-x: initial"
+      :style="fullscreen ? { height: 'auto' } : { height: height + 'px' }">
       <!-- 具名插槽 -->
       <slot name="content"></slot>
     </div>
     <template #footer v-if="!footerHidden">
       <span class="dialog-footer">
-        <el-button
-          type="primary"
-          loading-icon="Eleme"
-          :loading="confirmLoading"
-          v-throttle="Confirm"
-          >{{ confirmText }}</el-button
-        >
+        <el-button type="primary" loading-icon="Eleme" :loading="confirmLoading" v-throttle="Confirm">{{ confirmText
+        }}</el-button>
         <el-button type="danger" @click="Cancel">{{ cancelText }}</el-button>
       </span>
     </template>
@@ -114,16 +95,16 @@ const QuickClose = () => {
 };
 
 // 当前组件获取父组件传递的事件方法
-const emits = defineEmits(["Confirm", "Cancel"]);
+const emits = defineEmits(["confirm", "cancel"]);
 
 /** 对话框确定事件 */
 const Confirm = () => {
-  emits("Confirm");
+  emits("confirm");
 };
 
 /** 对话框的取消事件 */
 const Cancel = () => {
-  emits("Cancel");
+  emits("cancel");
 };
 
 /** 暴露给父组件方法 */

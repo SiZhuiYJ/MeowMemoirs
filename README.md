@@ -17,22 +17,46 @@ Vue 3 + TypeScript + Vite + Vue Router + Element Plus + Axios + Element-Plus + v
 
 ```text
 Memory Blog/
-|-- src/
-|   |-- hooks        // 自定义 hooks
-|   |-- assets       // 静态资源
-|   |-- libs         // 接口
-|   |-- components   // 通用组件
-|   |-- config       // 配置文件
-|   |-- directives   // 自定义指令
-|   |-- routers      // 路由配置
-|   |-- stores       // 状态管理
-|   |-- views        // 页面
-|   |-- layouts      // 布局
-|   |-- styles       // 样式
-|   |-- utils        // 工具类
-|   |-- App.vue      // 根组件
-|-- package.json
-|-- README.md
+├── public/ # 静态资源目录
+│ ├── favicon.ico
+│ ├── logo.png
+│ └── manifest.json
+├── src/ # 源代码目录
+│ ├── assets/ # 静态资源（经过构建处理）
+│ │ ├── images/ # 图片资源
+│ │ ├── styles/ # 全局样式
+│ │ └── fonts/ # 字体文件
+│ ├── components/ # 全局共享组件
+│ ├── composables/ # 全局共享组合式函数
+│ ├── config/ # 应用配置文件
+│ ├── features/ # 功能模块（核心业务代码）
+│ │ ├── auth/ # 认证功能模块
+│ │ ├── user/ # 用户功能模块
+│ │ ├── product/ # 产品功能模块
+│ │ ├── order/ # 订单功能模块
+│ │ └── dashboard/ # 仪表板功能模块
+│ ├── layouts/ # 页面布局组件
+│ ├── lib/ # 第三方库配置
+│ ├── pages/ # 页面组件
+│ ├── plugins/ # Vue 插件
+│ ├── router/ # 路由配置
+│ ├── services/ # 应用服务层
+│ ├── stores/ # 全局状态管理
+│ ├── test/ # 测试相关文件
+│ ├── types/ # 全局类型定义
+│ ├── utils/ # 工具函数
+│ ├── App.vue # 根组件
+│ └── main.ts # 应用入口
+├── tests/ # 测试目录
+├── docs/ # 项目文档
+├── .env # 环境变量
+├── .env.development # 开发环境变量
+├── .env.production # 生产环境变量
+├── package.json
+├── tsconfig.json # TypeScript 配置
+├── vite.config.ts # Vite 构建配置
+├── vitest.config.ts # 测试配置
+└── README.md
 ```
 
 ### 技术栈

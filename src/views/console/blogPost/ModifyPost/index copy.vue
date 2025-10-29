@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue";
 import MeowSelect from "@/components/MeowSelect/index.vue";
-import useTag from "@/components/blogPost/useTag";
+import useTag from "@/features/blogPost/useTag";
 const { blogTags, getTagList, addBlogTag } = useTag();
-import { useEditBlog } from "@/components/blogPost/useBlogEdit";
+import { useEditBlog } from "@/features/blogPost/useBlogEdit";
 const { currentCachedBlog, clearCachedBlog, uploadCurrentBlog } = useEditBlog();
 // import {
 //   meowNoticeSuccess,

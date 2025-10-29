@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
-import useCurrentBlog from "@/components/blogPost/useBlogCurrent"
+import useCurrentBlog from "@/features/blogPost/useBlogCurrent"
 const { currentBlog, selectBlog } = useCurrentBlog()
 const blogContent = ref<string>();
 

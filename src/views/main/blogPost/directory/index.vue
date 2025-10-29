@@ -9,9 +9,9 @@ import useApiUrl from "@/libs/useApiUrl";
 const { getStaticFileUrl } = useApiUrl();
 
 import type { blogPost, Tag } from "@/libs/api/blogPost/type";
-import useTag from "@/components/blogPost/useTag"
+import useTag from "@/features/blogPost/useTag"
 const { blogTags, getTagList } = useTag()
-import useBlogList from "@/components/blogPost/useBlogList"
+import useBlogList from "@/features/blogPost/useBlogList"
 const { blogList, getBlogList } = useBlogList()
 
 
