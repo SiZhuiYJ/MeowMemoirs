@@ -43,7 +43,7 @@ const formRules = reactive<FormRules<typeof blogParams>>({
 const TagToOptions = computed<options[]>(() => {
     return blogTags.value.map(item => ({
         label: item.tagName,
-        value: item.tagId.toString()
+        value: item.id.toString()
     }));
 });
 

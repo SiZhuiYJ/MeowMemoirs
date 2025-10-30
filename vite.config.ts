@@ -31,18 +31,18 @@ export default defineConfig({
   plugins: [
     // Vue官方插件，用于处理.vue文件
     vue(),
-    
+
     // PrismJS插件，用于代码高亮
     prismjs({
-      languages: ["json", "bash"],
+      languages: ["json", "bash", "typescript"],
     }),
-    
+
     // TS路径映射插件，使tsconfig.json中的paths配置生效
     tsconfigPaths(),
-    
+
     // 自定义CSS分析插件，用于处理鼠标相关样式
     cssAnalyzer(),
-    
+
     // SVG图标插件，用于处理SVG雪碧图
     createSvgIconsPlugin({
       // 指定存放SVG图标的目录
@@ -50,23 +50,23 @@ export default defineConfig({
       // 指定symbolId格式
       symbolId: "icon-[dir]-[name]",
     }),
-    
+
     // 打包可视化分析插件，用于分析打包文件大小
     visualizer({ open: true }),
-    
+
     // 自动导入插件，自动导入常用API
     AutoImport({
       // 配置需要自动导入的第三方库解析器
       resolvers: [ElementPlusResolver()],
     }),
-    
+
     // 组件自动导入插件
     Components({
       // 配置Element Plus组件解析器
       resolvers: [ElementPlusResolver()],
     }),
   ],
-  
+
   /**
    * 开发服务器配置
    */
@@ -85,7 +85,7 @@ export default defineConfig({
       cert: fs.readFileSync("certs/localhost+1.pem"),
     },
   },
-  
+
   /**
    * 构建配置
    */
@@ -98,7 +98,7 @@ export default defineConfig({
     minify: "terser",
     // 启用CSS代码分割
     cssCodeSplit: true,
-    
+
     /**
      * Rollup打包选项
      */
@@ -120,7 +120,7 @@ export default defineConfig({
         },
       },
     },
-    
+
     /**
      * Terser压缩选项
      */
@@ -133,13 +133,13 @@ export default defineConfig({
       },
     },
   },
-  
+
   /**
    * 静态资源处理配置
    * 指定需要额外处理的静态资源类型
    */
   assetsInclude: ["**/*.ani"],
-  
+
   /**
    * CSS相关配置
    */
@@ -151,7 +151,7 @@ export default defineConfig({
       // 可在此处添加其他PostCSS插件
     },
   },
-  
+
   /**
    * 路径解析配置
    * 设置模块导入路径别名，提高代码可读性和维护性

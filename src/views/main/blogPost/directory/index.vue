@@ -41,12 +41,8 @@ const formatDate = (dateString: string) => {
 // 标签处理
 const getBlogTag = (tags: string): Tag[] => {
     try {
-        const ids = tags.split(",").map(id => {
-            const num = Number(id.trim());
-            if (isNaN(num)) throw new Error(`Invalid ID: ${id}`);
-            return num;
-        });
-        return blogTags.value.filter(tag => ids.includes(tag.tagId));
+        const ids = JSON.parse(tags) as number[]
+        return blogTags.value.filter(tag => ids.includes(tag.id));
     } catch (e) {
         console.error("Tag processing error:", e);
         return [];
@@ -79,7 +75,7 @@ onMounted(() => {
 
                     <div class="blog-meta">
                         <div class="blog-tags">
-                            <span v-for="tag in item.TagList" :key="tag.tagId" class="blog-tag"
+                            <span v-for="tag in item.TagList" :key="tag.id" class="blog-tag"
                                 :style="{ backgroundColor: tag.tagColor }">
                                 {{ tag.tagName }}
                             </span>

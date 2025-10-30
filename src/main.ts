@@ -41,7 +41,7 @@ import "@kangc/v-md-editor/lib/style/preview.css";
 import vuepressTheme from "@kangc/v-md-editor/lib/theme/vuepress.js";
 import "@kangc/v-md-editor/lib/theme/style/vuepress.css";
 
-// PrismJS - 代码语法高亮库
+// PrismJS - 代码语法高亮库 需要去vite.config.ts里配置
 import Prism from "prismjs";
 
 // CodeMirror - 功能强大的代码编辑器

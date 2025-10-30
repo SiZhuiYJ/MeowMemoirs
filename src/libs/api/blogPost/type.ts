@@ -13,7 +13,7 @@ export type operation = "add" | "update";
 
 export interface Tag {
   tagName: string;
-  tagId: number;
+  id: number;
   tagColor: string;
 }
 // 上传博客
