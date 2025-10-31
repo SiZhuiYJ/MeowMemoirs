@@ -306,7 +306,6 @@ onMounted(async () => {
             grid-template-rows: 30px;
             // 剩余行自动平分空间
             grid-auto-rows: 1fr;
-
             // 可选：设置最小高度防止内容溢出
             grid-auto-flow: row;
 
@@ -359,6 +358,7 @@ onMounted(async () => {
                 }
 
                 @media (max-width: 768px) {
+                    padding: 1px;
                     flex-direction: column;
 
                     .date-header {
@@ -441,69 +441,83 @@ onMounted(async () => {
     }
 }
 
-:deep(.is-selected) {
-    border: 2px solid var(--el-color-primary) !important;
-
-    .el-calendar-day {
-        height: 81px;
-    }
-}
-
-:deep(.is-today) {
-    border: 2px dashed var(--el-color-primary) !important;
-
-    .el-calendar-day {
-        height: 81px;
-    }
-}
-
-:deep(.el-calendar-day) {
-    padding: 5px 0 0 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 85px;
-
-    @media (max-width: 768px) {
-        height: 56px;
+:deep(.el-calendar-table__row) {
+    .is-selected {
+        border: 2px dashed var(--el-color-primary) !important;
     }
 
-    div {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+    .is-today {
+        border: 2px solid var(--el-color-primary) !important;
+    }
 
-        .solar {
-            font-size: 16px;
+    .is-today,
+    .is-selected {
+        .el-calendar-day {
+            height: 81px !important;
 
-            @media (max-width: 768px) {
-                font-size: 12px;
+            @media (max-width:768px) {
+                height: 52px !important;
             }
         }
 
-        .lunar {
-            font-size: 16px;
+    }
 
-            @media (max-width: 768px) {
-                font-size: 8px;
-            }
-        }
-
-        .mark {
+    .prev,
+    .current,
+    .next {
+        .el-calendar-day {
+            padding: 5px 0 0 0;
             display: flex;
-            flex-direction: row;
-            font-size: 16px;
+            flex-direction: column;
+            align-items: center;
+            height: 85px;
 
             @media (max-width: 768px) {
-                font-size: 10px;
+                height: 56px;
+            }
 
-                p {
-                    width: 50%;
+            div {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+
+                .solar {
+                    font-size: 16px;
+
+                    @media (max-width: 768px) {
+                        font-size: 12px;
+                    }
+                }
+
+                .lunar {
+                    font-size: 16px;
+
+                    @media (max-width: 768px) {
+                        font-size: 8px;
+                    }
+                }
+
+                .mark {
+                    display: flex;
+                    flex-direction: row;
+                    font-size: 16px;
+
+                    @media (max-width: 768px) {
+                        font-size: 10px;
+
+                        p {
+                            width: 50%;
+                        }
+                    }
                 }
             }
         }
     }
 }
+
+
+
+
 
 // 日历
 .current-week {
