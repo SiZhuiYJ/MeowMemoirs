@@ -34,7 +34,7 @@ export default defineConfig({
 
     // PrismJS插件，用于代码高亮
     prismjs({
-      languages: ["json", "bash", "typescript"],
+      languages: ["json", "bash", "typescript", "css", "sql", "javascript"],
     }),
 
     // TS路径映射插件，使tsconfig.json中的paths配置生效

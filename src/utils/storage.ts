@@ -63,15 +63,15 @@ export const SessionStorage = {
  * @method clear 移除全部
  */
 export const LocalStorage = {
-  put(key: string, value: any) {
-    window.localStorage.setItem(CACHE_PREFIX + key, value);
+  put<T>(key: string, value: T) {
+    window.localStorage.setItem(CACHE_PREFIX + key, JSON.stringify(value));
   },
-  set(key: string, value: any) {
-    window.localStorage.setItem(CACHE_PREFIX + key, value);
+  set<T>(key: string, value: T) {
+    window.localStorage.setItem(CACHE_PREFIX + key, JSON.stringify(value));
   },
-  get(key: string) {
-    const value: any = window.localStorage.getItem(CACHE_PREFIX + key);
-    return value;
+  get<T>(key: string): T | null {
+    const value: string | null = window.localStorage.getItem(CACHE_PREFIX + key);
+    return value ? JSON.parse(value) : null;
   },
   remove(key: string) {
     window.localStorage.removeItem(CACHE_PREFIX + key);

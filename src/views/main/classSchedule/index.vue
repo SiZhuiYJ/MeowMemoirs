@@ -94,13 +94,12 @@ onMounted(async () => {
                 <p style="color: var(--el-color-primary)">
                     {{ formatDateToMMDD(weekNumber) }}
                 </p>
-                <p>-</p>
+                <p> </p>
                 当前周数：
             </div>
             <template #toggle>
                 <div class="current-week">
-                    第{{ numberToChinese(getCurrentWeek)
-                    }}周
+                    第{{ numberToChinese(getCurrentWeek) }}周
                 </div>
             </template>
             <template #container>
@@ -125,21 +124,10 @@ onMounted(async () => {
                 <div class="important-day">
                     <i v-for="day in useMark().markDate.value" :key="day.id" :style="{ borderLeftColor: day.color }"
                         class="day-item" @click="setWeekNumber(getdayByBirth(day))">
-                        {{ day.info }}·{{ day.date }}·{{
-                            getDaysBetween(
-                                getdayByBirth(day),
-                                getDateFormatYYYYMMDD(new Date())
-                            ) >= 0
-                                ? "还有"
-                                : "过去"
-                        }}{{
-                            Math.abs(
-                                getDaysBetween(
-                                    getdayByBirth(day),
-                                    getDateFormatYYYYMMDD(new Date())
-                                )
-                            )
-                        }}天
+                        {{ day.info }}·
+                        {{ day.date }}·
+                        {{ getDaysBetween(getdayByBirth(day), getDateFormatYYYYMMDD(new Date())) >= 0 ? "还有" : "过去" }}
+                        {{ Math.abs(getDaysBetween(getdayByBirth(day), getDateFormatYYYYMMDD(new Date()))) }}天
                     </i>
                 </div>
             </template>
@@ -199,46 +187,42 @@ onMounted(async () => {
         <div class="confession-class">
             <div class="confession-class-grid">
                 <div class="confession-time-item" key="-1">
-                    <div class="time-header">节次</div>
-                    <div class="date-header">日期</div>
+                    <div class="time-header">节次
+                        <div class="date-header">(日期)</div>
+                    </div>
+
                     <div class="time-slot" v-for="(number, index) in useRoutine().routineList
                         .value" :key="number">
                         <span class="time-slot-number">{{ numberToChinese(index + 1) }}节</span>
-                        <span class="time-slot-time">{{
-                            "{" + number + "}"
-                        }}</span>
+                        <span class="time-slot-time">{{ "{" + number + "}" }}</span>
                     </div>
                 </div>
                 <!-- 周次循环 -->
                 <div class="confession-class-item" v-for="(item, weekIndex) in weekList" :class="[
-                    weekNumber.getDay() === (weekIndex + 1) % 7 ? 'class-activate' : '']" :key="weekIndex + 1"
-                    :title="weekNumber.getDay() + ':' + ((weekIndex + 1) % 7)">
-                    <div class="day-header">{{ item }}</div>
-                    <div class="date-header">
-                        {{ formatDateToMMDD(getDateDaysBefore(weekNumber, weekNumber.getDay() - weekIndex - 1)) }}
+                    weekNumber.getDay() === (weekIndex + 1) % 7 ? 'class-activate' : '']" :key="weekIndex + 1">
+                    <div class="day-header">
+                        {{ item }}
+                        <div class="date-header">
+                            ({{ formatDateToMMDD(getDateDaysBefore(weekNumber, weekNumber.getDay() - weekIndex - 1)) }})
+                        </div>
                     </div>
-                    <div v-for="(_, index) in useRoutine().routineList
-                        .value" :key="index" class="course-slot" :title="item + '\\第' + (index + 1) + '节'">
-                        <template v-if="getClass(getCurrentWeek, weekIndex + 1, index + 1)">
+                    <div v-for="(_, sectionIndex) in useRoutine().routineList
+                        .value" :key="sectionIndex" class="course-slot">
+                        <template v-if="getClass(getCurrentWeek, weekIndex + 1, sectionIndex + 1)">
                             <div class="course-item"
-                                :style="{ borderLeftColor: getClass(getCurrentWeek, weekIndex + 1, index + 1)!.color }"
-                                @click="
-                                    () => {
-                                        showClassDetail(getClass(getCurrentWeek, weekIndex + 1, index + 1)!);
-                                        console.log(getClass(getCurrentWeek, weekIndex + 1, index + 1));
-                                    }
-                                ">
-                                <el-text class="course-name" line-clamp="1">
-                                    {{ getClass(getCurrentWeek, weekIndex + 1, index + 1)?.name }}
+                                :style="{ borderLeftColor: getClass(getCurrentWeek, weekIndex + 1, sectionIndex + 1)!.color }"
+                                @click="showClassDetail(getClass(getCurrentWeek, weekIndex + 1, sectionIndex + 1)!)">
+                                <el-text class="course-name" :line-clamp="useScreenStore().isMobile.value ? 2 : 1">
+                                    {{ getClass(getCurrentWeek, weekIndex + 1, sectionIndex + 1)?.name }}
                                 </el-text>
-                                <el-text class="course-details" line-clamp="3">
-                                    {{ getClass(getCurrentWeek, weekIndex + 1, index +
-                                        1)?.location }}/{{ getClass(getCurrentWeek, weekIndex + 1, index + 1)?.teacher }}
+                                <el-text class="course-details" :line-clamp="useScreenStore().isMobile.value ? 3 : 2">
+                                    {{ getClass(getCurrentWeek, weekIndex + 1, sectionIndex + 1)?.location }}/
+                                    {{ getClass(getCurrentWeek, weekIndex + 1, sectionIndex + 1)?.teacher }}
                                 </el-text>
                             </div>
                         </template>
                         <template v-else>
-                            <div class="empty-slot"></div>
+                            <div class="empty-slot">+</div>
                         </template>
                     </div>
                 </div>
@@ -263,6 +247,7 @@ onMounted(async () => {
 .confession-class-controller {
     background-color: #fff;
     display: flex;
+    align-items: center;
 
     .week-controller {
         min-width: 300px;
@@ -304,7 +289,6 @@ onMounted(async () => {
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    width: 100%;
 
     .confession-class-grid {
         display: grid;
@@ -319,12 +303,16 @@ onMounted(async () => {
             background-color: #eef2f7;
             display: grid;
             // 固定前两行高度
-            grid-template-rows: 35px 20px;
+            grid-template-rows: 30px;
             // 剩余行自动平分空间
             grid-auto-rows: 1fr;
 
             // 可选：设置最小高度防止内容溢出
             grid-auto-flow: row;
+
+            @media (max-width: 768px) {
+                grid-template-rows: 40px;
+            }
 
             .time-slot {
                 background: var(--el-color-primary-light-4);
@@ -361,25 +349,25 @@ onMounted(async () => {
                 padding: 5px;
                 text-align: center;
                 font-weight: 500;
-
-                >p {
-                    font-size: 12px;
-                }
-            }
-
-            .date-header {
-                height: 20px;
-                font-size: 12px;
-                background: var(--el-color-primary);
-                color: white;
                 display: flex;
                 align-items: center;
-                justify-content: center;
+
+                .date-header {
+                    font-size: 12px;
+                    background: var(--el-color-primary);
+                    color: white;
+                }
 
                 @media (max-width: 768px) {
-                    font-size: 10px;
+                    flex-direction: column;
+
+                    .date-header {
+                        font-size: 10px;
+                    }
                 }
             }
+
+
 
             .course-slot {
                 min-height: 50px;
@@ -394,20 +382,20 @@ onMounted(async () => {
                     font-size: 0.9rem;
                     height: calc(100% - 10px);
                     overflow: hidden;
+                    display: flex;
+                    flex-direction: column;
 
                     .course-name {
                         font-weight: 600;
-                        margin-bottom: 2px;
                         color: #1565c0;
 
                         @media (max-width: 768px) {
-                            font-size: 10px;
-                            margin-bottom: 1px;
+                            font-size: 9px;
                         }
                     }
 
                     .course-details {
-                        font-size: 0.8rem;
+                        font-size: 0.7rem;
                         color: #546e7a;
 
                         @media (max-width: 768px) {
@@ -425,9 +413,18 @@ onMounted(async () => {
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    color: #bdc3c7;
+                    color: white;
                     font-style: italic;
                     height: 100%;
+                    transition: all 0.3s ease; // 全部动画.3
+                    font-size: 0px;
+
+                    &:hover {
+                        height: calc(100% - 6px);
+                        font-size: 25px;
+                        border: 3px dashed var(--el-color-primary); // 边框为虚线
+                        color: var(--el-color-primary);
+                    }
                 }
             }
         }
@@ -444,7 +441,23 @@ onMounted(async () => {
     }
 }
 
-::v-deep(.el-calendar-day) {
+:deep(.is-selected) {
+    border: 2px solid var(--el-color-primary) !important;
+
+    .el-calendar-day {
+        height: 81px;
+    }
+}
+
+:deep(.is-today) {
+    border: 2px dashed var(--el-color-primary) !important;
+
+    .el-calendar-day {
+        height: 81px;
+    }
+}
+
+:deep(.el-calendar-day) {
     padding: 5px 0 0 0;
     display: flex;
     flex-direction: column;

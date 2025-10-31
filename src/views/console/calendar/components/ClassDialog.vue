@@ -156,7 +156,7 @@ const handleCancelWithEmit = () => {
         :loading="confirmLoading" :footer-hidden="footerHidden" :draggable="true" :close-on-click-modal="true"
         :height="500">
         <template #content>
-            <el-form ref="formRef" :model="formData" :rules="formRules" :disabled="disabled" label-width="100px"
+            <el-form ref="formRef" :model="formData" :rules="formRules" :disabled="disabled" label-width="90px"
                 class="class-form">
 
                 <el-form-item label="课程名称:" prop="name">
@@ -240,19 +240,20 @@ const handleCancelWithEmit = () => {
 
         .color-picker-wrapper {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 12px;
+            width: 100%;
 
             .color-preview {
                 min-width: 80px;
-                height: 32px;
+                height: 24px;
                 border-radius: 4px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 color: white;
                 font-size: 12px;
-                padding: 0 8px;
+                padding: 0;
                 background-color: #f5f5f5;
                 color: #666;
                 transition: all 0.3s ease;
@@ -274,12 +275,25 @@ const handleCancelWithEmit = () => {
 
             :deep(.el-form-item__label) {
                 text-align: left;
-                width: 100% !important;
             }
 
             :deep(.el-form-item__content) {
                 margin-left: 0 !important;
             }
+
+            :deep(.el-radio-group) {
+                display: grid;
+                grid-template-columns: repeat(7, 1fr);
+                width: 100%;
+
+                .el-radio-button {
+                    .el-radio-button__inner {
+                        padding: 5px 7px;
+                        width: 100%;
+                    }
+                }
+            }
+
         }
     }
 }

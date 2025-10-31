@@ -4,8 +4,8 @@ export interface blogPost {
   content: string; // 内容
   authorId: number; // 作者id
   author: string; // 作者
-  createdAt: string; // 发布时间
-  updatedAt: string; // 更新时间
+  createTime: string; // 发布时间
+  updateTime: string; // 更新时间
   summary: string; // 封面内容
   tags: string; // 标签
 }

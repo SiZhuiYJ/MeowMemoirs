@@ -19,7 +19,7 @@ const TagToOptions = computed<options[]>(() => {
     return blogTags.value.map(item => {
         return {
             label: item.tagName,
-            value: item.tagId.toString()
+            value: item.id.toString()
         };
     });
 });

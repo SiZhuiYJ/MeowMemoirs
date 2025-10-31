@@ -25,7 +25,7 @@ const processedBlogList = computed(() => {
     return blogList.value.map(item => ({
         ...item,
         TagList: getBlogTag(item.tags),
-        formattedDate: formatDate(item.createdAt)
+        formattedDate: formatDate(item.createTime)
     })) as ProcessedBlogItem[];
 });
 

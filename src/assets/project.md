@@ -25,7 +25,7 @@
 
 ```
 
-project-root/
+MeowMemoirs/
 ├── public/ # 静态资源目录
 │ ├── favicon.ico
 │ ├── logo.png
@@ -517,8 +517,8 @@ export interface User {
   name: string;
   role: UserRole;
   avatar?: string;
-  createdAt: string;
-  updatedAt: string;
+  createTime: string;
+  updateTime: string;
 }
 
 export type UserRole = "admin" | "user" | "moderator";

@@ -11,8 +11,9 @@ export default function useBlogList() {
     const getBlogList = async () => {
         const { data } = await BlogPostApi.MMPostBlogGetList();
         blogList.value = data.blogs;
-        console.log(blogList.value);
+        console.log("获取博客列表", blogList.value);
     };
+
     return {
         blogList,
         getBlogList,
