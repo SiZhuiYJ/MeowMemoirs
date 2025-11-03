@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Login from "./components/Login.vue";
-import Register from "./components/Register.vue";
+import Login from "@/features/auth/components/Login.vue";
+import Register from "@/features/auth/components/Register.vue";
 import useApiUrl from "@/libs/useApiUrl/index";
 import logoUrl from "@/assets/image/catsdiary.webp";
 import { useRouter } from "vue-router";
@@ -20,35 +20,24 @@ const background = computed(() => {
   return isMobile.value
     ? 9
     : isPad.value
-    ? 4
-    : isScreen.value
-    ? 3
-    : isDesktop.value
-    ? 1
-    : 8;
+      ? 4
+      : isScreen.value
+        ? 3
+        : isDesktop.value
+          ? 1
+          : 8;
 });
 </script>
 <template>
   <div class="body">
-    <img
-      class="progressive"
-      :src="getStaticFileUrl('img/home/_' + background + '-4k.webp')"
-      v-progressive.lazy="getStaticFileUrl('img/home/_' + background + '-720p.webp')"
-    />
-    <div
-      class="Logo animate-float"
-      @click="router.push('/home/index')"
-      title="暂不登录,前往首页"
-    >
+    <img class="progressive" :src="getStaticFileUrl('img/home/_' + background + '-4k.webp')"
+      v-progressive.lazy="getStaticFileUrl('img/home/_' + background + '-720p.webp')" />
+    <div class="Logo animate-float" @click="router.push('/home/index')" title="暂不登录,前往首页">
       <img :src="logoUrl" alt="" />
       <span>喵咪记事簿</span>
     </div>
     <div class="container" :style="{ width: isMobile ? '350px' : '650px' }">
-      <div
-        ref="form-box"
-        class="form-box"
-        :style="{ transform: `translateX(${isMobile ? 0 : !isLogin ? 80 : 0}%)` }"
-      >
+      <div ref="form-box" class="form-box" :style="{ transform: `translateX(${isMobile ? 0 : !isLogin ? 80 : 0}%)` }">
         <!-- 注册 -->
         <Register :class="isLogin ? '' : 'hidden'" />
         <!-- 登录 -->
@@ -86,6 +75,7 @@ const background = computed(() => {
   align-items: center;
   /* 渐变背景 */
   background: linear-gradient(200deg, #f3e7e9, #e3eeff);
+
   .progressive {
     position: absolute;
     width: 100vw;
@@ -94,6 +84,7 @@ const background = computed(() => {
     top: 0;
     left: 0;
   }
+
   .Logo {
     position: fixed;
     top: 0;
@@ -237,12 +228,10 @@ const background = computed(() => {
         box-shadow: 0 10px 30px #00000085;
         border-top: 1px solid rgba(255, 255, 255, 0.9);
         border-left: 1px solid rgba(255, 255, 255, 0.9);
-        background: linear-gradient(
-          to right bottom,
-          rgba(255, 255, 255, 0.6),
-          rgba(255, 255, 255, 0.3),
-          rgba(255, 255, 255, 0.2)
-        );
+        background: linear-gradient(to right bottom,
+            rgba(255, 255, 255, 0.6),
+            rgba(255, 255, 255, 0.3),
+            rgba(255, 255, 255, 0.2));
         backdrop-filter: blur(5px);
       }
     }
@@ -314,11 +303,6 @@ const background = computed(() => {
   /* 隐藏注册框 */
 }
 
-// .hidden {
-//     visibility: visible;
-//     width: 100%;
-//     opacity: 1;
-// }
 
 .animate-float {
   animation: float 5s linear 0ms infinite;

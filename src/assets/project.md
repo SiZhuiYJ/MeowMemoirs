@@ -24,7 +24,6 @@
 ## 完整目录结构
 
 ```
-
 MeowMemoirs/
 ├── public/ # 静态资源目录
 │ ├── favicon.ico

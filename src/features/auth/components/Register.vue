@@ -56,77 +56,37 @@ function handoverLogin() {
 <template>
   <div class="register-box">
     <h1>--注--册--</h1>
-    <el-input
-      class="rainbow"
-      v-model="rainbowID"
-      style="width: 240px; padding: 15px 0"
-      placeholder="账号"
-      clearable
-    />
-    <el-input
-      class="phone"
-      v-show="handover === 'userPhone'"
-      v-model="userPhone"
-      style="width: 240px; padding: 9px 0"
-      placeholder="电话"
-      clearable
-    />
-    <el-input
-      class="email"
-      v-show="handover === 'userEmail'"
-      v-model="userEmail"
-      style="width: 240px; padding: 9px 0"
-      placeholder="邮箱"
-      clearable
-    />
-    <el-input
-      class="input"
-      v-model="password"
-      style="width: 240px; padding: 9px 0"
-      type="password"
-      placeholder="密码"
-      show-password
-    />
-    <el-input
-      class="input confirmation"
-      v-model="confirm_password"
-      style="width: 240px; padding: 9px 0"
-      type="password"
-      placeholder="确认密码"
-      show-password
-    />
-    <el-radio-group
-      v-model="handover"
-      @change="handoverLogin"
-      fill="#a262ad80"
-      text-color="#FFF"
-    >
-      <el-radio-button
-        v-for="(item, index) in handoverList"
-        :key="index"
-        :label="item.label"
-        :value="item.value"
-      />>
+    <el-input class="rainbow" v-model="rainbowID" style="width: 240px; padding: 15px 0" placeholder="账号" clearable />
+    <el-input class="phone" v-show="handover === 'userPhone'" v-model="userPhone" style="width: 240px; padding: 9px 0"
+      placeholder="电话" clearable />
+    <el-input class="email" v-show="handover === 'userEmail'" v-model="userEmail" style="width: 240px; padding: 9px 0"
+      placeholder="邮箱" clearable />
+    <el-input class="input" v-model="password" style="width: 240px; padding: 9px 0" type="password" placeholder="密码"
+      show-password />
+    <el-input class="input confirmation" v-model="confirm_password" style="width: 240px; padding: 9px 0" type="password"
+      placeholder="确认密码" show-password />
+    <el-radio-group v-model="handover" @change="handoverLogin" fill="#a262ad80" text-color="#FFF">
+      <el-radio-button v-for="(item, index) in handoverList" :key="index" :label="item.label" :value="item.value" />>
     </el-radio-group>
     <button @click="register">注册</button>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.el-radio-button__inner:hover {
+:deep(.el-radio-button__inner):hover {
   color: #a262ad;
 }
 
-.el-input__wrapper {
+:deep(.el-input__wrapper) {
   background-color: rgba(255, 255, 255, 0);
   box-shadow: none;
 }
 
-.el-input__wrapper.is-focus {
+:deep(.el-input__wrapper).is-focus {
   box-shadow: none;
 }
 
-.el-input__wrapper:hover {
+:deep(.el-input__wrapper):hover {
   box-shadow: none;
 }
 
@@ -141,7 +101,7 @@ h1 {
 }
 
 input,
-.el-input__inner {
+:deep(.el-input__inner) {
   background-color: transparent;
   width: 70%;
   color: #fff;
@@ -156,12 +116,12 @@ input,
 }
 
 input::placeholder,
-.el-input__inner::placeholder {
+:deep(.el-input__inner)::placeholder {
   color: #fff;
 }
 
 input:focus,
-.el-input__inner:focus {
+:deep(.el-input__inner):focus {
   color: #a262ad;
   outline: none;
   border-bottom: 1px solid #a262ad80;
@@ -169,11 +129,10 @@ input:focus,
 }
 
 input:focus::placeholder,
-.el-input__inner:focus::placeholder {
+:deep(.el-input__inner):focus::placeholder {
   opacity: 0;
 }
-</style>
-<style scoped lang="scss">
+
 button {
   width: 70%;
   margin-top: 35px;

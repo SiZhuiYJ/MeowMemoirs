@@ -48,58 +48,38 @@ const login = async () => {
       meowMsgError(err.message);
     });
 };
-onMounted(async () => {});
+onMounted(async () => { });
 </script>
 
 <template>
   <div class="login-box">
     <h1>--登--录--</h1>
-    <el-input
-      v-model="Identifier"
-      style="width: 240px; padding: 15px 0"
-      :placeholder="handoverList.find((item) => item.value === handover)?.label"
-      clearable
-    />
-    <el-input
-      v-model="password"
-      style="width: 240px; padding: 15px 0 30px"
-      type="password"
-      placeholder="密码"
-      show-password
-      class="input"
-    />
-    <el-radio-group
-      v-model="handover"
-      @change="Identifier = ''"
-      fill="#a262ad80"
-      text-color="#FFF"
-    >
-      <el-radio-button
-        v-for="item in handoverList"
-        :label="item.label"
-        :value="item.value"
-        :key="item.value"
-      />
+    <el-input v-model="Identifier" style="width: 240px; padding: 15px 0"
+      :placeholder="handoverList.find((item) => item.value === handover)?.label" clearable />
+    <el-input v-model="password" style="width: 240px; padding: 15px 0 30px" type="password" placeholder="密码"
+      show-password class="input" />
+    <el-radio-group v-model="handover" @change="Identifier = ''" fill="#a262ad80" text-color="#FFF">
+      <el-radio-button v-for="item in handoverList" :label="item.label" :value="item.value" :key="item.value" />
     </el-radio-group>
     <button @click="login">登录</button>
   </div>
 </template>
 
-<style lang="scss">
-.el-radio-button__inner:hover {
+<style scoped lang="scss">
+:deep(.el-radio-button__inner):hover {
   color: #a262ad;
 }
 
-.el-input__wrapper {
+:deep(.el-input__wrapper) {
   background-color: rgba(255, 255, 255, 0);
   box-shadow: none;
 }
 
-.el-input__wrapper.is-focus {
+:deep(.el-input__wrapper).is-focus {
   box-shadow: none;
 }
 
-.el-input__wrapper:hover {
+:deep(.el-input__wrapper):hover {
   box-shadow: none;
 }
 
@@ -114,7 +94,7 @@ h1 {
 }
 
 input,
-.el-input__inner {
+:deep(.el-input__inner) {
   background-color: transparent;
   width: 70%;
   color: #fff;
@@ -129,12 +109,12 @@ input,
 }
 
 input::placeholder,
-.el-input__inner::placeholder {
+:deep(.el-input__inner)::placeholder {
   color: #fff;
 }
 
 input:focus,
-.el-input__inner:focus {
+:deep(.el-input__inner):focus {
   color: #a262ad;
   outline: none;
   border-bottom: 1px solid #a262ad80;
@@ -142,11 +122,10 @@ input:focus,
 }
 
 input:focus::placeholder,
-.el-input__inner:focus::placeholder {
+:deep(.el-input__inner):focus::placeholder {
   opacity: 0;
 }
-</style>
-<style scoped lang="scss">
+
 button {
   width: 70%;
   margin-top: 35px;

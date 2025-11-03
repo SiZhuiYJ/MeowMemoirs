@@ -8,10 +8,8 @@ import {
     meowMsgInfo,
     meowMsgError,
 } from "@/utils/message";
-import { useScheduleStores } from "@/features/schedule/stores/useScheduleStores";
-import { storeToRefs } from 'pinia';
-const { initializeData } = useScheduleStores();
-const { scheduleStore } = storeToRefs(useScheduleStores());
+import useSchedule from "@/features/schedule/composables/useSchedule";
+const { schedule, initializeData } = useSchedule();
 // 是否显示搜索表单[默认显示]
 const showSearch = ref<boolean>(true); // 默认显示搜索条件
 // 查询参数
@@ -157,7 +155,7 @@ onMounted(() => {
 
             <!-- 数据表格 -->
             <div class="schedule">
-                <MeowCard v-for="value in scheduleStore" :key="value.id" class="schedule-item">
+                <MeowCard v-for="value in schedule" :key="value.id" class="schedule-item">
                     <div class="schedule-title">{{ value.scheduleName }}</div>
                     <div class="schedule-weekCount">{{ value.weekCount }}</div>
                     <div class="schedule-startTime">{{ value.startTime }}</div>

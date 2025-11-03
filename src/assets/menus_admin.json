@@ -337,7 +337,8 @@
         "isFull": "1",
         "isAffix": "1",
         "redirect": ""
-    },    {
+    },
+    {
         "path": "/console/calendar/editCourse",
         "name": "editCourse",
         "label": "课程修改",
