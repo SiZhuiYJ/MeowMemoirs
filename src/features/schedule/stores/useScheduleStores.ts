@@ -3,7 +3,8 @@ import type { Schedule } from "@/features/auth/types";
 import { meowMsgError, meowMsgSuccess } from "@/utils/message";
 import { ElLoading } from "element-plus";
 import { defineStore } from "pinia";
-import { ref, computed } from "vue";
+import { ref} from "vue";
+
 
 export const useScheduleStores = defineStore("schedule", () => {
     const scheduleStore = ref<Schedule[]>([]);
