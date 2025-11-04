@@ -21,39 +21,49 @@ export interface PaginationResponse<T = any> {
 }
 
 // 课程时间段类型
-export interface CourseTimeSlot {
+export interface CourseTime {
+    /** 时间段ID */
+    Id: number;
+    /** 课程ID */
+    courseId: number;
     /** 课程地点 */
     location: string;
     /** 教师姓名 */
     teacher: string;
     /** 周次数组，如 [1,2,3,4,5] */
-    weeks: number[];
+    weekList: number[];
     /** 节次数组，如 [1,2] 表示第1-2节 */
-    sections: number[];
+    sectionList: number[];
     /** 周几，1-7 表示周一至周日 */
-    weekday: number;
+    dayOfWeek: number;
+    /** 创建时间 */
+    CreateTime: string;
+    /** 更新时间 */
+    UpdateTime: string;
+    /** 备注 */
+    remark?: string;
 }
 
 // 课程项类型
-export interface CourseItem {
+export interface Course {
     /** 课程表ID */
     id: number;
     /** 关联的课表ID */
-    schedule_id: number;
+    scheduleId: number;
     /** 课程名称 */
-    course_name: string;
+    courseName: string;
     /** 课程颜色，十六进制颜色码，如 #FF0000 */
     color: string;
     /** 课程时间段数组 */
-    time_slots: CourseTimeSlot[];
+    timeSlots: CourseTime[];
     /** 备注 */
     remark?: string;
     /** 创建时间 */
-    create_time: string;
+    createTime: string;
     /** 更新时间 */
-    update_time: string;
+    updateTime: string;
     /** 删除标记 */
-    is_deleted: 0 | 1;
+    isDeleted: 0 | 1;
     /** 扩展字段 */
     ext_attr1?: string;
     ext_attr2?: string;
@@ -108,7 +118,7 @@ export interface UpdateScheduleRequest extends Partial<CreateScheduleRequest> {
 export interface CreateCourseRequest {
     schedule_id: number;
     color: string;
-    time_slots: CourseTimeSlot[];
+    time_slots: CourseTime[];
     ext_attr1?: string;
     ext_attr2?: string;
     ext_attr3?: string;
@@ -143,7 +153,7 @@ export interface DisplayCourse {
     /** 教师姓名（从第一个时间段获取） */
     teacher: string;
     /** 所有时间段 */
-    time_slots: CourseTimeSlot[];
+    time_slots: CourseTime[];
     /** 用于渲染的显示文本 */
     displayText: string;
 }
@@ -155,7 +165,7 @@ export interface WeekCourseData {
 
 // 课表查询结果
 export interface ScheduleWithCourses extends Schedule {
-    courses: CourseItem[];
+    courses: Course[];
     week_course_data: WeekCourseData;
 }
 

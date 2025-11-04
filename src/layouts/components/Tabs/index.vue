@@ -5,7 +5,7 @@ import GlobalIcon from "@/components/GlobalIcon/index.vue";
 import Sortable from "sortablejs";
 import { meowMsgWarning } from "@/utils/message";
 import type { TabsPaneContext } from "element-plus";
-import { ref, watch, computed, onMounted } from "vue";
+import { ref, watch, computed, onMounted, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { STATIC_URL } from "@/config/index.ts";
 import { useAuthStore, useTabsStore, type Tab } from "@/stores";
@@ -17,10 +17,12 @@ const route = useRoute();
 const router = useRouter();
 
 /** 页面创建后，立即初始化选项卡 AND 拖拽函数 */
-onMounted(() => {
+onMounted(async () => {
   addTab(); // 添加选项卡[进入根页面，立即添加首页]
   setActiveTab(); // 设置激活选项卡[进入根页面，立即激活首页]
   initTabs(); // 进入根页面，初始化需要固定的页面
+  // 等待 DOM 更新后再初始化拖拽，避免 document.querySelector 返回 null
+  await nextTick();
   tabsDrop(); // 初始化拖拽功能
 });
 
@@ -109,20 +111,27 @@ const clickToggleTab = (tab: TabsPaneContext) => {
 
 /** 6、tabs 拖拽排序 */
 const tabsDrop = () => {
-  Sortable.create(document.querySelector(".el-tabs__nav") as HTMLElement, {
-    draggable: ".el-tabs__item",
-    animation: 300,
-    // @ts-ignore
-    onEnd({ newIndex, oldIndex }) {
-      const tabsList = [...useTabsStore().tabsStore.tabList];
-      // 获取当前移动的索引的数据
-      const currentRow = tabsList.splice(oldIndex as number, 1)[0];
-      // 将 currentRow 元素插入到 tabsList 数组的指定位置 newIndex。0 是删除的元素数量，这里不需要删除任何元素
-      tabsList.splice(newIndex as number, 0, currentRow);
-      // 更新排序后的tabs仓库数据
-      useTabsStore().setTab(tabsList);
-    }
-  });
+  try {
+    const el = document.querySelector(".el-tabs__nav") as HTMLElement | null;
+    if (!el) return; // 如果没有找到元素，安全返回，避免传入 null
+    Sortable.create(el, {
+      draggable: ".el-tabs__item",
+      animation: 300,
+      // @ts-ignore
+      onEnd({ newIndex, oldIndex }) {
+        const tabsList = [...useTabsStore().tabsStore.tabList];
+        // 获取当前移动的索引的数据
+        const currentRow = tabsList.splice(oldIndex as number, 1)[0];
+        // 将 currentRow 元素插入到 tabsList 数组的指定位置 newIndex。0 是删除的元素数量，这里不需要删除任何元素
+        tabsList.splice(newIndex as number, 0, currentRow);
+        // 更新排序后的tabs仓库数据
+        useTabsStore().setTab(tabsList);
+      }
+    });
+  } catch (error) {
+    // 保护性捕获，避免未处理的异常中断挂载流程
+    // console.warn("tabsDrop init failed:", error);
+  }
 };
 
 /** 7、右键菜单 */

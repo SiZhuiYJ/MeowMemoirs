@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import useSchedule from "@/features/schedule/composables/useSchedule";
-const { initializeData, getScheduleByID } = useSchedule();
+import { useScheduleStores } from "@/features/schedule/stores/useScheduleStores";
+const { initializeData, getScheduleByID } = useScheduleStores();
 import type { Schedule } from "@/features/schedule/types";
 const scheduleItem = ref<Schedule | undefined>(undefined);
 onMounted(async () => {
     await initializeData();
-    scheduleItem.value = getScheduleByID(1);
+    scheduleItem.value = await getScheduleByID(1);
     console.log("编辑课表页面获取的课表信息", scheduleItem.value);
 });
 
