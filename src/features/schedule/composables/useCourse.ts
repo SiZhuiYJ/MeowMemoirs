@@ -10,13 +10,11 @@ export default function useCourse() {
     }
 
     async function getCourseByID(id: number): Promise<Course | undefined> {
-        console.log("获取课程id", id)
         if (!id) return undefined;
         if (course.value?.id !== id) {
             const { data } = await ScheduleApi.MMPostCourseByID(id)
             setCourse(data.course);
         }
-        console.log("获取课程详情", course.value)
         return course.value;
     }
     return {

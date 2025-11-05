@@ -11,13 +11,23 @@ export default function useSchedule() {
     }
 
     async function getScheduleByID(id: number): Promise<Schedule | undefined> {
-        console.log("获取课表id", id)
         if (!id) return undefined;
         if (schedule.value?.id !== id) {
             const { data } = await ScheduleApi.MMPostScheduleByID(id)
-            setSchedule(data.schedule);
+            console.log(data.schedule);
+            setSchedule({
+                id: data.schedule.id,
+                userId: data.schedule.userId,
+                scheduleName: data.schedule.scheduleName,
+                startTime: data.schedule.startTime,
+                weekCount: data.schedule.weekCount,
+                timetable: JSON.parse(data.schedule.timetable) as string[],
+                remark: data.schedule.remark,
+                createTime: data.schedule.createTime,
+                updateTime: data.schedule.updateTime,
+                is_deleted: data.schedule.is_deleted,
+            });
         }
-        console.log("获取课表详情", schedule.value)
         return schedule.value;
     }
     return {

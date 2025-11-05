@@ -37,21 +37,21 @@ const serverMessage = [
 // 声明全局性能API类型
 declare const PerformanceObserver:
   | {
-      prototype: PerformanceObserver;
-      new (callback: PerformanceObserverCallback): PerformanceObserver;
-      supportedEntryTypes?: string[];
-    }
+    prototype: PerformanceObserver;
+    new(callback: PerformanceObserverCallback): PerformanceObserver;
+    supportedEntryTypes?: string[];
+  }
   | undefined;
 
 interface PerformanceMetrics {
-  DNS查询时间: string;
-  TCP连接时间: string;
-  TLS握手时间: string;
-  请求响应时间: string;
-  DOM解析时间: string;
-  白屏时间: string;
-  DOM准备时间: string;
-  页面完全加载时间: string;
+  "DNS查询时间": string;
+  "TCP连接时间": string;
+  "TLS握手时间": string;
+  "请求响应时间": string;
+  "DOM解析时间": string;
+  "白屏时间": string;
+  "DOM准备时间": string;
+  "页面完全加载时间": string;
   "首次内容绘制(FCP)": string;
   "最大内容绘制(LCP)": string;
 }
@@ -73,17 +73,17 @@ const calculateMetrics = () => {
 
   // 详细指标
   metrics.value = {
-    DNS查询时间: `${(entry.domainLookupEnd - entry.domainLookupStart).toFixed(2)}ms`,
-    TCP连接时间: `${(entry.connectEnd - entry.connectStart).toFixed(2)}ms`,
-    TLS握手时间:
+    "DNS查询时间": `${(entry.domainLookupEnd - entry.domainLookupStart).toFixed(2)}ms`,
+    "TCP连接时间": `${(entry.connectEnd - entry.connectStart).toFixed(2)}ms`,
+    "TLS握手时间":
       entry.secureConnectionStart > 0
         ? `${(entry.connectEnd - entry.secureConnectionStart).toFixed(2)}ms`
         : "未使用HTTPS",
-    请求响应时间: `${(entry.responseEnd - entry.requestStart).toFixed(2)}ms`,
-    DOM解析时间: `${(entry.domComplete - entry.domInteractive).toFixed(2)}ms`,
-    白屏时间: `${(entry.responseStart - entry.startTime).toFixed(2)}ms`,
-    DOM准备时间: `${(entry.domContentLoadedEventEnd - entry.startTime).toFixed(2)}ms`,
-    页面完全加载时间: totalLoadTime.value,
+    "请求响应时间": `${(entry.responseEnd - entry.requestStart).toFixed(2)}ms`,
+    "DOM解析时间": `${(entry.domComplete - entry.domInteractive).toFixed(2)}ms`,
+    "白屏时间": `${(entry.responseStart - entry.startTime).toFixed(2)}ms`,
+    "DOM准备时间": `${(entry.domContentLoadedEventEnd - entry.startTime).toFixed(2)}ms`,
+    "页面完全加载时间": totalLoadTime.value,
   };
 
   // 添加更多现代性能指标
@@ -213,21 +213,10 @@ onMounted(() => {
         <template #container>
           <h3>详细性能测试数据</h3>
           <div>
-            本次打开网页的速度击败全世界<span
-              style="font-size: 16px; font-weight: bold"
-              :style="{ color: getRandomColor() }"
-              >{{ rankNum }}</span
-            >
-            <span
-              style="font-size: 16px; font-weight: bold"
-              :style="{ color: getRandomColor() }"
-              >{{ rankTen }}</span
-            >
-            <span
-              style="font-size: 16px; font-weight: bold"
-              :style="{ color: getRandomColor() }"
-              >%</span
-            >
+            本次打开网页的速度击败全世界<span style="font-size: 16px; font-weight: bold" :style="{ color: getRandomColor() }">{{
+              rankNum }}</span>
+            <span style="font-size: 16px; font-weight: bold" :style="{ color: getRandomColor() }">{{ rankTen }}</span>
+            <span style="font-size: 16px; font-weight: bold" :style="{ color: getRandomColor() }">%</span>
             的人
           </div>
         </template>
@@ -245,105 +234,82 @@ onMounted(() => {
             <div class="table-row">
               <div class="table-cell">
                 <span class="cell-label">IP地址:</span>
-                <span class="cell-value"
-                  ><el-text truncated>{{
-                    accessStore.getSimpleIP?.ip || "未知"
-                  }}</el-text></span
-                >
+                <span class="cell-value"><el-text truncated>{{
+                  accessStore.getSimpleIP?.ip || "未知"
+                }}</el-text></span>
               </div>
             </div>
             <div class="table-row">
               <div class="table-cell">
                 <span class="cell-label">AS编号:</span>
-                <span class="cell-value"
-                  ><el-text truncated>{{
-                    accessStore.getSimpleIP?.as?.number || "未知"
-                  }}</el-text></span
-                >
+                <span class="cell-value"><el-text truncated>{{
+                  accessStore.getSimpleIP?.as?.number || "未知"
+                }}</el-text></span>
               </div>
             </div>
             <div class="table-row">
               <div class="table-cell">
                 <span class="cell-label">AS名称:</span>
-                <span class="cell-value"
-                  ><el-text truncated>{{
-                    accessStore.getSimpleIP?.as?.name || "未知"
-                  }}</el-text></span
-                >
+                <span class="cell-value"><el-text truncated>{{
+                  accessStore.getSimpleIP?.as?.name || "未知"
+                }}</el-text></span>
               </div>
             </div>
             <div class="table-row">
               <div class="table-cell">
                 <span class="cell-label">运营商:</span>
-                <span class="cell-value"
-                  ><el-text truncated>{{
-                    accessStore.getSimpleIP?.as?.info || "未知"
-                  }}</el-text></span
-                >
+                <span class="cell-value"><el-text truncated>{{
+                  accessStore.getSimpleIP?.as?.info || "未知"
+                }}</el-text></span>
               </div>
             </div>
             <div class="table-row">
               <div class="table-cell">
                 <span class="cell-label">地址段:</span>
-                <span class="cell-value"
-                  ><el-text truncated>{{
-                    accessStore.getSimpleIP?.addr || "未知"
-                  }}</el-text></span
-                >
+                <span class="cell-value"><el-text truncated>{{
+                  accessStore.getSimpleIP?.addr || "未知"
+                }}</el-text></span>
               </div>
             </div>
             <div class="table-row">
               <div class="table-cell">
                 <span class="cell-label">国家:</span>
-                <span class="cell-value"
-                  ><el-text truncated
-                    >{{ accessStore.getSimpleIP?.country?.name || "未知" }} ({{
-                      accessStore.getSimpleIP?.country?.code || "未知"
-                    }})</el-text
-                  ></span
-                >
+                <span class="cell-value"><el-text truncated>{{ accessStore.getSimpleIP?.country?.name || "未知" }} ({{
+                  accessStore.getSimpleIP?.country?.code || "未知"
+                }})</el-text></span>
               </div>
             </div>
             <div class="table-row">
               <div class="table-cell">
                 <span class="cell-label">注册国家:</span>
-                <span class="cell-value"
-                  ><el-text truncated
-                    >{{ accessStore.getSimpleIP?.registeredCountry?.name || "未知" }} ({{
+                <span class="cell-value"><el-text truncated>{{ accessStore.getSimpleIP?.registeredCountry?.name || "未知"
+                    }} ({{
                       accessStore.getSimpleIP?.registeredCountry?.code || "未知"
-                    }})</el-text
-                  ></span
-                >
+                    }})</el-text></span>
               </div>
             </div>
             <div class="table-row">
               <div class="table-cell">
                 <span class="cell-label">地区:</span>
-                <span class="cell-value"
-                  ><el-text truncated>{{
-                    (accessStore.getSimpleIP?.regions || []).join(" / ") || "未知"
-                  }}</el-text></span
-                >
+                <span class="cell-value"><el-text truncated>{{
+                  (accessStore.getSimpleIP?.regions || []).join(" / ") || "未知"
+                }}</el-text></span>
               </div>
             </div>
             <div class="table-row">
               <div class="table-cell">
                 <span class="cell-label">地区简称:</span>
-                <span class="cell-value"
-                  ><el-text truncated>{{
-                    (accessStore.getSimpleIP?.regionsShort || []).join(" / ") || "未知"
-                  }}</el-text></span
-                >
+                <span class="cell-value"><el-text truncated>{{
+                  (accessStore.getSimpleIP?.regionsShort || []).join(" / ") || "未知"
+                }}</el-text></span>
               </div>
             </div>
             <div class="table-row">
               <div class="table-cell">
                 <span class="cell-label">连接类型:</span>
-                <span class="cell-value"
-                  ><el-text truncated>{{
-                    accessStore.getSimpleIP?.type || "未知"
-                  }}</el-text></span
-                >
+                <span class="cell-value"><el-text truncated>{{
+                  accessStore.getSimpleIP?.type || "未知"
+                }}</el-text></span>
               </div>
             </div>
           </div>

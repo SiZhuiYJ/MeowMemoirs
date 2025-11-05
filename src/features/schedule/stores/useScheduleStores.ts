@@ -1,5 +1,5 @@
-import { ScheduleApi } from "@/features/auth/api";
-import type { Schedule } from "@/features/auth/types";
+import { ScheduleApi } from "@/features/schedule/api";
+import type { Schedule } from "@/features/schedule/types";
 import { meowMsgError, meowMsgSuccess } from "@/utils/message";
 import { ElLoading } from "element-plus";
 import { defineStore } from "pinia";
@@ -18,15 +18,27 @@ export const useScheduleStores = defineStore("schedule", () => {
         });
         try {
             const { data } = await ScheduleApi.MMPostScheduleList();
-            console.log("获取课表数据", data);
-            scheduleStore.value = data.schedule;
+            data.schedule.forEach((item) => {
+                scheduleStore.value.push({
+                    id: item.id,
+                    userId: item.userId,
+                    scheduleName: item.scheduleName,
+                    startTime: item.startTime,
+                    weekCount: item.weekCount,
+                    timetable: JSON.parse(item.timetable) as string[],
+                    remark: item.remark,
+                    createTime: item.createTime,
+                    updateTime: item.updateTime,
+                    is_deleted: item.is_deleted,
+                });
+            });
+            // scheduleStore.value = data.schedule;
             meowMsgSuccess("课表获取成功");
         } catch (error) {
             scheduleStore.value = [];
             console.log(error);
             meowMsgError("课表获取失败");
         }
-        console.log("课表集合", scheduleStore.value)
         loading.close();
     }
     async function getScheduleByID(id: number) {

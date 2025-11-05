@@ -9,13 +9,11 @@ export default function useTime() {
         time.value = data;
     }
     async function getTimeByID(id: number): Promise<CourseTime | undefined> {
-        console.log("获取课程时间id", id)
         if (!id) return undefined;
         if (time.value?.courseId !== id) {
             const { data } = await ScheduleApi.MMPostTimeByID(id)
-            setTime(data.courseTime);
+            setTime(data.time);
         }
-        console.log("获取课程时间详情", time.value)
         return time.value;
     }
     return {

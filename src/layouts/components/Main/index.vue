@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, provide, onBeforeUnmount, nextTick } from "vue";
+import { ref, watch, provide, onBeforeUnmount, nextTick, onMounted } from "vue";
 import Maximize from "@/layouts/components/Main/components/Maximize.vue";
 import { useDebounceFn } from "@vueuse/core";
 import Tabs from "@/layouts/components/Tabs/index.vue";
@@ -44,19 +44,32 @@ watch(
 const screenWidth = ref(0);
 const showTabs = ref(true);
 
-/** 监听窗口大小变化，折叠侧边栏 */
+/**
+ * 监听窗口大小变化，折叠侧边栏
+ * 使用 visualViewport.width 或 window.innerWidth 以避免某些移动端在滚动时因为地址栏收起/展开触发的高度变化
+ * 导致 clientWidth 计算异常，从而误触发 showTabs 切换。
+ */
+const getViewportWidth = () => {
+  // visualViewport 在部分浏览器中更精确，回退到 innerWidth
+  // 保证在滚动导致地址栏收起/展开时不会误判宽度
+  // @ts-ignore
+  return (window.visualViewport && window.visualViewport.width) || window.innerWidth || document.documentElement.clientWidth;
+};
+
 const listeningWindow = useDebounceFn(() => {
-  screenWidth.value = document.body.clientWidth;
+  screenWidth.value = getViewportWidth();
   if (!isCollapse && screenWidth.value < 1200)
     useGlobalStore().setGlobal("isCollapse", true);
   if (isCollapse && screenWidth.value > 1200)
     useGlobalStore().setGlobal("isCollapse", false);
-  if (screenWidth.value < 520) {
-    showTabs.value = false;
-  } else {
-    showTabs.value = true;
-  }
+  // 仅根据宽度判断是否显示 tabs（避免滚动/高度变化影响）
+  showTabs.value = screenWidth.value >= 520;
 }, 100);
+
+// 立即执行一次初始化，避免首次没有 resize 事件时状态不正确
+onMounted(() => {
+  listeningWindow();
+});
 
 window.addEventListener("resize", listeningWindow, false);
 
@@ -67,7 +80,7 @@ onBeforeUnmount(() => {
 
 <template>
   <Maximize v-show="maximize" />
-  <Tabs v-if="showTabs"></Tabs>
+  <Tabs></Tabs><!--  v-if="showTabs" -->
   <el-main class="layout layout-main">
     <router-view v-slot="{ Component, route }">
       <transition :name="transition" mode="out-in" appear>
@@ -89,6 +102,7 @@ onBeforeUnmount(() => {
   overflow-x: hidden;
   background-color: #f6f9fe;
 }
+
 .dark .layout-main {
   --un-bg-opacity: 1;
   background-color: rgb(0 0 0 / var(--un-bg-opacity));

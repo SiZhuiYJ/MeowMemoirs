@@ -36,12 +36,14 @@ export interface CourseTime {
     sectionList: number[];
     /** 周几，1-7 表示周一至周日 */
     dayOfWeek: number;
+    /** 备注 */
+    remark?: string;
     /** 创建时间 */
     CreateTime: string;
     /** 更新时间 */
     UpdateTime: string;
-    /** 备注 */
-    remark?: string;
+    /** 删除标记 */
+    isDeleted: 0 | 1;
 }
 
 // 课程项类型
@@ -54,8 +56,6 @@ export interface Course {
     courseName: string;
     /** 课程颜色，十六进制颜色码，如 #FF0000 */
     color: string;
-    /** 课程时间段数组 */
-    timeSlots: CourseTime[];
     /** 备注 */
     remark?: string;
     /** 创建时间 */
@@ -84,6 +84,33 @@ export interface Schedule {
     weekCount: number;
     /** 作息时间表，如 ["08:00-08:45", "08:55-09:40"] */
     timetable: string[];
+    /** 备注 */
+    remark?: string;
+    /** 创建时间 */
+    createTime: string;
+    /** 更新时间 */
+    updateTime: string;
+    /** 删除标记 */
+    is_deleted: 0 | 1;
+    /** 扩展字段 */
+    ext_attr1?: string;
+    ext_attr2?: string;
+    ext_attr3?: string;
+}
+// 课表类型
+export interface ScheduleDto {
+    /** 课表ID */
+    id: number;
+    /** 用户ID */
+    userId: number;
+    /** 课表名称 */
+    scheduleName: string;
+    /** 开课时间，格式：YYYY-MM-DD */
+    startTime: string;
+    /** 本学期周数 */
+    weekCount: number;
+    /** 作息时间表，如 ["08:00-08:45", "08:55-09:40"] */
+    timetable: string;
     /** 备注 */
     remark?: string;
     /** 创建时间 */

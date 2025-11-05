@@ -38,6 +38,8 @@ watch(
   }
 );
 
+
+
 /** 1、初始化需要固定的 tabs[isAffix[配置固定tabs项]，在进入系统的时候，获取对应权限菜单数据，如果里面有固定tabs配置项，则进行添加] */
 const initTabs = () => {
   useAuthStore().menuList.forEach((item: any) => {

@@ -9,13 +9,11 @@ export default function useTimeList() {
         timeList.value = data;
     }
     async function getTimeListByID(id: number): Promise<CourseTime[] | undefined> {
-        console.log("获取课程时间id", id)
         if (!id) return undefined;
         if (timeList.value?.[0]?.courseId !== id) {
             const { data } = await ScheduleApi.MMPostTimeListByCourseID(id)
-            setTimeList(data.courseTime);
+            setTimeList(data.time);
         }
-        console.log("获取课程时间列表", timeList.value)
         return timeList.value;
     }
     return {
