@@ -16,6 +16,7 @@ export const useScheduleStores = defineStore("schedule", () => {
             text: "获取课表数据中...",
             background: "rgba(0, 0, 0, 0.7)"
         });
+        scheduleStore.value=[];
         try {
             const { data } = await ScheduleApi.MMPostScheduleList();
             data.schedule.forEach((item) => {
