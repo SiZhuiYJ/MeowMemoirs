@@ -1,0 +1,82 @@
+<script setup lang="ts">
+// 定义参数的类型
+interface ITimeRangeProps {
+    IndexKey?: number;
+    timeRange?: string; // 时间范围
+}
+
+const props = withDefaults(defineProps<ITimeRangeProps>(), {
+    IndexKey: 0,
+    timeRange: "00:00-23:59",
+});
+
+const emits = defineEmits<{
+    (e: "editTime", time: { IndexKey: number; timeRange: string; }): void;
+    (e: "deleteTime", time: { IndexKey: number; timeRange: string; }): void;
+}>();
+import { ref, onMounted } from 'vue';
+import dayjs from 'dayjs';
+const showTimePicker = ref<boolean>(false);
+const newTimeRange = ref<[string, string]>(["00:00", "23:59"]);
+
+const editTimeRange = () => {
+    console.log("编辑时间范围:", newTimeRange.value.join('-'));
+    emits("editTime", { timeRange: newTimeRange.value.join('-'), IndexKey: props.IndexKey });
+    showTimePicker.value = false;
+}
+
+const deleteTimeRange = () => {
+    console.log("删除时间范围:", newTimeRange.value.join('-'));
+    emits("deleteTime", { timeRange: newTimeRange.value.join('-'), IndexKey: props.IndexKey });
+}
+
+const toggleTimePicker = () => {
+    showTimePicker.value = !showTimePicker.value;
+}
+
+const parseTime = (timeStr: string): Date => {
+    const parsed = dayjs(timeStr, 'HH:mm', true); // 严格模式解析
+    if (!parsed.isValid()) {
+        console.error(`无效时间格式: ${timeStr}`);
+        return new Date(); // 返回默认值避免崩溃
+    }
+    return parsed.toDate();
+};
+
+onMounted(() => {
+    const [start, end] = props.timeRange.split('-');
+    newTimeRange.value = [
+        dayjs(parseTime(start)).format('HH:mm'),
+        dayjs(parseTime(end)).format('HH:mm')
+    ];
+});
+// onMounted(() => {
+//     const [start, end] = props.timeRange.split('-');
+//     newTimeRange.value = [
+//         dayjs(start, 'HH:mm').toDate(),
+//         dayjs(end, 'HH:mm').toDate()
+//     ];
+// });
+</script>
+<template>
+    <template v-if="!showTimePicker">
+        <div>{{ props.timeRange }}
+        </div> <el-button type="primary" size="small" @click="toggleTimePicker">
+            编辑
+        </el-button>
+        <el-button type="danger" size="small" @click="deleteTimeRange">
+            删除
+        </el-button>
+    </template>
+    <template v-else>
+        <el-time-picker v-model="newTimeRange" is-range arrow-control range-separator="至" start-placeholder="开始"
+            end-placeholder="结束" format="HH:mm" value-format="HH:mm" style="width:100px;" />
+        <el-button type="primary" @click="editTimeRange">
+            确定
+        </el-button>
+        <el-button type="text" @click="toggleTimePicker">
+            取消
+        </el-button>
+    </template>
+</template>
+<style scoped lang="scss"></style>
