@@ -212,9 +212,9 @@ onMounted(async () => {
         <el-col :xs="24" :sm="12" :md="12" :lg="6" :xl="6">
             <el-card class="card-main" shadow="hover">
                 <template #header> 课程列表 </template>
-                <div v-for="course in courseList" :key="course.id" @click="getCourseByID(course.id)"
-                    class="course-item">
-                    {{ course.courseName }}
+                <div v-for="courseItem in courseList" :key="courseItem.id" @click="getCourseByID(courseItem.id)"
+                    class="course-item" :class="{ 'is-course': courseItem.id === course?.id }">
+                    {{ courseItem.courseName }}
                 </div>
             </el-card>
         </el-col>
@@ -281,9 +281,9 @@ onMounted(async () => {
     border-bottom: 1px solid #f0f0f0;
     transition: background-color 0.3s ease;
 
-    &:last-child {
-        border-bottom: none;
-    }
+    // &:last-child {
+    //     border-bottom: none;
+    // }
 
     &:hover {
         background-color: #f8f9fa;
@@ -327,5 +327,9 @@ onMounted(async () => {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.is-course {
+    border-bottom: 1px solid #000;
 }
 </style>
