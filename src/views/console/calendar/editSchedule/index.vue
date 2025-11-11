@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch, onMounted, ref, computed } from "vue";
+import { watch, onMounted, ref } from "vue";
 // Store
 import { useScheduleStores } from "@/features/schedule/stores/useScheduleStores";
 import { storeToRefs } from "pinia";
