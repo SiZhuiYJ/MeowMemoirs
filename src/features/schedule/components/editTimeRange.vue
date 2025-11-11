@@ -6,7 +6,7 @@ interface ITimeRangeProps {
 }
 
 const props = withDefaults(defineProps<ITimeRangeProps>(), {
-    IndexKey: 0,
+    IndexKey: -1,
     timeRange: "00:00-23:59",
 });
 
@@ -49,28 +49,25 @@ onMounted(() => {
         dayjs(parseTime(start)).format('HH:mm'),
         dayjs(parseTime(end)).format('HH:mm')
     ];
+    console.log("IndexKey", props.IndexKey);
+    if (props.IndexKey < 0) {
+        toggleTimePicker();
+    }
 });
-// onMounted(() => {
-//     const [start, end] = props.timeRange.split('-');
-//     newTimeRange.value = [
-//         dayjs(start, 'HH:mm').toDate(),
-//         dayjs(end, 'HH:mm').toDate()
-//     ];
-// });
 </script>
 <template>
     <template v-if="!showTimePicker">
-        <div>{{ props.timeRange }}
-        </div> <el-button type="primary" size="small" @click="toggleTimePicker">
+        <div class="time">{{ props.timeRange }}
+        </div> <el-button type="primary" @click="toggleTimePicker">
             编辑
         </el-button>
-        <el-button type="danger" size="small" @click="deleteTimeRange">
+        <el-button type="danger" @click="deleteTimeRange">
             删除
         </el-button>
     </template>
     <template v-else>
         <el-time-picker v-model="newTimeRange" is-range arrow-control range-separator="至" start-placeholder="开始"
-            end-placeholder="结束" format="HH:mm" value-format="HH:mm" style="width:100px;" />
+            end-placeholder="结束" format="HH:mm" value-format="HH:mm" style="width:100%;" />
         <el-button type="primary" @click="editTimeRange">
             确定
         </el-button>
@@ -79,4 +76,9 @@ onMounted(() => {
         </el-button>
     </template>
 </template>
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.time {
+    padding-right: 3px;
+    width: 100%;
+}
+</style>

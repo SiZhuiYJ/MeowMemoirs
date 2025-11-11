@@ -23,91 +23,34 @@ const { timeList, getTimeListByID } = useTimeList();
 
 import editTimeRange from "@/features/schedule/components/editTimeRange.vue"
 
-// // 时间段管理相关
-// const showTimePicker = ref(false);
-// const newTimeRange = ref<[Date, Date]>([new Date(), new Date()]);
 
-// // 确保schedule.timetable存在
-// const timetable = computed(() => {
-//     if (!schedule.value || !schedule.value.timetable) {
-//         return [];
-//     }
-//     return schedule.value.timetable;
-// });
 
-// // 格式化时间段显示
-// const formatTimeRange = (timeRange: string) => {
-//     return timeRange;
-// };
 
-// // 添加时间段
-// const addTimeRange = () => {
-//     if (!schedule.value) return;
+// 当前课表id
+const currentScheduleId = ref<number>(0);
+watch(() => schedule.value?.id, (newVal) => {
+    currentScheduleId.value = newVal || 0;
+    console.log("当前课表id:", newVal);
+});
+// 添加课表
+const addSchedule = () => {
+    console.log("添加课表");
+}
 
-//     // 确保timetable存在
-//     if (!schedule.value.timetable) {
-//         schedule.value.timetable = [];
-//     }
+// 添加时间段
+const showTimePicker = ref<boolean>(false);
 
-//     const startTime = formatDateToTime(newTimeRange.value[0]);
-//     const endTime = formatDateToTime(newTimeRange.value[1]);
-
-//     // 检查时间段是否有效
-//     if (startTime && endTime) {
-//         const timeString = `${startTime}-${endTime}`;
-//         schedule.value.timetable.push(timeString);
-//         showTimePicker.value = false;
-
-//         // 重置时间选择器
-//         newTimeRange.value = [new Date(), new Date()];
-//     }
-// };
-
-// // 删除时间段
-// const removeTimeRange = (index: number) => {
-//     if (!schedule.value || !schedule.value.timetable) return;
-//     schedule.value.timetable.splice(index, 1);
-// };
-
-// // 将Date对象格式化为HH:mm格式
-// const formatDateToTime = (date: Date): string => {
-//     const hours = date.getHours().toString().padStart(2, "0");
-//     const minutes = date.getMinutes().toString().padStart(2, "0");
-//     return `${hours}:${minutes}`;
-// };
-
-// // 将时间字符串转换为Date对象
-// const parseTimeToDate = (timeStr: string): Date => {
-//     const [hours, minutes] = timeStr.split(":").map(Number);
-//     const date = new Date();
-//     date.setHours(hours, minutes, 0, 0);
-//     return date;
-// };
-
-// // 编辑时间段
-// const editTimeRange = (index: number) => {
-//     if (!schedule.value || !schedule.value.timetable) return;
-
-//     const timeRange = schedule.value.timetable[index];
-//     const [startTime, endTime] = timeRange.split("-");
-
-//     newTimeRange.value = [parseTimeToDate(startTime), parseTimeToDate(endTime)];
-
-//     // 先删除原来的时间段
-//     schedule.value.timetable.splice(index, 1);
-//     showTimePicker.value = true;
-// };
-
-// const toStringList = (time: string): [string, string] => {
-//     const [start, end] = time.split('-');
-//     return [start, end];
-// };
 const editTime = (time: { timeRange: string; IndexKey: number }) => {
     console.log("编辑时间段:", time);
     if (!schedule.value || !schedule.value.timetable) return;
     if (time.IndexKey === undefined) return;
-
-    schedule.value.timetable[time.IndexKey] = time.timeRange;
+    if (time.IndexKey < 0) {
+        // 添加新时间段
+        schedule.value.timetable.push(time.timeRange);
+    } else {
+        schedule.value.timetable[time.IndexKey] = time.timeRange;
+    }
+    showTimePicker.value = false;
 };
 const removeTime = (time: { timeRange: string; IndexKey: number }) => {
     console.log("删除时间段:", time);
@@ -116,6 +59,9 @@ const removeTime = (time: { timeRange: string; IndexKey: number }) => {
 
     schedule.value.timetable.splice(time.IndexKey, 1);
 };
+
+
+
 watch(
     () => course.value,
     async newVal => {
@@ -124,6 +70,12 @@ watch(
         }
     }
 );
+
+import type { CollapseModelValue } from 'element-plus'
+const activeNames = ref(['1'])
+const handleChange = (val: CollapseModelValue) => {
+    console.log(val)
+};
 watch(
     () => schedule.value?.timetable,
     newVal => {
@@ -147,12 +99,16 @@ onMounted(async () => {
         <el-col :xs="24" :sm="12" :md="12" :lg="6" :xl="6">
             <el-card class="card-main" shadow="hover">
                 <template #header>
-                    <div v-for="schedule in scheduleStore" :key="schedule.id" @click="
-                        getScheduleByID(schedule.id),
-                        getCourseListByID(schedule.id)
-                        ">
-                        {{ schedule.scheduleName }}
-                    </div>
+                    <el-select v-model="currentScheduleId" placeholder="Select">
+                        <el-option v-for="schedule in scheduleStore" :key="schedule.id" :label="schedule.scheduleName"
+                            :value="schedule.id"
+                            @click="getScheduleByID(schedule.id), getCourseListByID(schedule.id)" />
+                        <template #footer>
+                            <el-button text bg @click="addSchedule">
+                                添加课表
+                            </el-button>
+                        </template>
+                    </el-select>
                 </template>
                 <template v-if="schedule">
                     <el-form :model="schedule" label-width="auto" style="max-width: 600px">
@@ -169,28 +125,17 @@ onMounted(async () => {
                             <div class="time-list">
                                 <el-scrollbar height="200px">
                                     <div v-for="(time, index) in schedule.timetable" :key="index" class="time-item">
-                                        <editTimeRange :timeRange="time" :key="index" @deleteTime="removeTime"
+                                        <editTimeRange :timeRange="time" :IndexKey="index" @deleteTime="removeTime"
                                             @editTime="editTime" />
+                                    </div>
+                                    <div class="time-item">
+                                        <el-button type="primary" @click="showTimePicker = true" v-if="!showTimePicker">
+                                            添加
+                                        </el-button>
+                                        <editTimeRange v-if="showTimePicker" @editTime="editTime" />
                                     </div>
                                 </el-scrollbar>
                             </div>
-
-                            <!-- 添加时间段区域 -->
-                            <!-- <div class="add-time-section">
-                                <el-button v-if="!showTimePicker" type="primary" @click="showTimePicker = true">
-                                    + 添加时间段
-                                </el-button>
-
-                                <div v-if="showTimePicker" class="time-picker-container">
-                                    <el-time-picker v-model="newTimeRange" is-range arrow-control range-separator="至"
-                                        start-placeholder="开始" end-placeholder="结束" format="HH:mm"
-                                        value-format="HH:mm" />
-                                    <el-button type="primary" @click="addTimeRange">添加
-                                    </el-button>
-                                    <el-button type="text" @click="showTimePicker = false">取消
-                                    </el-button>
-                                </div>
-                            </div> -->
                         </el-form-item>
                         <el-form-item label="课表备注">
                             <el-input v-model="schedule.remark" type="textarea" />
@@ -202,7 +147,9 @@ onMounted(async () => {
                             <el-date-picker v-model="schedule.updateTime" type="datetime" placeholder="更新时间" disabled />
                         </el-form-item>
                     </el-form>
+
                 </template>
+
                 <template v-else>
                     <div>No course selected</div>
                 </template>
@@ -221,7 +168,7 @@ onMounted(async () => {
         <el-col :xs="24" :sm="12" :md="12" :lg="6" :xl="6" class="d-2">
             <el-card class="card-main" shadow="hover">
                 <template #header>
-                    {{ course?.id }}/{{ course?.scheduleId }}
+                    课程详情 {{ course?.scheduleId }} {{ course?.id }}
                 </template>
                 <template v-if="course">
                     <el-form :model="course" label-width="auto" style="max-width: 600px">
@@ -250,9 +197,12 @@ onMounted(async () => {
         <el-col :xs="24" :sm="12" :md="12" :lg="6" :xl="6" style="padding-bottom: 0px">
             <el-card class="card-main" shadow="hover">
                 <template #header> 课程时间段列表 </template>
-                <div v-for="time in timeList" :key="time.Id" @click="getTimeByID(time.Id)">
-                    {{ time ? JSON.stringify(time) : "No time selected" }}
-                </div>
+                <el-collapse v-model="activeNames" @change="handleChange" style="width: 90%;">
+                    <el-collapse-item v-for="time in timeList" :key="time.Id"
+                        :title="`${time.location} ${time.teacher}`" :name="time.Id">
+                        {{ time ? JSON.stringify(time) : "No time selected" }}
+                    </el-collapse-item>
+                </el-collapse>
             </el-card>
         </el-col>
     </el-row>
@@ -280,10 +230,6 @@ onMounted(async () => {
     display: flex;
     border-bottom: 1px solid #f0f0f0;
     transition: background-color 0.3s ease;
-
-    // &:last-child {
-    //     border-bottom: none;
-    // }
 
     &:hover {
         background-color: #f8f9fa;
@@ -315,11 +261,6 @@ onMounted(async () => {
     gap: 5px;
 }
 
-/* 添加时间段区域样式 */
-.add-time-section {
-    // margin-top: 10px;
-}
-
 .time-picker-container {
     padding: 0px;
     background-color: #f9f9f9;
@@ -331,5 +272,10 @@ onMounted(async () => {
 
 .is-course {
     border-bottom: 1px solid #000;
+}
+
+:deep(.el-card__body) {
+    // 内容不得超出卡片范围
+    overflow: hidden;
 }
 </style>
