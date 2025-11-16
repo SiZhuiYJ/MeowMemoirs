@@ -17,9 +17,9 @@ export interface CourseTime {
     /** 备注 */
     remark?: string;
     /** 创建时间 */
-    CreateTime: string;
+    createTime: string;
     /** 更新时间 */
-    UpdateTime: string;
+    updateTime: string;
     /** 删除标记 */
     isDeleted: 0 | 1;
 }

@@ -408,7 +408,7 @@ class ANIMousePlus {
         style.innerHTML = styleContent;
         document.head.appendChild(style);
 
-        console.log("Generated CSS:", styleContent); // 调试用
+        // console.log("Generated CSS:", styleContent); // 调试用
     }
 
     /**

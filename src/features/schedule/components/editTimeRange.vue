@@ -11,8 +11,12 @@ const props = withDefaults(defineProps<ITimeRangeProps>(), {
 });
 
 const emits = defineEmits<{
+    // 编辑
     (e: "editTime", time: { IndexKey: number; timeRange: string; }): void;
+    // 删除
     (e: "deleteTime", time: { IndexKey: number; timeRange: string; }): void;
+    // 取消
+    (e: "cancel"): void;
 }>();
 import { ref, onMounted } from 'vue';
 import dayjs from 'dayjs';
@@ -28,6 +32,11 @@ const editTimeRange = () => {
 const deleteTimeRange = () => {
     console.log("删除时间范围:", newTimeRange.value.join('-'));
     emits("deleteTime", { timeRange: newTimeRange.value.join('-'), IndexKey: props.IndexKey });
+}
+
+const cancelEdit = () => {
+    emits("cancel");
+    showTimePicker.value = false;
 }
 
 const toggleTimePicker = () => {
@@ -71,7 +80,7 @@ onMounted(() => {
         <el-button type="primary" @click="editTimeRange">
             确定
         </el-button>
-        <el-button type="text" @click="toggleTimePicker">
+        <el-button type="text" @click="cancelEdit">
             取消
         </el-button>
     </template>

@@ -7,7 +7,7 @@ const { initializeData } = useScheduleStores();
 const { scheduleStore } = storeToRefs(useScheduleStores());
 // Schedule
 import useSchedule from "@/features/schedule/composables/useSchedule";
-const { schedule, getScheduleByID } = useSchedule();
+const { schedule, getScheduleByID, WeekTable, TimeTable } = useSchedule();
 // Course
 import useCourse from "@/features/schedule/composables/useCourse";
 const { course, getCourseByID } = useCourse();
@@ -23,7 +23,8 @@ const { timeList, getTimeListByID } = useTimeList();
 
 import editTimeRange from "@/features/schedule/components/editTimeRange.vue"
 
-
+// el-form
+import { numberToChinese } from "@/utils/calendar";
 
 
 // 当前课表id
@@ -97,7 +98,7 @@ onMounted(async () => {
 <template>
     <el-row :gutter="5">
         <el-col :xs="24" :sm="12" :md="12" :lg="6" :xl="6">
-            <el-card class="card-main" shadow="hover">
+            <el-card class="card-main schedule-list" shadow="hover">
                 <template #header>
                     <el-select v-model="currentScheduleId" placeholder="Select">
                         <el-option v-for="schedule in scheduleStore" :key="schedule.id" :label="schedule.scheduleName"
@@ -132,7 +133,8 @@ onMounted(async () => {
                                         <el-button type="primary" @click="showTimePicker = true" v-if="!showTimePicker">
                                             添加
                                         </el-button>
-                                        <editTimeRange v-if="showTimePicker" @editTime="editTime" />
+                                        <editTimeRange v-if="showTimePicker" @editTime="editTime"
+                                            @cancel="showTimePicker = false" />
                                     </div>
                                 </el-scrollbar>
                             </div>
@@ -197,10 +199,51 @@ onMounted(async () => {
         <el-col :xs="24" :sm="12" :md="12" :lg="6" :xl="6" style="padding-bottom: 0px">
             <el-card class="card-main" shadow="hover">
                 <template #header> 课程时间段列表 </template>
-                <el-collapse v-model="activeNames" @change="handleChange" style="width: 90%;">
+                <el-collapse v-if="timeList.length > 0" v-model="activeNames" @change="handleChange"
+                    style="width: 90%;">
                     <el-collapse-item v-for="time in timeList" :key="time.Id"
                         :title="`${time.location} ${time.teacher}`" :name="time.Id">
-                        {{ time ? JSON.stringify(time) : "No time selected" }}
+                        <el-form :model="time" label-width="auto" style="max-width: 600px">
+                            <el-form-item label="课程地址" prop="location">
+                                <el-input v-model="time.location" />
+                            </el-form-item>
+
+                            <el-form-item label="课程教师" prop="teacher">
+                                <el-input v-model="time.teacher" />
+                            </el-form-item>
+
+                            <el-form-item label="课程周几" prop="dayOfWeek">
+                                <el-radio-group v-model="time.dayOfWeek">
+                                    <el-radio-button v-for="value in 7" :key="value" :label="value">
+                                        {{ value === 7 ? '日' : numberToChinese(value) }}
+                                    </el-radio-button>
+                                </el-radio-group>
+                            </el-form-item>
+
+                            <el-form-item label="课程周次" prop="weekList">
+                                <el-select-v2 v-model="time.weekList" multiple :options="WeekTable"
+                                    placeholder="请选择课程周次" style="width: 100%" collapse-tags collapse-tags-tooltip
+                                    :max-collapse-tags="3" />
+                            </el-form-item>
+
+                            <el-form-item label="课程节次" prop="sectionList">
+                                <el-select-v2 v-model="time.sectionList" multiple :options="TimeTable"
+                                    placeholder="请选择课程节次" style="width: 100%" collapse-tags collapse-tags-tooltip
+                                    :max-collapse-tags="3" />
+                            </el-form-item>
+
+                            <el-form-item label="课程备注" prop="remark">
+                                <el-input v-model="time.remark" type="textarea" />
+                            </el-form-item>
+
+                            <el-form-item label="发布时间" prop="createTime">
+                                <el-date-picker v-model="time.createTime" type="datetime" placeholder="发布时间" disabled />
+                            </el-form-item>
+
+                            <el-form-item label="更新时间" prop="updateTime">
+                                <el-date-picker v-model="time.updateTime" type="datetime" placeholder="更新时间" disabled />
+                            </el-form-item>
+                        </el-form>
                     </el-collapse-item>
                 </el-collapse>
             </el-card>
@@ -212,6 +255,12 @@ onMounted(async () => {
 .card-main {
     border-radius: 0.375rem;
     height: calc(100vh - 132px);
+}
+
+.schedule-list {
+    :deep(.el-card__header) {
+        padding: calc(var(--el-card-padding) - 6px) var(--el-card-padding);
+    }
 }
 
 .el-col {

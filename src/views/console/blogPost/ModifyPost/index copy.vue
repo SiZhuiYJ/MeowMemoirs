@@ -3,6 +3,9 @@ import { ref, onMounted, computed } from "vue";
 import MeowSelect from "@/components/MeowSelect/index.vue";
 import useTag from "@/features/blogPost/useTag";
 const { blogTags, getTagList, addBlogTag } = useTag();
+
+// 局部按需引入已配置好的编辑器（配置位于 src/libs/vmd-editor.ts）
+import { VMdEditor } from "@/libs/vmd-editor";
 import { useEditBlog } from "@/features/blogPost/useBlogEdit";
 const { currentCachedBlog, clearCachedBlog, uploadCurrentBlog } = useEditBlog();
 // import {

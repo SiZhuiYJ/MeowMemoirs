@@ -29,108 +29,9 @@ import directives from "./directives";
 // 注册SVG图标（Vite插件生成的虚拟模块）
 import "virtual:svg-icons-register";
 
-// Markdown编辑器（带Codemirror支持的完整版）
-import VMdEditor from "@kangc/v-md-editor/lib/codemirror-editor";
-import "@kangc/v-md-editor/lib/style/codemirror-editor.css";
-
-// Markdown预览组件
-import VMdPreview from "@kangc/v-md-editor/lib/preview";
-import "@kangc/v-md-editor/lib/style/preview.css";
-
-// VuePress主题样式
-import vuepressTheme from "@kangc/v-md-editor/lib/theme/vuepress.js";
-import "@kangc/v-md-editor/lib/theme/style/vuepress.css";
-
-// PrismJS - 代码语法高亮库 需要去vite.config.ts里配置
-import Prism from "prismjs";
-
-// CodeMirror - 功能强大的代码编辑器
-import Codemirror from "codemirror";
-
-// CodeMirror语言模式支持
-import "codemirror/mode/markdown/markdown";      // Markdown语法
-import "codemirror/mode/javascript/javascript";  // JavaScript语法
-import "codemirror/mode/css/css";                // CSS语法
-import "codemirror/mode/htmlmixed/htmlmixed";    // HTML语法
-import "codemirror/mode/vue/vue";                // Vue语法
-
-// CodeMirror编辑功能增强
-import "codemirror/addon/edit/closebrackets";    // 自动闭合括号
-import "codemirror/addon/edit/closetag";         // 自动闭合标签
-import "codemirror/addon/edit/matchbrackets";    // 括号匹配
-
-// CodeMirror显示功能增强
-import "codemirror/addon/display/placeholder";   // 占位符显示
-
-// CodeMirror交互功能增强
-import "codemirror/addon/selection/active-line"; // 当前行高亮
-
-// CodeMirror滚动条样式
-import "codemirror/addon/scroll/simplescrollbars";
-import "codemirror/addon/scroll/simplescrollbars.css";
-
-// CodeMirror核心样式
-import "codemirror/lib/codemirror.css";
-
-// Markdown编辑器插件 - 行号显示
-import createLineNumbertPlugin from "@kangc/v-md-editor/lib/plugins/line-number/index";
-
-// Markdown编辑器插件 - 代码复制功能
-import createCopyCodePlugin from "@kangc/v-md-editor/lib/plugins/copy-code/index";
-import "@kangc/v-md-editor/lib/plugins/copy-code/copy-code.css";
-
-// Markdown编辑器插件 - Emoji表情支持
-import createEmojiPlugin from "@kangc/v-md-editor/lib/plugins/emoji/index";
-import "@kangc/v-md-editor/lib/plugins/emoji/emoji.css";
-
-// Markdown编辑器插件 - 待办事项列表
-import createTodoListPlugin from "@kangc/v-md-editor/lib/plugins/todo-list/index";
-import "@kangc/v-md-editor/lib/plugins/todo-list/todo-list.css";
-
-// 将CodeMirror绑定到Markdown编辑器
-VMdEditor.Codemirror = Codemirror;
-
-// 配置Markdown编辑器，使用VuePress主题
-VMdEditor.use(vuepressTheme, {
-  Prism, // 使用Prism进行代码高亮
-  // extend(md: MarkdownIt) {
-  //   // 可以在此处扩展Markdown解析功能
-  //   // md.set(option).use(plugin);
-  // },
-  // 代码高亮扩展映射：将.vue文件视为html进行高亮
-  codeHighlightExtensionMap: {
-    vue: "html",
-  },
-})
-  // 添加行号显示插件
-  .use(createLineNumbertPlugin())
-  // 添加代码复制插件
-  .use(createCopyCodePlugin())
-  // 添加表情符号插件
-  .use(createEmojiPlugin())
-  // 添加待办事项列表插件
-  .use(createTodoListPlugin());
-
-// 配置Markdown预览组件，使用VuePress主题
-VMdPreview.use(vuepressTheme, {
-  Prism, // 使用Prism进行代码高亮
-  // extend(md: MarkdownIt) {
-  //   // 可以在此处扩展Markdown解析功能
-  //   // md.set(option).use(plugin);
-  // },
-  // 代码高亮扩展映射：将.vue文件视为html进行高亮
-  codeHighlightExtensionMap: {
-    vue: "html",
-  },
-})
-  // 添加行号显示插件
-  .use(createLineNumbertPlugin())
-  // 添加代码复制插件
-  .use(createCopyCodePlugin())
-  // 添加表情符号插件
-  .use(createEmojiPlugin())
-  // 添加待办事项列表插件
-  .use(createTodoListPlugin());
+// v-md-editor 编辑器相关的导入与配置已迁移到 `src/libs/vmd-editor.ts`，
+// 需要在使用编辑器的组件中按需导入：
+// import { VMdEditor, VMdPreview } from '@/libs/vmd-editor';
 
 // 创建Vue应用实例
 const app = createApp(App);
@@ -157,11 +58,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 // 注册全局自定义指令
 app.use(directives);
 
-// 注册Markdown编辑器组件
-app.use(VMdEditor);
-
-// 注册Markdown预览组件
-app.use(VMdPreview);
+// 注意：VMdEditor / VMdPreview 改为在使用处局部引入并注册
 // main.js
 import VConsole from 'vconsole';
 

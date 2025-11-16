@@ -1,5 +1,8 @@
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
+// 局部按需引入已配置好的编辑器（配置位于 src/libs/vmd-editor.ts）
+import { VMdPreview } from "@/libs/vmd-editor";
+
 import useCurrentBlog from "@/features/blogPost/useBlogCurrent"
 const { currentBlog, selectBlog } = useCurrentBlog()
 const blogContent = ref<string>();

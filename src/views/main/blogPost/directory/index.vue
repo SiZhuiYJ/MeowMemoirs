@@ -70,8 +70,11 @@ onMounted(() => {
                     :origin="getStaticFileUrl('img/home/_3-4k.webp')" />
 
                 <div class="blog-info">
-                    <h3 class="blog-title">{{ item.title }}</h3>
-                    <p class="blog-intro">{{ item.summary }}</p>
+                    <!-- 标题 -->
+                    <div class="blog-title-container">
+                        <h3 class="blog-title">{{ item.title }}</h3>
+                        <p class="blog-intro">{{ item.summary }}</p>
+                    </div>
 
                     <div class="blog-meta">
                         <div class="blog-tags">
@@ -154,9 +157,19 @@ onMounted(() => {
     grid-template-columns: 1fr 2fr;
     gap: 1.5rem;
     padding: 1.5rem;
+    height: 250px;
 
     @media (max-width: 768px) {
         grid-template-columns: 1fr;
+        height: auto;
+    }
+}
+
+.preview {
+    height: 250px;
+
+    @media (max-width: 768px) {
+        height: 150px;
     }
 }
 
@@ -174,29 +187,32 @@ onMounted(() => {
 .blog-info {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    justify-content: space-between;
 }
 
-.blog-title {
-    font-size: clamp(1.25rem, 2.5vw, 1.5rem);
-    color: var(--el-text-color-primary);
-    margin: 0;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+.blog-title-container {
+    .blog-title {
+        font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+        color: var(--el-text-color-primary);
+        margin: 0;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .blog-intro {
+        color: var(--el-text-color-regular);
+        font-size: 0.95rem;
+        line-height: 1.6;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        margin: 0;
+    }
 }
 
-.blog-intro {
-    color: var(--el-text-color-regular);
-    font-size: 0.95rem;
-    line-height: 1.6;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    margin: 0;
-}
 
 .blog-tags {
     display: flex;
