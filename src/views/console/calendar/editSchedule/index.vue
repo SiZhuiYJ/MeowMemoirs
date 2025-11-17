@@ -16,26 +16,84 @@ import useCourseList from "@/features/schedule/composables/useCourseList";
 const { courseList, getCourseListByID } = useCourseList();
 // Time
 import useTime from "@/features/schedule/composables/useTime";
-const { getTimeByID } = useTime(); // time
+const { time, getTimeByID } = useTime();
 // TimeList
 import useTimeList from "@/features/schedule/composables/useTimeList";
 const { timeList, getTimeListByID } = useTimeList();
 
-import editTimeRange from "@/features/schedule/components/editTimeRange.vue"
+import editTimeRange from "@/features/schedule/components/editTimeRange.vue";
 
 // el-form
 import { numberToChinese } from "@/utils/calendar";
 
-
 // 当前课表id
 const currentScheduleId = ref<number>(0);
-watch(() => schedule.value?.id, (newVal) => {
-    currentScheduleId.value = newVal || 0;
-    console.log("当前课表id:", newVal);
-});
+watch(
+    () => schedule.value?.id,
+    (newVal) => {
+        currentScheduleId.value = newVal || 0;
+        console.log("当前课表id:", newVal);
+    }
+);
+// 当前课程id
+const currentCourseId = ref<number>(0);
+watch(
+    () => course.value?.id,
+    (newVal) => {
+        currentCourseId.value = newVal || 0;
+        console.log("当前课程id:", newVal);
+    }
+);
+// 当前时间id
+const currentTimeId = ref<number>(0);
+watch(
+    () => time.value?.id,
+    (newVal) => {
+        currentTimeId.value = newVal || 0;
+        console.log("当前时间id:", newVal);
+    }
+);
 // 添加课表
 const addSchedule = () => {
     console.log("添加课表");
+};
+// 添加课程
+const addCourse = () => {
+    console.log("添加课程");
+};
+// 添加时间
+const addTime = () => {
+    console.log("添加时间");
+};
+const timeSearch = ref("");
+// 搜索建议
+const querySearch = (queryString: string, cb: any) => {
+    // 打印接收到的查询字符串，便于调试为什么会变成 "8"
+    console.log("querySearch 接收到的 queryString:", queryString);
+    console.log("查询数据:", schedule.value?.timetable);
+    if (!schedule.value?.timetable) {
+        cb([]);
+        return;
+    }
+    const results = queryString
+        ? schedule.value?.timetable.filter(createFilter(queryString))
+        // ? schedule.value?.timetable.filter(createFilter(queryString))
+        : schedule.value?.timetable
+    cb(results)
+}
+const createFilter = (queryString: string) => {
+    // 规范化查询字符串并缓存，避免在 filter 回调中被误用为 index 等参数
+    const q = String(queryString || "").toLowerCase();
+    return (item: string) => {
+        const text = String(item || "").toLowerCase();
+        // 使用 startsWith 比较直观（等同于 indexOf(...) === 0）
+        const matched = text.startsWith(q);
+        console.log("过滤:", item, q, matched);
+        return matched;
+    }
+}
+const handleSelect = (item: Record<string, any>) => {
+    console.log(item)
 }
 
 // 添加时间段
@@ -61,25 +119,18 @@ const removeTime = (time: { timeRange: string; IndexKey: number }) => {
     schedule.value.timetable.splice(time.IndexKey, 1);
 };
 
-
-
 watch(
     () => course.value,
-    async newVal => {
+    async (newVal) => {
         if (newVal) {
             await getTimeListByID(newVal.id);
         }
     }
 );
 
-import type { CollapseModelValue } from 'element-plus'
-const activeNames = ref(['1'])
-const handleChange = (val: CollapseModelValue) => {
-    console.log(val)
-};
 watch(
     () => schedule.value?.timetable,
-    newVal => {
+    (newVal) => {
         if (newVal) {
             console.log("课表时间段更新:", newVal);
         }
@@ -91,23 +142,23 @@ onMounted(async () => {
     await getCourseListByID(scheduleStore.value?.[0]?.id || 0);
     await getCourseByID(courseList.value?.[0]?.id || 0);
     await getTimeListByID(courseList.value?.[0]?.id || 0);
-    await getTimeByID(timeList.value?.[0]?.Id || 0);
+    await getTimeByID(timeList.value?.[0]?.id || 0);
 });
 </script>
 
 <template>
     <el-row :gutter="5">
         <el-col :xs="24" :sm="12" :md="12" :lg="6" :xl="6">
-            <el-card class="card-main schedule-list" shadow="hover">
+            <el-card class="card-main" shadow="hover">
                 <template #header>
+                    <!-- 课表列表 -->
                     <el-select v-model="currentScheduleId" placeholder="Select">
                         <el-option v-for="schedule in scheduleStore" :key="schedule.id" :label="schedule.scheduleName"
                             :value="schedule.id"
                             @click="getScheduleByID(schedule.id), getCourseListByID(schedule.id)" />
+                        <template #header>课表列表</template>
                         <template #footer>
-                            <el-button text bg @click="addSchedule">
-                                添加课表
-                            </el-button>
+                            <el-button text bg @click="addSchedule"> 添加课表 </el-button>
                         </template>
                     </el-select>
                 </template>
@@ -119,10 +170,10 @@ onMounted(async () => {
                         <el-form-item label="开课时间">
                             <el-date-picker v-model="schedule.startTime" type="datetime" placeholder="开课时间" disabled />
                         </el-form-item>
-                        <el-form-item label="课程颜色">
+                        <el-form-item label="课程周期">
                             <el-input-number v-model="schedule.weekCount" :min="1" :max="100" />
                         </el-form-item>
-                        <el-form-item label="作息安排">
+                        <!-- <el-form-item label="作息安排">
                             <div class="time-list">
                                 <el-scrollbar height="200px">
                                     <div v-for="(time, index) in schedule.timetable" :key="index" class="time-item">
@@ -138,7 +189,7 @@ onMounted(async () => {
                                     </div>
                                 </el-scrollbar>
                             </div>
-                        </el-form-item>
+                        </el-form-item> -->
                         <el-form-item label="课表备注">
                             <el-input v-model="schedule.remark" type="textarea" />
                         </el-form-item>
@@ -149,7 +200,6 @@ onMounted(async () => {
                             <el-date-picker v-model="schedule.updateTime" type="datetime" placeholder="更新时间" disabled />
                         </el-form-item>
                     </el-form>
-
                 </template>
 
                 <template v-else>
@@ -157,20 +207,55 @@ onMounted(async () => {
                 </template>
             </el-card>
         </el-col>
-        <!-- 其他列保持不变 -->
         <el-col :xs="24" :sm="12" :md="12" :lg="6" :xl="6">
             <el-card class="card-main" shadow="hover">
-                <template #header> 课程列表 </template>
-                <div v-for="courseItem in courseList" :key="courseItem.id" @click="getCourseByID(courseItem.id)"
-                    class="course-item" :class="{ 'is-course': courseItem.id === course?.id }">
-                    {{ courseItem.courseName }}
-                </div>
+                <template #header>
+                    <!-- 课表作息  -->
+                    <el-autocomplete v-model="timeSearch" :fetch-suggestions="querySearch" clearable placeholder="查询作息"
+                        @select="handleSelect" />
+                    <!-- <el-select v-model="currentScheduleId" placeholder="Select">
+                        <el-option v-for="courseItem in courseList" :key="courseItem.id" :label="courseItem.courseName"
+                            :value="courseItem.id" @click="getCourseByID(courseItem.id)" />
+                        <template #header>课表作息</template>
+        <template #footer>
+                            <el-button text bg @click="addCourse">
+                                添加作息
+                            </el-button>
+                        </template>
+        </el-select> -->
+                </template>
+                <template v-if="schedule">
+                    <el-scrollbar>
+                        <div v-for="(time, index) in schedule.timetable" :key="index" class="time-item">
+                            <editTimeRange :timeRange="time" :IndexKey="index" @deleteTime="removeTime"
+                                @editTime="editTime" />
+                        </div>
+                        <div class="time-item">
+                            <el-button type="primary" @click="showTimePicker = true" v-if="!showTimePicker">
+                                添加
+                            </el-button>
+                            <editTimeRange v-if="showTimePicker" @editTime="editTime"
+                                @cancel="showTimePicker = false" />
+                        </div>
+                    </el-scrollbar>
+                </template>
+
+                <template v-else>
+                    <div>No course selected</div>
+                </template>
             </el-card>
         </el-col>
         <el-col :xs="24" :sm="12" :md="12" :lg="6" :xl="6" class="d-2">
             <el-card class="card-main" shadow="hover">
                 <template #header>
-                    课程详情 {{ course?.scheduleId }} {{ course?.id }}
+                    <el-select v-model="currentCourseId" placeholder="Select">
+                        <el-option v-for="courseItem in courseList" :key="courseItem.id" :label="courseItem.courseName"
+                            :value="courseItem.id" @click="getCourseByID(courseItem.id)" />
+                        <template #header>课程列表</template>
+                        <template #footer>
+                            <el-button text bg @click="addCourse"> 添加课程 </el-button>
+                        </template>
+                    </el-select>
                 </template>
                 <template v-if="course">
                     <el-form :model="course" label-width="auto" style="max-width: 600px">
@@ -196,56 +281,63 @@ onMounted(async () => {
                 </template>
             </el-card>
         </el-col>
+
         <el-col :xs="24" :sm="12" :md="12" :lg="6" :xl="6" style="padding-bottom: 0px">
             <el-card class="card-main" shadow="hover">
-                <template #header> 课程时间段列表 </template>
-                <el-collapse v-if="timeList.length > 0" v-model="activeNames" @change="handleChange"
-                    style="width: 90%;">
-                    <el-collapse-item v-for="time in timeList" :key="time.Id"
-                        :title="`${time.location} ${time.teacher}`" :name="time.Id">
-                        <el-form :model="time" label-width="auto" style="max-width: 600px">
-                            <el-form-item label="课程地址" prop="location">
-                                <el-input v-model="time.location" />
-                            </el-form-item>
+                <template #header>
+                    <el-select v-model="currentTimeId" placeholder="Select">
+                        <el-option v-for="timeItem in timeList" :key="timeItem.id" :label="timeItem.location"
+                            :value="timeItem.id" @click="getTimeByID(timeItem.id)" />
+                        <template #header>课程时间</template>
+                        <template #footer>
+                            <el-button text bg @click="addTime"> 添加时间段 </el-button>
+                        </template>
+                    </el-select>
+                </template>
+                <template v-if="time">
+                    <el-form :model="time" label-width="auto" style="max-width: 600px">
+                        <el-form-item label="课程地址" prop="location">
+                            <el-input v-model="time.location" />
+                        </el-form-item>
 
-                            <el-form-item label="课程教师" prop="teacher">
-                                <el-input v-model="time.teacher" />
-                            </el-form-item>
+                        <el-form-item label="课程教师" prop="teacher">
+                            <el-input v-model="time.teacher" />
+                        </el-form-item>
 
-                            <el-form-item label="课程周几" prop="dayOfWeek">
-                                <el-radio-group v-model="time.dayOfWeek">
-                                    <el-radio-button v-for="value in 7" :key="value" :label="value">
-                                        {{ value === 7 ? '日' : numberToChinese(value) }}
-                                    </el-radio-button>
-                                </el-radio-group>
-                            </el-form-item>
+                        <el-form-item label="课程周几" prop="dayOfWeek">
+                            <el-radio-group v-model="time.dayOfWeek">
+                                <el-radio-button v-for="value in 7" :key="value" :label="value">
+                                    {{ value === 7 ? '日' : numberToChinese(value) }}
+                                </el-radio-button>
+                            </el-radio-group>
+                        </el-form-item>
 
-                            <el-form-item label="课程周次" prop="weekList">
-                                <el-select-v2 v-model="time.weekList" multiple :options="WeekTable"
-                                    placeholder="请选择课程周次" style="width: 100%" collapse-tags collapse-tags-tooltip
-                                    :max-collapse-tags="3" />
-                            </el-form-item>
+                        <el-form-item label="课程周次" prop="weekList">
+                            <el-select-v2 v-model="time.weekList" multiple :options="WeekTable" placeholder="请选择课程周次"
+                                style="width: 100%" collapse-tags collapse-tags-tooltip :max-collapse-tags="3" />
+                        </el-form-item>
 
-                            <el-form-item label="课程节次" prop="sectionList">
-                                <el-select-v2 v-model="time.sectionList" multiple :options="TimeTable"
-                                    placeholder="请选择课程节次" style="width: 100%" collapse-tags collapse-tags-tooltip
-                                    :max-collapse-tags="3" />
-                            </el-form-item>
+                        <el-form-item label="课程节次" prop="sectionList">
+                            <el-select-v2 v-model="time.sectionList" multiple :options="TimeTable" placeholder="请选择课程节次"
+                                style="width: 100%" collapse-tags collapse-tags-tooltip :max-collapse-tags="3" />
+                        </el-form-item>
 
-                            <el-form-item label="课程备注" prop="remark">
-                                <el-input v-model="time.remark" type="textarea" />
-                            </el-form-item>
+                        <el-form-item label="课程备注" prop="remark">
+                            <el-input v-model="time.remark" type="textarea" />
+                        </el-form-item>
 
-                            <el-form-item label="发布时间" prop="createTime">
-                                <el-date-picker v-model="time.createTime" type="datetime" placeholder="发布时间" disabled />
-                            </el-form-item>
+                        <el-form-item label="发布时间" prop="createTime">
+                            <el-date-picker v-model="time.createTime" type="datetime" placeholder="发布时间" disabled />
+                        </el-form-item>
 
-                            <el-form-item label="更新时间" prop="updateTime">
-                                <el-date-picker v-model="time.updateTime" type="datetime" placeholder="更新时间" disabled />
-                            </el-form-item>
-                        </el-form>
-                    </el-collapse-item>
-                </el-collapse>
+                        <el-form-item label="更新时间" prop="updateTime">
+                            <el-date-picker v-model="time.updateTime" type="datetime" placeholder="更新时间" disabled />
+                        </el-form-item>
+                    </el-form>
+                </template>
+                <template v-else>
+                    <div>No course selected</div>
+                </template>
             </el-card>
         </el-col>
     </el-row>
@@ -255,12 +347,6 @@ onMounted(async () => {
 .card-main {
     border-radius: 0.375rem;
     height: calc(100vh - 132px);
-}
-
-.schedule-list {
-    :deep(.el-card__header) {
-        padding: calc(var(--el-card-padding) - 6px) var(--el-card-padding);
-    }
 }
 
 .el-col {

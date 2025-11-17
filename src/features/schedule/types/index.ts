@@ -1,7 +1,7 @@
 // 课程时间段类型
 export interface CourseTime {
     /** 时间段ID */
-    Id: number;
+    id: number;
     /** 课程ID */
     courseId: number;
     /** 课程地点 */

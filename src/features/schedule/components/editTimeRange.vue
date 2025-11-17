@@ -51,7 +51,9 @@ const parseTime = (timeStr: string): Date => {
     }
     return parsed.toDate();
 };
-
+const edit = editTimeRange;
+const cancel = cancelEdit;
+const deleteTime = deleteTimeRange;
 onMounted(() => {
     const [start, end] = props.timeRange.split('-');
     newTimeRange.value = [
@@ -62,6 +64,12 @@ onMounted(() => {
     if (props.IndexKey < 0) {
         toggleTimePicker();
     }
+});
+/** 暴露给父组件方法 */
+defineExpose({
+    edit,
+    cancel,
+    deleteTime,
 });
 </script>
 <template>
