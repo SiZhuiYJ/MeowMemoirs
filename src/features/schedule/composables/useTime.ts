@@ -27,7 +27,7 @@ export default function useTime() {
     }
     async function getTimeByID(id: number): Promise<CourseTime | undefined> {
         if (!id) return undefined;
-        if (time.value?.courseId !== id) {
+        if (time.value?.id !== id) {
             const { data } = await ScheduleApi.MMPostTimeByID(id)
             setTime(data.time);
         }
