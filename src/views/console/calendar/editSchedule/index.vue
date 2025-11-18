@@ -66,35 +66,6 @@ const addTime = () => {
     console.log("添加时间");
 };
 const timeSearch = ref("");
-// 搜索建议
-const querySearch = (queryString: string, cb: any) => {
-    // 打印接收到的查询字符串，便于调试为什么会变成 "8"
-    console.log("querySearch 接收到的 queryString:", queryString);
-    console.log("查询数据:", schedule.value?.timetable);
-    if (!schedule.value?.timetable) {
-        cb([]);
-        return;
-    }
-    const results = queryString
-        ? schedule.value?.timetable.filter(createFilter(queryString))
-        // ? schedule.value?.timetable.filter(createFilter(queryString))
-        : schedule.value?.timetable
-    cb(results)
-}
-const createFilter = (queryString: string) => {
-    // 规范化查询字符串并缓存，避免在 filter 回调中被误用为 index 等参数
-    const q = String(queryString || "").toLowerCase();
-    return (item: string) => {
-        const text = String(item || "").toLowerCase();
-        // 使用 startsWith 比较直观（等同于 indexOf(...) === 0）
-        const matched = text.startsWith(q);
-        console.log("过滤:", item, q, matched);
-        return matched;
-    }
-}
-const handleSelect = (item: Record<string, any>) => {
-    console.log(item)
-}
 
 // 添加时间段
 const showTimePicker = ref<boolean>(false);
@@ -136,6 +107,34 @@ watch(
         }
     }
 );
+
+const shortcuts = [
+    {
+        text: '今天', // 今天
+        value: new Date(),
+    },
+    {
+        text: '昨天', // 昨天
+        value: () => {
+            const date = new Date()
+            date.setTime(date.getTime() - 3600 * 1000 * 24)
+            return date
+        },
+    },
+    {
+        text: '一周前',// 一周前
+        value: () => {
+            const date = new Date()
+            date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
+            return date
+        },
+    },
+]
+
+const disabledDate = (time: Date) => {
+    return time.getTime() > Date.now()
+}
+
 onMounted(async () => {
     await initializeData();
     await getScheduleByID(scheduleStore.value?.[0]?.id || 0);
@@ -168,28 +167,12 @@ onMounted(async () => {
                             <el-input v-model="schedule.scheduleName" />
                         </el-form-item>
                         <el-form-item label="开课时间">
-                            <el-date-picker v-model="schedule.startTime" type="datetime" placeholder="开课时间" disabled />
+                            <el-date-picker v-model="schedule.startTime" type="date" placeholder="开课时间"
+                                :disabled-date="disabledDate" :shortcuts="shortcuts" />
                         </el-form-item>
                         <el-form-item label="课程周期">
                             <el-input-number v-model="schedule.weekCount" :min="1" :max="100" />
                         </el-form-item>
-                        <!-- <el-form-item label="作息安排">
-                            <div class="time-list">
-                                <el-scrollbar height="200px">
-                                    <div v-for="(time, index) in schedule.timetable" :key="index" class="time-item">
-                                        <editTimeRange :timeRange="time" :IndexKey="index" @deleteTime="removeTime"
-                                            @editTime="editTime" />
-                                    </div>
-                                    <div class="time-item">
-                                        <el-button type="primary" @click="showTimePicker = true" v-if="!showTimePicker">
-                                            添加
-                                        </el-button>
-                                        <editTimeRange v-if="showTimePicker" @editTime="editTime"
-                                            @cancel="showTimePicker = false" />
-                                    </div>
-                                </el-scrollbar>
-                            </div>
-                        </el-form-item> -->
                         <el-form-item label="课表备注">
                             <el-input v-model="schedule.remark" type="textarea" />
                         </el-form-item>
@@ -211,18 +194,7 @@ onMounted(async () => {
             <el-card class="card-main" shadow="hover">
                 <template #header>
                     <!-- 课表作息  -->
-                    <el-autocomplete v-model="timeSearch" :fetch-suggestions="querySearch" clearable placeholder="查询作息"
-                        @select="handleSelect" />
-                    <!-- <el-select v-model="currentScheduleId" placeholder="Select">
-                        <el-option v-for="courseItem in courseList" :key="courseItem.id" :label="courseItem.courseName"
-                            :value="courseItem.id" @click="getCourseByID(courseItem.id)" />
-                        <template #header>课表作息</template>
-        <template #footer>
-                            <el-button text bg @click="addCourse">
-                                添加作息
-                            </el-button>
-                        </template>
-        </el-select> -->
+                    <el-input v-model="timeSearch" placeholder="时间段" clearable prefix-icon="Clock" />
                 </template>
                 <template v-if="schedule">
                     <el-scrollbar>
@@ -239,7 +211,6 @@ onMounted(async () => {
                         </div>
                     </el-scrollbar>
                 </template>
-
                 <template v-else>
                     <div>No course selected</div>
                 </template>
@@ -250,7 +221,16 @@ onMounted(async () => {
                 <template #header>
                     <el-select v-model="currentCourseId" placeholder="Select">
                         <el-option v-for="courseItem in courseList" :key="courseItem.id" :label="courseItem.courseName"
-                            :value="courseItem.id" @click="getCourseByID(courseItem.id)" />
+                            :value="courseItem.id" @click="getCourseByID(courseItem.id)">
+                            <span style="float: left;">
+                                {{ courseItem.courseName }}
+                            </span>
+                            <span
+                                style="float: right;border-right: 4px solid #fff;font-size: 13px; height: 90%;margin:2px 0;display: flex;align-items: center;"
+                                :style="{ borderRightColor: courseItem.color }">
+                                {{ courseItem.color }}
+                            </span>
+                        </el-option>
                         <template #header>课程列表</template>
                         <template #footer>
                             <el-button text bg @click="addCourse"> 添加课程 </el-button>
@@ -287,7 +267,12 @@ onMounted(async () => {
                 <template #header>
                     <el-select v-model="currentTimeId" placeholder="Select">
                         <el-option v-for="timeItem in timeList" :key="timeItem.id" :label="timeItem.location"
-                            :value="timeItem.id" @click="getTimeByID(timeItem.id)" />
+                            :value="timeItem.id" @click="getTimeByID(timeItem.id)">
+                            <span style="float: left">{{ timeItem.location }}</span>
+                            <span style="float: right;color: var(--el-text-color-secondary);font-size: 13px;">
+                                {{ timeItem.teacher }}
+                            </span>
+                        </el-option>
                         <template #header>课程时间</template>
                         <template #footer>
                             <el-button text bg @click="addTime"> 添加时间段 </el-button>
@@ -412,5 +397,6 @@ onMounted(async () => {
 :deep(.el-card__body) {
     // 内容不得超出卡片范围
     overflow: hidden;
+
 }
 </style>

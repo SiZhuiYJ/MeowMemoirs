@@ -35,7 +35,7 @@ onMounted(async () => {
     await getCourseListByID(scheduleStore.value?.[0]?.id || 0);
     await getCourseByID(courseList.value?.[0]?.id || 0);
     await getTimeListByID(courseList.value?.[0]?.id || 0);
-    await getTimeByID(timeList.value?.[0]?.Id || 0);
+    await getTimeByID(timeList.value?.[0]?.id || 0);
 });
 </script>
 <template>
@@ -43,40 +43,23 @@ onMounted(async () => {
         <el-col :xs="24" :sm="12" :md="12" :lg="6" :xl="6">
             <el-card class="card-main" shadow="hover">
                 <template #header>
-                    <div
-                        v-for="schedule in scheduleStore"
-                        :key="schedule.id"
-                        @click="
-                            getScheduleByID(schedule.id),
-                                getCourseListByID(schedule.id)
-                        "
-                    >
+                    <div v-for="schedule in scheduleStore" :key="schedule.id" @click="
+                        getScheduleByID(schedule.id),
+                        getCourseListByID(schedule.id)
+                        ">
                         {{ schedule.scheduleName }}
                     </div>
                 </template>
                 <template v-if="schedule">
-                    <el-form
-                        :model="schedule"
-                        label-width="auto"
-                        style="max-width: 600px"
-                    >
+                    <el-form :model="schedule" label-width="auto" style="max-width: 600px">
                         <el-form-item label="课表名称">
                             <el-input v-model="schedule.scheduleName" />
                         </el-form-item>
                         <el-form-item label="开课时间">
-                            <el-date-picker
-                                v-model="schedule.startTime"
-                                type="datetime"
-                                placeholder="开课时间"
-                                disabled
-                            />
+                            <el-date-picker v-model="schedule.startTime" type="datetime" placeholder="开课时间" disabled />
                         </el-form-item>
                         <el-form-item label="课程颜色">
-                            <el-input-number
-                                v-model="schedule.weekCount"
-                                :min="1"
-                                :max="100"
-                            />
+                            <el-input-number v-model="schedule.weekCount" :min="1" :max="100" />
                         </el-form-item>
                         <el-form-item label="作息安排">
                             <div v-for="time in schedule.timetable" :key="time">
@@ -84,26 +67,13 @@ onMounted(async () => {
                             </div>
                         </el-form-item>
                         <el-form-item label="课表备注">
-                            <el-input
-                                v-model="schedule.remark"
-                                type="textarea"
-                            />
+                            <el-input v-model="schedule.remark" type="textarea" />
                         </el-form-item>
                         <el-form-item label="发布时间">
-                            <el-date-picker
-                                v-model="schedule.createTime"
-                                type="datetime"
-                                placeholder="发布时间"
-                                disabled
-                            />
+                            <el-date-picker v-model="schedule.createTime" type="datetime" placeholder="发布时间" disabled />
                         </el-form-item>
                         <el-form-item label="更新时间">
-                            <el-date-picker
-                                v-model="schedule.updateTime"
-                                type="datetime"
-                                placeholder="更新时间"
-                                disabled
-                            />
+                            <el-date-picker v-model="schedule.updateTime" type="datetime" placeholder="更新时间" disabled />
                         </el-form-item>
                         <!-- <el-form-item>
                             <el-button type="primary" @click="onSubmit">Create</el-button>
@@ -119,12 +89,8 @@ onMounted(async () => {
         <el-col :xs="24" :sm="12" :md="12" :lg="6" :xl="6">
             <el-card class="card-main" shadow="hover">
                 <template #header> 课程列表 </template>
-                <div
-                    v-for="course in courseList"
-                    :key="course.id"
-                    @click="getCourseByID(course.id)"
-                    class="course-item"
-                >
+                <div v-for="course in courseList" :key="course.id" @click="getCourseByID(course.id)"
+                    class="course-item">
                     {{ course.courseName }}
                 </div>
             </el-card>
@@ -135,11 +101,7 @@ onMounted(async () => {
                     {{ course?.id }}/{{ course?.scheduleId }}
                 </template>
                 <template v-if="course">
-                    <el-form
-                        :model="course"
-                        label-width="auto"
-                        style="max-width: 600px"
-                    >
+                    <el-form :model="course" label-width="auto" style="max-width: 600px">
                         <el-form-item label="课程名称">
                             <el-input v-model="course.courseName" />
                         </el-form-item>
@@ -150,20 +112,10 @@ onMounted(async () => {
                             <el-input v-model="course.remark" type="textarea" />
                         </el-form-item>
                         <el-form-item label="发布时间">
-                            <el-date-picker
-                                v-model="course.createTime"
-                                type="datetime"
-                                placeholder="发布时间"
-                                disabled
-                            />
+                            <el-date-picker v-model="course.createTime" type="datetime" placeholder="发布时间" disabled />
                         </el-form-item>
                         <el-form-item label="更新时间">
-                            <el-date-picker
-                                v-model="course.updateTime"
-                                type="datetime"
-                                placeholder="更新时间"
-                                disabled
-                            />
+                            <el-date-picker v-model="course.updateTime" type="datetime" placeholder="更新时间" disabled />
                         </el-form-item>
                         <!-- <el-form-item>
                             <el-button type="primary" @click="onSubmit">Create</el-button>
@@ -176,21 +128,10 @@ onMounted(async () => {
                 </template>
             </el-card>
         </el-col>
-        <el-col
-            :xs="24"
-            :sm="12"
-            :md="12"
-            :lg="6"
-            :xl="6"
-            style="padding-bottom: 0px"
-        >
+        <el-col :xs="24" :sm="12" :md="12" :lg="6" :xl="6" style="padding-bottom: 0px">
             <el-card class="card-main" shadow="hover">
                 <template #header> 课程时间段列表 </template>
-                <div
-                    v-for="time in timeList"
-                    :key="time.Id"
-                    @click="getTimeByID(time.Id)"
-                >
+                <div v-for="time in timeList" :key="time.id" @click="getTimeByID(time.id)">
                     {{ time ? JSON.stringify(time) : "No time selected" }}
                 </div>
             </el-card>
