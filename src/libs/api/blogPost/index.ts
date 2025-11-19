@@ -20,23 +20,23 @@ interface BlogTags {
 }
 export const BlogPostApi = {
   // 获取文章列表
-  MMPostBlogGetList() {
+  PostBlogGetList() {
     return http.get<ResponseData<BlogList>>(`/Blog/GetAllBlogs`);
   },
   // 获取文章详情
-  MMPostBlogPostDetail(id: number) {
+  PostBlogPostDetail(id: number) {
     return http.get<ResponseData<Blog>>(`/Blog/GetBlogById/${id}`);
   },
   // 获取文章标签列表
-  MMPostBlogGetTags() {
+  PostBlogGetTags() {
     return http.get<ResponseData<BlogTags>>(`/Blog/GetBlogTags`);
   },
   // 操作文章
-  MMPostBlogPostEdit(blog: UploadBlog, operation: operation) {
+  PostBlogPostEdit(blog: UploadBlog, operation: operation) {
     return http.post<ResponseData<Blog>>(`Blog/UploadBlog/${operation}`, blog);
   },
   // 添加标签
-  MMPostBlogAddTag(blogTag: AddTag) {
+  PostBlogAddTag(blogTag: AddTag) {
     return http.post<ResponseData<{ tagId: number }>>(
       `/Blog/AddBlogTag`,
       blogTag

@@ -59,7 +59,7 @@ export const useAccessStore = defineStore("access", () => {
     try {
       const {
         data
-      } = await AccessLogApi.MMPostIpAccessLog();
+      } = await AccessLogApi.PostIpAccessLog();
       IpAccessLog.value = data.ipAccessLogs;
     } catch (error) {
       console.log(error);

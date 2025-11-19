@@ -22,19 +22,19 @@ export const userApi = {
     return http.post<ResponseData<Data>>("/Auth/UserLogin", params);
   },
   // token验证
-  MMPostToken() {
+  PostToken() {
     return http.post<ResponseData<Data>>("/Auth/RefreshToken");
   },
   // 获取用户信息
-  MMPostUser() {
+  PostUser() {
     return http.post<ResponseData<ToInfo>>("/Auth/TokenToInfo");
   },
   // 获取路由
-  MMPostRouter() {
+  PostRouter() {
     return http.post<ResponseData<AuthRouter>>("/Auth/TokenToMenuList");
   },
   // 用户注册
-  MMPostRegister(params: IRegisterParams) {
+  PostRegister(params: IRegisterParams) {
     return http.post<ResponseData<Data>>("/Auth/UserRegistration", params);
   },
 };

@@ -30,7 +30,7 @@ export default function useTimeList() {
     async function getTimeListByID(id: number): Promise<CourseTime[] | undefined> {
         if (!id) return undefined;
         if (timeList.value?.[0]?.courseId !== id) {
-            const { data } = await ScheduleApi.MMPostTimeListByCourseID(id)
+            const { data } = await ScheduleApi.CourseTime.PostListByCourseID(id)
             setTimeList(data.time);
         }
         return timeList.value;

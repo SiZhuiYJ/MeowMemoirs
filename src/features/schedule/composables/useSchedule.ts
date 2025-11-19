@@ -7,6 +7,8 @@ export default function useSchedule() {
     // 所有课表列表
     const schedule = ref<Schedule>();
 
+    const loading = ref(false);
+
     const WeekTable = ref<{ label: string; value: number }[]>([]);
     const TimeTable = ref<{ label: string; value: number }[]>([]);
 
@@ -15,10 +17,13 @@ export default function useSchedule() {
     }
 
     async function getScheduleByID(id: number): Promise<Schedule | undefined> {
-        if (!id) return undefined;
+        resetSchedule();
+        if (!id) {
+            loading.value = false;
+            return undefined;
+        }
         if (schedule.value?.id !== id) {
-            const { data } = await ScheduleApi.MMPostScheduleByID(id)
-            console.log(data.schedule);
+            const { data } = await ScheduleApi.Schedule.PostByID(id)
             setSchedule({
                 id: data.schedule.id,
                 userId: data.schedule.userId,
@@ -34,8 +39,10 @@ export default function useSchedule() {
             WeekTable.value = getWeekTableByWeeklong();
             TimeTable.value = getTimeTable();
         }
+        loading.value = false;
         return schedule.value;
     }
+
     // 获取周次表按照weeklong生成
     function getWeekTableByWeeklong(): { label: string; value: number }[] {
         const weekCount = schedule.value?.weekCount || 0;
@@ -48,6 +55,7 @@ export default function useSchedule() {
         console.log("周次表数据:", data);
         return data;
     }
+
     // 获取节次表
     function getTimeTable(): { label: string; value: number }[] {
         const timetableCount = schedule.value?.timetable.length || 0;
@@ -57,11 +65,40 @@ export default function useSchedule() {
         console.log("节次表数据:", data);
         return data;
     }
+
+    // 重置
+    function resetSchedule() {
+        schedule.value = {
+            id: 0,
+            userId: 0,
+            scheduleName: "",
+            startTime: "",
+            weekCount: 0,
+            timetable: [],
+            remark: "",
+            createTime: "",
+            updateTime: "",
+            is_deleted: 0,
+        };
+        WeekTable.value = [];
+        TimeTable.value = [];
+        return;
+    }
+
+    // 编辑
+    function editSchedule(data: Schedule) {
+        schedule.value = { ...schedule.value, ...data };
+        console.log("Schedule edited:", schedule.value);
+    }
+    resetSchedule();
     return {
         schedule,
+        loading,
         WeekTable,
         TimeTable,
         setSchedule,
         getScheduleByID,
+        resetSchedule,
+        editSchedule,
     };
 }

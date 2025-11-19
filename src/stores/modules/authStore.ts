@@ -29,7 +29,7 @@ export const useAuthStore = defineStore("auth", () => {
     userName: "",
   });
   async function listRouters() {
-    const { data } = await userApi.MMPostRouter();
+    const { data } = await userApi.PostRouter();
     menuList.value = generateFlattenRoutes(data.menuList);
     recursiveMenuList.value = generateRoutes(
       getShowStaticAndDynamicMenuList(data.menuList),
@@ -43,7 +43,7 @@ export const useAuthStore = defineStore("auth", () => {
     console.log(breadcrumbList.value);
   }
   async function getLoginUserInfo() {
-    const { data } = await userApi.MMPostUser();
+    const { data } = await userApi.PostUser();
     loginUser.value = data.userInfo;
     buttonList.value = data.buttonList;
     roleList.value = data.roleList;

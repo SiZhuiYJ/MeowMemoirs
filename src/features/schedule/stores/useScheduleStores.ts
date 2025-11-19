@@ -16,9 +16,9 @@ export const useScheduleStores = defineStore("schedule", () => {
             text: "获取课表数据中...",
             background: "rgba(0, 0, 0, 0.7)"
         });
-        scheduleStore.value=[];
+        scheduleStore.value = [];
         try {
-            const { data } = await ScheduleApi.MMPostScheduleList();
+            const { data } = await ScheduleApi.Schedule.PostList();
             data.schedule.forEach((item) => {
                 scheduleStore.value.push({
                     id: item.id,
@@ -33,7 +33,6 @@ export const useScheduleStores = defineStore("schedule", () => {
                     is_deleted: item.is_deleted,
                 });
             });
-            // scheduleStore.value = data.schedule;
             meowMsgSuccess("课表获取成功");
         } catch (error) {
             scheduleStore.value = [];

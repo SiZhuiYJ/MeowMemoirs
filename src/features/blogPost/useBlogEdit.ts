@@ -38,7 +38,7 @@ export const useEditBlog = defineStore("editBlog", () => {
             content: editBlog.value.content,
             tags: JSON.stringify(editBlog.value.tags)
         };
-        const { data } = await BlogPostApi.MMPostBlogPostEdit(editBlogData, editBlog.value.id === 0 ? "add" : "update");
+        const { data } = await BlogPostApi.PostBlogPostEdit(editBlogData, editBlog.value.id === 0 ? "add" : "update");
         editBlog.value = {
             id: data.blog.id,
             title: data.blog.title,

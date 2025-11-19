@@ -15,7 +15,7 @@ export default function useSchedule() {
             background: "rgba(0, 0, 0, 0.7)"
         });
         try {
-            const { data } = await ScheduleApi.MMPostScheduleList();
+            const { data } = await ScheduleApi.Schedule.PostList();
             console.log("获取课表数据", data);
             // schedule.value = data.schedule;
             meowMsgSuccess("课表获取成功");

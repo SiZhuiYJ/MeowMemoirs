@@ -11,7 +11,7 @@ export default function useCurrentBlog() {
         if (currentBlog.value && currentBlog.value.id === id) {
             return currentBlog.value; // 如果当前博客已被选中，直接返回
         }
-        const { data } = await BlogPostApi.MMPostBlogPostDetail(id);
+        const { data } = await BlogPostApi.PostBlogPostDetail(id);
         currentBlog.value = data.blog;
         return currentBlog.value;
     };

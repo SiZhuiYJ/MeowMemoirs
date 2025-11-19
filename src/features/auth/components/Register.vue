@@ -33,7 +33,7 @@ const register = async () => {
     background: "rgba(0, 0, 0, 0.7)",
   });
   try {
-    const data = await userApi.MMPostRegister({
+    const data = await userApi.PostRegister({
       Type: handover.value,
       Identifier: handover.value === "userPhone" ? userPhone.value : userEmail.value,
       RainbowID: rainbowID.value,

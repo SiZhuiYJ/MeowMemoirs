@@ -53,7 +53,7 @@ export const useUserStore = defineStore(
     async function postToken() {
       try {
         userStore.value.token = userStore.value.refresh_token;
-        const { data } = await userApi.MMPostToken();
+        const { data } = await userApi.PostToken();
         setToken(data.jwtTokenResult);
         console.log("换token成功", data);
         router.push(STATIC_URL);

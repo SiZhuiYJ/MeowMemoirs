@@ -9,14 +9,14 @@ export default function useBlogTags() {
     const blogTags = ref<Tag[]>([]);
     // 获取所有博客标签
     const getTagList = async () => {
-        const { data } = await BlogPostApi.MMPostBlogGetTags();
+        const { data } = await BlogPostApi.PostBlogGetTags();
         blogTags.value = data.tags;
         console.log(blogTags.value);
     };
 
     // 添加博客标签
     const addBlogTag = async (blogTag: AddTag) => {
-        const { data } = await BlogPostApi.MMPostBlogAddTag(blogTag);
+        const { data } = await BlogPostApi.PostBlogAddTag(blogTag);
         console.log(blogTag, data);
         return data.tagId; // 返回新添加标签的ID
     };

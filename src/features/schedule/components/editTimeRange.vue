@@ -88,7 +88,7 @@ defineExpose({
         <el-button type="primary" @click="editTimeRange">
             确定
         </el-button>
-        <el-button type="text" @click="cancelEdit">
+        <el-button type="success" @click="cancelEdit">
             取消
         </el-button>
     </template>

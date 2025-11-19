@@ -11,7 +11,7 @@ export default function useCourseList() {
     async function getCourseListByID(id: number): Promise<Course[] | undefined> {
         if (!id) return undefined;
         if (courseList.value?.[0]?.scheduleId !== id) {
-            const { data } = await ScheduleApi.MMPostCourseListByScheduleID(id)
+            const { data } = await ScheduleApi.Course.PostListByScheduleID(id)
             setCourseList(data.course);
         }
         return courseList.value;

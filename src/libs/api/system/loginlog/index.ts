@@ -13,7 +13,7 @@ interface AccessLog {
 
 export const AccessLogApi = {
 
-    MMPostIpAccessLog() {
+    PostIpAccessLog() {
         return http.post<ResponseData<AccessLog>>(`/Log/ipaccesslogs`);
     },
 };

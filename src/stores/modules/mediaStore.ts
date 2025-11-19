@@ -60,7 +60,7 @@ export const useMediaStore = defineStore("media", () => {
     try {
       loading.value = true;
       // 这里替换实际的API调用
-      const { data } = await MediaApi.MMPostMediaList();
+      const { data } = await MediaApi.PostMediaList();
       console.log("data", data);
       allData.value = data.medias.map((item: Media) => ({
         id: item.mediaId,
@@ -79,7 +79,7 @@ export const useMediaStore = defineStore("media", () => {
         type: item.url.split(".").pop() || "",
       }));
       currentShow.value = allData.value[0];
-      const apiTag = await MediaApi.MMPostImageTagList();
+      const apiTag = await MediaApi.PostImageTagList();
       const initialTags: options[] = [];
       const MediaType: { [key: string]: string } = {};
       apiTag.data.tags.forEach((tag) => {
@@ -95,8 +95,8 @@ export const useMediaStore = defineStore("media", () => {
         tags: initialTags,
         tagsMap: MediaType,
       };
-      console.log( "metaData", metaData.value)
-      console.log( "allData", allData.value)
+      console.log("metaData", metaData.value)
+      console.log("allData", allData.value)
 
       applyFilters();
     } finally {
@@ -125,7 +125,7 @@ export const useMediaStore = defineStore("media", () => {
     // }
   };
   // 上传图片
-  const uploadMedia = () => {};
+  const uploadMedia = () => { };
   // 删除图片
   const deleteMedia = (row: MediaTable) => {
     console.log(row);

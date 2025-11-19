@@ -11,11 +11,11 @@ interface Tags {
 let rootUrl = import.meta.env.VITE_SERVER;
 export const MediaApi = {
   // 获取图片列表
-  MMPostMediaList() {
+  PostMediaList() {
     return http.post<ResponseData<medias>>("/files/Medias/List");
   },
   // 获取图片标签列表
-  MMPostImageTagList() {
+  PostImageTagList() {
     return http.post<ResponseData<Tags>>("/files/Medias/tagList");
   },
   getImgLargeUrl(RainbowID: string, name: string) {
@@ -38,24 +38,21 @@ export const MediaApi = {
   },
   getImgOriginalUrl(RainbowID: string, name: string) {
     return new URL(
-      `/MeowMemoirs/Files/medias/${RainbowID}/"${
-        name.split(".")[0]
+      `/MeowMemoirs/Files/medias/${RainbowID}/"${name.split(".")[0]
       }"?width=200&type=${name.split(".")[1]}`,
       rootUrl
     ).href;
   }, // 获取视频封面
   getVideoCover(RainbowID: string, name: string) {
     return new URL(
-      `MeowMemoirs/Files/medias/${RainbowID}/${
-        name.split(".")[0]
+      `MeowMemoirs/Files/medias/${RainbowID}/${name.split(".")[0]
       }?MediaType=videos`,
       rootUrl
     ).href;
   },
   getVideoUrl(RainbowID: string, name: string) {
     return new URL(
-      `/MeowMemoirs/Files/medias/${RainbowID}/${
-        name.split(".")[0]
+      `/MeowMemoirs/Files/medias/${RainbowID}/${name.split(".")[0]
       }?type=mp4&MediaType=videos`,
       rootUrl
     ).href;

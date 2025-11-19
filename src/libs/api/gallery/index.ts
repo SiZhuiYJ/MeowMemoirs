@@ -12,7 +12,7 @@ export const galleryApi = {
     return http.get<ResponseData<items>>("/Gallerys/GetImageList");
   },
   // 获取图片标签列表
-  MMPostImageTagList() {
+  PostImageTagList() {
     return http.post<ResponseData<string[]>>("/Gallerys/GetImageTagList");
   },
 };

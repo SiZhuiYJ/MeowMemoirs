@@ -8,8 +8,8 @@ interface ScheduleList {
 
 export const ScheduleApi = {
     // 获取课表列表
-    MMPostScheduleList() {
-        return http.post<ResponseData<ScheduleList>>("/Schedule/PostScheduleList");
+    PostList() {
+        return http.post<ResponseData<ScheduleList>>("/Schedule/PostList");
     },
 };
 

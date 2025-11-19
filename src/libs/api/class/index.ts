@@ -5,10 +5,10 @@ import type { ClassDto } from "@/libs/api/class/type";
 
 export const ClassApi = {
     // 获取课程列表
-    MMPostClassList() {
+    PostClassList() {
         return http.post<ResponseData<ClassDto[]>>("/Classes/PostClassesList");
     },
-    MMPostClassesByID(userID: number) {
+    PostClassesByID(userID: number) {
         return http.post<ResponseData<ClassDto[]>>(`/Classes/PostClassesListByID?userId=${userID}`);
     }
 };

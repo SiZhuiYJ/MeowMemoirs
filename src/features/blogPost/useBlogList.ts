@@ -9,7 +9,7 @@ export default function useBlogList() {
 
     // 获取博客列表
     const getBlogList = async () => {
-        const { data } = await BlogPostApi.MMPostBlogGetList();
+        const { data } = await BlogPostApi.PostBlogGetList();
         blogList.value = data.blogs;
         console.log("获取博客列表", blogList.value);
     };

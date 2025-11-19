@@ -81,15 +81,17 @@ onBeforeUnmount(() => {
 <template>
   <Maximize v-show="maximize" />
   <Tabs></Tabs><!--  v-if="showTabs" -->
-  <el-main class="layout layout-main">
-    <router-view v-slot="{ Component, route }">
-      <transition :name="transition" mode="out-in" appear>
-        <keep-alive :max="16" :include="useKeepAliveStore().keepAliveStore.keepAliveName">
-          <component :is="Component" :key="route.fullPath" v-if="isRouterShow" />
-        </keep-alive>
-      </transition>
-    </router-view>
-  </el-main>
+  <el-scrollbar>
+    <el-main class="layout layout-main">
+      <router-view v-slot="{ Component, route }">
+        <transition :name="transition" mode="out-in" appear>
+          <keep-alive :max="16" :include="useKeepAliveStore().keepAliveStore.keepAliveName">
+            <component :is="Component" :key="route.fullPath" v-if="isRouterShow" />
+          </keep-alive>
+        </transition>
+      </router-view>
+    </el-main>
+  </el-scrollbar>
   <common-footer class="layout"></common-footer>
 </template>
 

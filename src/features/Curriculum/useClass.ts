@@ -15,7 +15,7 @@ export default function useClass() {
             background: "rgba(0, 0, 0, 0.7)"
         });
         try {
-            const { data } = await ClassApi.MMPostClassesByID(1);
+            const { data } = await ClassApi.PostClassesByID(1);
             data.forEach(item => {
                 classes.value.push({
                     id: item.id,
