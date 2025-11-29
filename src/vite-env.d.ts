@@ -44,3 +44,8 @@ declare module "@kangc/v-md-editor/lib/codemirror-editor" {
 // prismjs
 declare module "prismjs";
 // md相关类型声明结束
+
+declare module "webtorrent/dist/webtorrent.min.js" {
+  import WebTorrent from "webtorrent";
+  export default WebTorrent;
+}

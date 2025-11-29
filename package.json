@@ -31,14 +31,18 @@
     "vite-plugin-prismjs": "^0.0.11",
     "vue": "^3.5.13",
     "vue-lazyload": "^3.0.0",
-    "vue-router": "^4.5.1"
+    "vue-router": "^4.5.1",
+    "webtorrent": "^2.8.4"
   },
   "devDependencies": {
+    "@esbuild/android-arm64": "^0.27.0",
+    "@rollup/rollup-android-arm64": "^4.53.3",
     "@types/codemirror": "^5.60.16",
     "@types/file-saver": "^2.0.7",
     "@types/lodash.throttle": "^4.1.9",
     "@types/markdown-it": "^14.1.2",
     "@types/nprogress": "^0.2.3",
+    "@types/webtorrent": "^0.110.1",
     "@vitejs/plugin-vue": "^5.2.2",
     "@vue/tsconfig": "^0.7.0",
     "postcss": "^8.5.4",

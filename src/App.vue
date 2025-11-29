@@ -12,6 +12,8 @@ import dayjs from "dayjs";
 import "dayjs/locale/zh-cn";
 dayjs.locale("zh-cn");
 
+import { ConsoleMonitorWidget } from "@/features/console-monitor";
+
 /**
  * 管理员账户信息
  * {
@@ -62,13 +64,13 @@ const handleCursor = () => {
 function flowerOnClick(event: { pageX: number; pageY: number }) {
     // 创建虚拟容器元素
     let v = document.createElement("div");
-    
+
     // 计算最大高度和宽度
     const maxH = document.body.scrollHeight,
         h = maxH / 10 + 10;
     const maxW = document.body.scrollWidth,
         w = 20;
-        
+
     // 设置容器样式和位置
     v.setAttribute("class", "virtual-container");
     v.style.left = event.pageX - 8 + "px";
@@ -77,12 +79,12 @@ function flowerOnClick(event: { pageX: number; pageY: number }) {
         event.pageX + 20 + 8 > maxW ? maxW - event.pageX + 8 + "px" : w + "px";
     v.style.height =
         event.pageY + h + 8 > maxH ? maxH - event.pageY + 8 + "px" : h + "px";
-        
+
     // 创建花瓣元素
     let e = document.createElement("div");
     e.setAttribute("class", "click-star");
     v.appendChild(e);
-    
+
     // 添加到页面并设置自动移除
     document.body.appendChild(v);
     setTimeout(() => document.body.removeChild(v), 1000);
@@ -90,9 +92,9 @@ function flowerOnClick(event: { pageX: number; pageY: number }) {
 
 // 页面标题数组
 const titles = [
-    "(ฅ^•ﻌ•^ฅ)✧ 欢迎回来喵！",     // 活跃状态标题
-    "(ฅ•ω•ฅ)ﾉ♨ 去哪里了喵？",     // 离开页面标题
-    "(=｀ω´=)~zzZ 休息一下喵~"    // 空闲状态标题
+    "(ฅ^•ﻌ•^ฅ)✧ 欢迎回来喵！", // 活跃状态标题
+    "(ฅ•ω•ฅ)ﾉ♨ 去哪里了喵？", // 离开页面标题
+    "(=｀ω´=)~zzZ 休息一下喵~" // 空闲状态标题
 ];
 
 // 需要监听的用户活动事件
@@ -119,7 +121,7 @@ const resetIdleTimer = () => {
     if (idleTimer.value) {
         clearTimeout(idleTimer.value);
     }
-    
+
     // 设置新的空闲计时器（1分钟后触发）
     idleTimer.value = window.setTimeout(
         () => {
@@ -136,7 +138,7 @@ const resetIdleTimer = () => {
 const handleVisibilityChange = () => {
     // 更新活跃状态
     isActive.value = !document.hidden;
-    
+
     if (isActive.value) {
         // 返回页面时设置欢迎标题并重置计时器
         setTitle(0);
@@ -206,7 +208,7 @@ onMounted(async () => {
         // 兼容不支持requestIdleCallback的浏览器
         setTimeout(() => handleCursor(), 2000);
     }
-    
+
     // 初始化访问数据
     await initializeData();
 });
@@ -220,7 +222,7 @@ onUnmounted(() => {
 
     // 清理页面可见性监听器
     document.removeEventListener("visibilitychange", handleVisibilityChange);
-    
+
     // 清除空闲计时器
     if (idleTimer.value) {
         clearTimeout(idleTimer.value);
@@ -239,6 +241,7 @@ onUnmounted(() => {
         <!-- 路由视图容器 -->
         <router-view></router-view>
     </el-config-provider>
+    <ConsoleMonitorWidget />
 </template>
 
 <style scoped lang="scss">

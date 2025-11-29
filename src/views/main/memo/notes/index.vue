@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<!-- <script setup lang="ts">
 import { ref } from "vue";
 interface ListItem {
   id: number;
@@ -67,5 +67,28 @@ section.forEach((section) => {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+}
+</style> -->
+<!-- src/App.vue -->
+<template>
+  <div class="app-root">
+    <TorrentPlayerPanel />
+    <TorrentConsoleFab />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { TorrentPlayerPanel, TorrentConsoleFab } from '@/features/torrentPlayer'
+</script>
+
+<style scoped>
+.app-root {
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #20293a, #020617);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
 }
 </style>
