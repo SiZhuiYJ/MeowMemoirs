@@ -129,6 +129,7 @@ export function useTorrentClient() {
           }
 
           appendLog("info", `选择文件播放：${file.name}`);
+          store.setRuntime({ status: "downloading", progress: torrent.progress || 0 });
 
           // 渲染到 <video id="torrent-video">
           file.renderTo("#torrent-video", { autoplay: true }, (err: unknown) => {
@@ -140,9 +141,13 @@ export function useTorrentClient() {
               });
             } else {
               appendLog("info", "视频已挂载到播放器。");
-              store.setRuntime({ status: "downloading" });
             }
           });
+        });
+
+        torrent.on("download", () => {
+          // 只要有数据流动就更新状态，避免长时间停留在“连接中”
+          store.setRuntime({ status: "downloading", progress: torrent.progress || 0 });
         });
 
         startStatsLoop(store);
