@@ -322,6 +322,22 @@ export const layoutRouter: RouteRecordRaw[] = [
               isFull: "1",
               isAffix: "0",
             },
+            
+          },
+          {
+            path: "/main/effect/musicPlayer",
+            component: () => import("@/views/main/effect/musicPlayer/index.vue"),
+            meta: {
+              title: "音乐播放器",
+              enName: "musicPlayer",
+              icon: "Headset",
+              isHeader: "0",
+              isHide: "1",
+              isLink: "",
+              isKeepAlive: "0",
+              isFull: "1",
+              isAffix: "0",
+            },
           },
         ],
       },
