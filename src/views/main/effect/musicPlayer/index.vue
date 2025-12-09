@@ -284,6 +284,12 @@ const modeLabel = computed(() => {
     #0f1521;
   min-height: 100vh;
   box-sizing: border-box;
+  width: min(1200px, 100%);
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+  border-radius: 28px;
+  box-shadow: 0 20px 80px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.02);
 }
 
 .player-hero {
@@ -293,6 +299,8 @@ const modeLabel = computed(() => {
   padding: clamp(1.25rem, 4vw, 2.5rem);
   backdrop-filter: blur(8px);
   isolation: isolate;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
 
   &.theme-1 {
     background: linear-gradient(135deg, rgba(99, 102, 241, 0.32), rgba(14, 165, 233, 0.32));
@@ -585,6 +593,7 @@ button svg {
   display: grid;
   grid-template-columns: 1.2fr 0.8fr;
   gap: 1rem;
+  align-items: stretch;
 
   @media (max-width: 1100px) {
     grid-template-columns: 1fr;
@@ -593,10 +602,13 @@ button svg {
 
 .panel {
   padding: 1rem;
-  min-height: 340px;
+  min-height: 360px;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 16px 30px rgba(0, 0, 0, 0.22);
 }
 
 .panel-head {
@@ -633,6 +645,7 @@ button svg {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
+  padding: 0.25rem 0.1rem 0.1rem;
 }
 
 .track {
@@ -645,10 +658,13 @@ button svg {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid transparent;
   text-align: left;
+  transition: transform 0.2s ease, box-shadow 0.25s ease, border-color 0.2s ease;
 }
 
 .track:hover {
   border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
 }
 
 .track.active {
