@@ -158,6 +158,15 @@ export const useMusicPlayer = (audioRef: {
     const coverUrl = ref<string | null>(null);
     const coverLoading = ref(false);
     const coverCache = new Map<number, string>();
+    const paletteCache = new Map<
+        number,
+        { primary: string; secondary: string; text: string }
+    >();
+    const dominantColor = ref<{
+        primary: string;
+        secondary: string;
+        text: string;
+    } | null>(null);
 
     const isPlaying = ref(false);
     const isReady = ref(false);
@@ -231,6 +240,65 @@ export const useMusicPlayer = (audioRef: {
         return "audio/*";
     };
 
+    const rgbToHex = (r: number, g: number, b: number) => {
+        const toHex = (n: number) =>
+            Math.max(0, Math.min(255, Math.round(n)))
+                .toString(16)
+                .padStart(2, "0");
+        return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+    };
+
+    const mixChannel = (value: number, target: number, weight: number) =>
+        value * (1 - weight) + target * weight;
+
+    const extractPalette = async (url: string) => {
+        const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+            const image = new Image();
+            image.crossOrigin = "anonymous";
+            image.onload = () => resolve(image);
+            image.onerror = reject;
+            image.src = url;
+        });
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d", { willReadFrequently: true });
+        if (!ctx) return null;
+        const sampleSize = 64;
+        const width = (canvas.width = Math.min(
+            sampleSize,
+            img.naturalWidth || img.width
+        ));
+        const height = (canvas.height = Math.min(
+            sampleSize,
+            img.naturalHeight || img.height
+        ));
+        ctx.drawImage(img, 0, 0, width, height);
+        const data = ctx.getImageData(0, 0, width, height).data;
+        let r = 0;
+        let g = 0;
+        let b = 0;
+        let count = 0;
+        for (let i = 0; i < data.length; i += 4) {
+            const alpha = data[i + 3];
+            if (alpha < 10) continue; // skip fully transparent pixels
+            r += data[i];
+            g += data[i + 1];
+            b += data[i + 2];
+            count++;
+        }
+        if (!count) return null;
+        const base = [r / count, g / count, b / count];
+        const darker = base.map(channel => mixChannel(channel, 0, 0.25));
+        const lighter = base.map(channel => mixChannel(channel, 255, 0.35));
+        const luminance =
+            0.299 * base[0] + 0.587 * base[1] + 0.114 * base[2];
+        const text = luminance > 170 ? "#0f172a" : "#f8fafc";
+        return {
+            primary: rgbToHex(darker[0], darker[1], darker[2]),
+            secondary: rgbToHex(lighter[0], lighter[1], lighter[2]),
+            text
+        };
+    };
+
     const loadLyrics = async () => {
         if (!currentTrack.value) return;
         lyricLoading.value = true;
@@ -253,6 +321,7 @@ export const useMusicPlayer = (audioRef: {
         const cached = coverCache.get(track.id);
         if (cached) {
             coverUrl.value = cached;
+            dominantColor.value = paletteCache.get(track.id) || null;
             return;
         }
         album.value = null;
@@ -260,6 +329,7 @@ export const useMusicPlayer = (audioRef: {
         artist.value = null;
         artists.value = null;
         coverUrl.value = null;
+        dominantColor.value = null;
         coverLoading.value = true;
         try {
             const mm = await import("music-metadata-browser");
@@ -286,6 +356,17 @@ export const useMusicPlayer = (audioRef: {
                 const objectUrl = URL.createObjectURL(blob);
                 coverCache.set(track.id, objectUrl);
                 coverUrl.value = objectUrl;
+                try {
+                    const palette =
+                        paletteCache.get(track.id) ||
+                        (await extractPalette(objectUrl));
+                    if (palette) {
+                        paletteCache.set(track.id, palette);
+                        dominantColor.value = palette;
+                    }
+                } catch (error) {
+                    console.warn("Palette extract failed", error);
+                }
             }
         } catch (error) {
             console.warn("Cover parse failed", error);
@@ -294,6 +375,7 @@ export const useMusicPlayer = (audioRef: {
             artist.value = null;
             artists.value = null;
             coverUrl.value = null;
+            dominantColor.value = null;
         } finally {
             coverLoading.value = false;
         }
@@ -520,6 +602,7 @@ export const useMusicPlayer = (audioRef: {
         artists,
         coverUrl,
         coverLoading,
+        dominantColor,
         isPlaying,
         isReady,
         currentTime,

@@ -13,6 +13,7 @@ const {
     artists,
     coverUrl,
     coverLoading,
+    dominantColor,
     isPlaying,
     duration,
     progress,
@@ -37,6 +38,18 @@ const {
     formatTime
 } = useMusicPlayer(audioRef);
 
+const heroStyle = computed(() => {
+    const palette = dominantColor.value;
+    if (!palette) return undefined;
+    return {
+        "--hero-start": palette.primary,
+        "--hero-end": palette.secondary,
+        "--hero-text": palette.text,
+        "--accent-a": palette.secondary,
+        "--accent-b": palette.primary
+    };
+});
+
 const modeLabel = computed(() => {
     switch (playMode.value) {
         case "single":
@@ -51,7 +64,7 @@ const modeLabel = computed(() => {
 
 <template>
     <div class="player-page">
-        <section class="player-hero" :class="`theme-${(currentIndex % 5) + 1}`">
+        <section class="player-hero" :style="heroStyle">
             <div class="glow"></div>
             <div class="hero-main">
                 <div class="vinyl-wrap">
@@ -215,6 +228,11 @@ const modeLabel = computed(() => {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    --hero-start: rgba(99, 102, 241, 0.32);
+    --hero-end: rgba(14, 165, 233, 0.32);
+    --hero-text: #e8ecf1;
+    --accent-a: #7c8bff;
+    --accent-b: #ff7a9a;
     // padding: clamp(1rem, 1vw + 0.5rem, 2.5rem);
     color: #e8ecf1;
     // background: radial-gradient(circle at 20% 20%, rgba(103, 87, 255, 0.08), transparent 35%), radial-gradient(circle at 80% 0%, rgba(255, 142, 180, 0.12), transparent 35%), #0f1521;
@@ -237,36 +255,8 @@ const modeLabel = computed(() => {
     isolation: isolate;
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
-
-    &.theme-1 {
-        background: linear-gradient(135deg,
-                rgba(99, 102, 241, 0.32),
-                rgba(14, 165, 233, 0.32));
-    }
-
-    &.theme-2 {
-        background: linear-gradient(135deg,
-                rgba(249, 115, 22, 0.32),
-                rgba(236, 72, 153, 0.32));
-    }
-
-    &.theme-3 {
-        background: linear-gradient(135deg,
-                rgba(74, 222, 128, 0.28),
-                rgba(59, 130, 246, 0.28));
-    }
-
-    &.theme-4 {
-        background: linear-gradient(135deg,
-                rgba(250, 204, 21, 0.24),
-                rgba(236, 72, 153, 0.3));
-    }
-
-    &.theme-5 {
-        background: linear-gradient(135deg,
-                rgba(236, 72, 153, 0.35),
-                rgba(14, 165, 233, 0.28));
-    }
+    background: linear-gradient(135deg, var(--hero-start), var(--hero-end));
+    color: var(--hero-text);
 }
 
 .player-hero .glow {
@@ -540,7 +530,7 @@ button svg {
     width: 64px;
     height: 64px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #ff7a9a, #7c8bff);
+    background: linear-gradient(135deg, var(--accent-a), var(--accent-b));
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
 }
 
@@ -556,7 +546,7 @@ button svg {
 }
 
 .volume-slider {
-    background: linear-gradient(90deg, #7c8bff, #7affc2);
+    background: linear-gradient(90deg, var(--accent-a), var(--accent-b));
 }
 
 .grid {
@@ -681,7 +671,7 @@ button svg {
 
 .badge {
     padding: 0.2rem 0.65rem;
-    background: linear-gradient(135deg, #7c8bff, #ff7a9a);
+    background: linear-gradient(135deg, var(--accent-a), var(--accent-b));
     color: #0f1521;
     border-radius: 999px;
     font-weight: 700;
