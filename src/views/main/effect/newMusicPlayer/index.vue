@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Buffer } from "buffer";
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 
 interface Track {
   id: number;

@@ -1,107 +1,37 @@
 <script setup lang="ts">
-import { Buffer } from "buffer";
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
-
-interface Track {
-  id: number;
-  name: string;
-  artist: string;
-  url: string;
-  lyric: string;
-  duration?: number;
-}
-
-interface LyricLine {
-  time: number;
-  text: string;
-}
-
-type PlayMode = "loop" | "single" | "shuffle";
-
-const buildAssetUrl = (folder: "Musics" | "Lyrics", fileName: string) =>
-  new URL(`../../../../assets/${folder}/${fileName}`, import.meta.url).href;
-
-const playlist = ref<Track[]>([
-  {
-    id: 1,
-    name: "我只能离开",
-    artist: "颜人中",
-    url: buildAssetUrl("Musics", "我只能离开 - 颜人中.flac"),
-    lyric: buildAssetUrl("Lyrics", "我只能离开 - 颜人中.lrc"),
-  },
-  {
-    id: 2,
-    name: "Star Crossing Night (feat. GALI)",
-    artist: "徐明浩; GALI",
-    url: buildAssetUrl("Musics", "Star Crossing Night (feat. GALI) - 徐明浩; GALI.flac"),
-    lyric: buildAssetUrl("Lyrics", "Star Crossing Night (feat. GALI) - 徐明浩,GALI.lrc"),
-  },
-  {
-    id: 3,
-    name: "Take My Hand",
-    artist: "DAISHI DANCE; Cécile Corbel",
-    url: buildAssetUrl("Musics", "Take My Hand - DAISHI DANCE; Cécile Corbel.flac"),
-    lyric: buildAssetUrl("Lyrics", "Take My Hand - DAISHI DANCE,Cécile Corbel.lrc"),
-  },
-  {
-    id: 4,
-    name: "The King",
-    artist: "Paper.MAN",
-    url: buildAssetUrl("Musics", "The King - Paper.MAN.flac"),
-    lyric: buildAssetUrl("Lyrics", "The King - Paper.MAN.lrc"),
-  },
-  {
-    id: 5,
-    name: "勾指起誓",
-    artist: "洛天依Official",
-    url: buildAssetUrl("Musics", "勾指起誓 - 洛天依Official; ilem.flac"),
-    lyric: buildAssetUrl("Lyrics", "勾指起誓 - 洛天依Official,ilem.lrc"),
-  },
-  {
-    id: 6,
-    name: "江南",
-    artist: "林俊杰",
-    url: buildAssetUrl("Musics", "江南 - 林俊杰.flac"),
-    lyric: buildAssetUrl("Lyrics", "江南 - 林俊杰.lrc"),
-  },
-  {
-    id: 7,
-    name: "我害怕",
-    artist: "薛之谦",
-    url: buildAssetUrl("Musics", "我害怕 - 薛之谦.flac"),
-    lyric: buildAssetUrl("Lyrics", "我害怕 - 薛之谦.lrc"),
-  },
-]);
+import { computed, ref } from "vue";
+import LyricCarousel from "./LyricCarousel.vue";
+import { useMusicPlayer } from "./useMusicPlayer";
 
 const audioRef = ref<HTMLAudioElement | null>(null);
-const coverUrl = ref<string | null>(null);
-const coverLoading = ref(false);
-const coverCache = new Map<number, string>();
 
-const currentIndex = ref(0);
-const isPlaying = ref(false);
-const isReady = ref(false);
-const currentTime = ref(0);
-const duration = ref(0);
-const progress = ref(0);
-const volume = ref(0.7);
-const muted = ref(false);
-const playMode = ref<PlayMode>("loop");
-const lyrics = ref<LyricLine[]>([]);
-const lyricLoading = ref(false);
-
-function formatTime(value: number) {
-  if (!value || Number.isNaN(value)) return "00:00";
-  const minutes = Math.floor(value / 60)
-    .toString()
-    .padStart(2, "0");
-  const seconds = Math.floor(value % 60)
-    .toString()
-    .padStart(2, "0");
-  return `${minutes}:${seconds}`;
-}
-
-const currentTrack = computed(() => playlist.value[currentIndex.value]);
+const {
+  playlist,
+  coverUrl,
+  coverLoading,
+  isPlaying,
+  duration,
+  progress,
+  volume,
+  muted,
+  playMode,
+  lyrics,
+  lyricLoading,
+  currentTrack,
+  currentIndex,
+  formattedCurrentTime,
+  formattedDuration,
+  activeLyricIndex,
+  playAt,
+  playPrev,
+  playNext,
+  togglePlay,
+  seek,
+  changeVolume,
+  toggleMute,
+  cycleMode,
+  formatTime,
+} = useMusicPlayer(audioRef);
 
 const modeLabel = computed(() => {
   switch (playMode.value) {
@@ -112,311 +42,6 @@ const modeLabel = computed(() => {
     default:
       return "顺序循环";
   }
-});
-
-const activeLyricIndex = computed(() => {
-  const time = currentTime.value;
-  if (!lyrics.value.length) return -1;
-  if (time < lyrics.value[0].time) return 0;
-  const idx = lyrics.value.findIndex((line, index) => {
-    const next = lyrics.value[index + 1];
-    return line.time <= time && (!next || time < next.time);
-  });
-  return idx === -1 ? lyrics.value.length - 1 : idx;
-});
-
-const formattedCurrentTime = computed(() => formatTime(currentTime.value));
-const formattedDuration = computed(() => formatTime(duration.value));
-
-const VISIBLE_LYRIC_COUNT = 7;
-const visibleLyrics = computed(() => {
-  if (!lyrics.value.length) return [];
-  const half = Math.floor(VISIBLE_LYRIC_COUNT / 2);
-  let start = Math.max(activeLyricIndex.value - half, 0);
-  if (start + VISIBLE_LYRIC_COUNT > lyrics.value.length) {
-    start = Math.max(lyrics.value.length - VISIBLE_LYRIC_COUNT, 0);
-  }
-  const end = Math.min(start + VISIBLE_LYRIC_COUNT, lyrics.value.length);
-  return lyrics.value.slice(start, end).map((line, idx) => ({
-    ...line,
-    idx: start + idx,
-  }));
-});
-
-const parseLrc = (raw: string): LyricLine[] => {
-  const lines = raw.split(/\r?\n/);
-  const grouped = new Map<number, string[]>();
-  const timeReg = /\[(\d{1,2}):(\d{1,2})(?:\.(\d{1,3}))?]/g;
-
-  lines.forEach((line) => {
-    const text = line.replace(timeReg, "").trim() || "♪";
-    let match: RegExpExecArray | null;
-    while ((match = timeReg.exec(line)) !== null) {
-      const minutes = Number(match[1]);
-      const seconds = Number(match[2]);
-      const millis = Number(match[3] || 0);
-      const time = Number((minutes * 60 + seconds + millis / 1000).toFixed(2));
-      const bucket = grouped.get(time) || [];
-      bucket.push(text);
-      grouped.set(time, bucket);
-    }
-  });
-
-  return Array.from(grouped.entries())
-    .map(([time, texts]) => ({ time, text: texts.join(" / ") }))
-    .sort((a, b) => a.time - b.time);
-};
-
-const loadLyrics = async () => {
-  if (!currentTrack.value) return;
-  lyricLoading.value = true;
-  try {
-    const res = await fetch(currentTrack.value.lyric);
-    const text = await res.text();
-    lyrics.value = parseLrc(text);
-  } catch (error) {
-    console.error("Lyric load error", error);
-    lyrics.value = [];
-  } finally {
-    lyricLoading.value = false;
-  }
-};
-
-const setProgressFromAudio = () => {
-  const audio = audioRef.value;
-  if (!audio) return;
-  currentTime.value = audio.currentTime;
-  duration.value = audio.duration || duration.value || 0;
-  progress.value = duration.value ? (audio.currentTime / duration.value) * 100 : 0;
-};
-
-const onLoadedMetadata = () => {
-  const audio = audioRef.value;
-  if (!audio) return;
-  duration.value = audio.duration;
-  const track = currentTrack.value;
-  if (track) {
-    track.duration = audio.duration;
-  }
-  isReady.value = true;
-};
-
-const handleEnded = () => {
-  if (playMode.value === "single") {
-    restartCurrent();
-    return;
-  }
-  if (playMode.value === "shuffle") {
-    playRandom();
-    return;
-  }
-  playNext();
-};
-
-const restartCurrent = async () => {
-  const audio = audioRef.value;
-  if (!audio) return;
-  audio.currentTime = 0;
-  await audio.play();
-  isPlaying.value = true;
-};
-
-const playRandom = () => {
-  if (playlist.value.length <= 1) {
-    restartCurrent();
-    return;
-  }
-  let next = currentIndex.value;
-  while (next === currentIndex.value) {
-    next = Math.floor(Math.random() * playlist.value.length);
-  }
-  playAt(next);
-};
-
-const handlePlay = () => {
-  isPlaying.value = true;
-};
-
-const handlePause = () => {
-  isPlaying.value = false;
-};
-
-const guessMime = (url: string) => {
-  const lower = url.toLowerCase();
-  if (lower.endsWith(".flac")) return "audio/flac";
-  if (lower.endsWith(".mp3")) return "audio/mpeg";
-  if (lower.endsWith(".wav")) return "audio/wav";
-  return "audio/*";
-};
-
-const loadCover = async () => {
-  (globalThis as any).Buffer = (globalThis as any).Buffer || Buffer;
-  const track = currentTrack.value;
-  if (!track) return;
-  const cached = coverCache.get(track.id);
-  if (cached) {
-    coverUrl.value = cached;
-    return;
-  }
-  coverUrl.value = null;
-  coverLoading.value = true;
-  try {
-    const mm = await import("music-metadata-browser");
-    const response = await fetch(track.url, {
-      headers: { Range: "bytes=0-400000" },
-    });
-    const arrayBuffer = await response.arrayBuffer();
-    const blob = new Blob([new Uint8Array(arrayBuffer)], { type: guessMime(track.url) });
-    const metadata = await mm.parseBlob(blob);
-    const picture = metadata.common.picture?.[0];
-    if (picture) {
-      const blob = new Blob([picture.data as any], { type: picture.format || "image/jpeg" });
-      const objectUrl = URL.createObjectURL(blob);
-      coverCache.set(track.id, objectUrl);
-      coverUrl.value = objectUrl;
-    }
-  } catch (error) {
-    console.warn("Cover parse failed", error);
-    coverUrl.value = null;
-  } finally {
-    coverLoading.value = false;
-  }
-};
-
-const attachAudioEvents = () => {
-  const audio = audioRef.value;
-  if (!audio) return;
-  audio.addEventListener("timeupdate", setProgressFromAudio);
-  audio.addEventListener("loadedmetadata", onLoadedMetadata);
-  audio.addEventListener("ended", handleEnded);
-  audio.addEventListener("play", handlePlay);
-  audio.addEventListener("pause", handlePause);
-  audio.addEventListener("error", () => {
-    console.error("音频加载失败");
-  });
-};
-
-const detachAudioEvents = () => {
-  const audio = audioRef.value;
-  if (!audio) return;
-  audio.removeEventListener("timeupdate", setProgressFromAudio);
-  audio.removeEventListener("loadedmetadata", onLoadedMetadata);
-  audio.removeEventListener("ended", handleEnded);
-  audio.removeEventListener("play", handlePlay);
-  audio.removeEventListener("pause", handlePause);
-};
-
-const loadTrack = async (autoplay = false) => {
-  const audio = audioRef.value;
-  if (!audio || !currentTrack.value) return;
-  isReady.value = false;
-  isPlaying.value = false;
-  currentTime.value = 0;
-  progress.value = 0;
-  duration.value = 0;
-  audio.currentTime = 0;
-  audio.src = currentTrack.value.url;
-  audio.load();
-  await loadLyrics();
-  await loadCover();
-  if (autoplay) {
-    try {
-      await audio.play();
-      isPlaying.value = true;
-    } catch (error) {
-      isPlaying.value = false;
-      console.error("音频播放被阻止", error);
-    }
-  }
-};
-
-const playAt = async (index: number) => {
-  if (index < 0 || index >= playlist.value.length) return;
-  currentIndex.value = index;
-  await loadTrack(true);
-};
-
-const playPrev = () => {
-  const prev = currentIndex.value - 1 < 0 ? playlist.value.length - 1 : currentIndex.value - 1;
-  playAt(prev);
-};
-
-const playNext = () => {
-  const next = currentIndex.value + 1 >= playlist.value.length ? 0 : currentIndex.value + 1;
-  playAt(next);
-};
-
-const togglePlay = async () => {
-  const audio = audioRef.value;
-  if (!audio) return;
-  if (!isReady.value) {
-    await loadTrack(true);
-    return;
-  }
-  if (isPlaying.value) {
-    audio.pause();
-    isPlaying.value = false;
-  } else {
-    try {
-      await audio.play();
-      isPlaying.value = true;
-    } catch (error) {
-      console.error("播放失败", error);
-    }
-  }
-};
-
-const seek = (value: number) => {
-  const audio = audioRef.value;
-  if (!audio || !duration.value) return;
-  const nextTime = (value / 100) * duration.value;
-  audio.currentTime = nextTime;
-  currentTime.value = nextTime;
-  progress.value = value;
-};
-
-const changeVolume = (value: number) => {
-  const audio = audioRef.value;
-  volume.value = value;
-  if (!audio) return;
-  audio.volume = value;
-  if (muted.value && value > 0) {
-    audio.muted = false;
-    muted.value = false;
-  }
-};
-
-const toggleMute = () => {
-  const audio = audioRef.value;
-  if (!audio) return;
-  audio.muted = !audio.muted;
-  muted.value = audio.muted;
-};
-
-const cycleMode = () => {
-  const next: Record<PlayMode, PlayMode> = {
-    loop: "single",
-    single: "shuffle",
-    shuffle: "loop",
-  };
-  playMode.value = next[playMode.value];
-};
-
-watch(activeLyricIndex, () => {
-  // Only need to update reactive slice, no manual scroll required.
-});
-
-onMounted(() => {
-  const audio = audioRef.value;
-  if (!audio) return;
-  audio.volume = volume.value;
-  attachAudioEvents();
-  loadTrack();
-});
-
-onBeforeUnmount(() => {
-  detachAudioEvents();
-  coverCache.forEach((url) => URL.revokeObjectURL(url));
 });
 </script>
 
@@ -608,19 +233,7 @@ onBeforeUnmount(() => {
             </div>
             <span class="pill" v-if="lyricLoading">加载中...</span>
           </header>
-          <div class="lyrics">
-            <p v-if="!lyrics.length && !lyricLoading" class="empty">暂无歌词</p>
-            <TransitionGroup name="lyric-fade" tag="div" class="lyrics-body">
-              <p
-                v-for="line in visibleLyrics"
-                :key="`${line.time}-${line.idx}`"
-                class="lyric-line"
-                :data-active="activeLyricIndex === line.idx"
-              >
-                {{ line.text }}
-              </p>
-            </TransitionGroup>
-          </div>
+          <LyricCarousel :lines="lyrics" :active-index="activeLyricIndex" :loading="lyricLoading" />
         </div>
 
         <div class="panel glass">
@@ -1014,53 +627,6 @@ button svg {
 
 .lyrics {
   flex: 1;
-  overflow: hidden;
-  padding: 0.25rem 0.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.lyrics-body {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  max-height: 260px;
-  overflow: hidden;
-}
-
-.lyric-line {
-  margin: 0;
-  padding: 0.5rem 0.75rem;
-  border-radius: 12px;
-  opacity: 0.7;
-  transition: all 0.2s ease;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.lyric-line[data-active="true"] {
-  background: rgba(255, 255, 255, 0.08);
-  opacity: 1;
-  color: #fff;
-  font-weight: 700;
-  transform: translateX(4px);
-}
-
-.lyric-fade-enter-active,
-.lyric-fade-leave-active {
-  transition: all 0.28s ease;
-}
-.lyric-fade-enter-from,
-.lyric-fade-leave-to {
-  opacity: 0;
-  transform: translateY(8px) scale(0.98);
-}
-
-.empty {
-  opacity: 0.6;
 }
 
 .playlist {
