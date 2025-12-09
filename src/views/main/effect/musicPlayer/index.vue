@@ -1,15 +1,77 @@
 <script setup lang="ts">
 import { Buffer } from "buffer";
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
-import {
-  defaultPlaylist,
-  parseLrc,
-  type LyricLine,
-  type PlayMode,
-  type Track,
-} from "@/features/music-player";
 
-const playlist = ref<Track[]>([...defaultPlaylist]);
+interface Track {
+  id: number;
+  name: string;
+  artist: string;
+  url: string;
+  lyric: string;
+  duration?: number;
+}
+
+interface LyricLine {
+  time: number;
+  text: string;
+}
+
+type PlayMode = "loop" | "single" | "shuffle";
+
+const buildAssetUrl = (folder: "Musics" | "Lyrics", fileName: string) =>
+  new URL(`../../../../assets/${folder}/${fileName}`, import.meta.url).href;
+
+const playlist = ref<Track[]>([
+  {
+    id: 1,
+    name: "我只能离开",
+    artist: "颜人中",
+    url: buildAssetUrl("Musics", "我只能离开 - 颜人中.flac"),
+    lyric: buildAssetUrl("Lyrics", "我只能离开 - 颜人中.lrc"),
+  },
+  {
+    id: 2,
+    name: "Star Crossing Night (feat. GALI)",
+    artist: "徐明浩; GALI",
+    url: buildAssetUrl("Musics", "Star Crossing Night (feat. GALI) - 徐明浩; GALI.flac"),
+    lyric: buildAssetUrl("Lyrics", "Star Crossing Night (feat. GALI) - 徐明浩,GALI.lrc"),
+  },
+  {
+    id: 3,
+    name: "Take My Hand",
+    artist: "DAISHI DANCE; Cécile Corbel",
+    url: buildAssetUrl("Musics", "Take My Hand - DAISHI DANCE; Cécile Corbel.flac"),
+    lyric: buildAssetUrl("Lyrics", "Take My Hand - DAISHI DANCE,Cécile Corbel.lrc"),
+  },
+  {
+    id: 4,
+    name: "The King",
+    artist: "Paper.MAN",
+    url: buildAssetUrl("Musics", "The King - Paper.MAN.flac"),
+    lyric: buildAssetUrl("Lyrics", "The King - Paper.MAN.lrc"),
+  },
+  {
+    id: 5,
+    name: "勾指起誓",
+    artist: "洛天依Official",
+    url: buildAssetUrl("Musics", "勾指起誓 - 洛天依Official; ilem.flac"),
+    lyric: buildAssetUrl("Lyrics", "勾指起誓 - 洛天依Official,ilem.lrc"),
+  },
+  {
+    id: 6,
+    name: "江南",
+    artist: "林俊杰",
+    url: buildAssetUrl("Musics", "江南 - 林俊杰.flac"),
+    lyric: buildAssetUrl("Lyrics", "江南 - 林俊杰.lrc"),
+  },
+  {
+    id: 7,
+    name: "我害怕",
+    artist: "薛之谦",
+    url: buildAssetUrl("Musics", "我害怕 - 薛之谦.flac"),
+    lyric: buildAssetUrl("Lyrics", "我害怕 - 薛之谦.lrc"),
+  },
+]);
 
 const audioRef = ref<HTMLAudioElement | null>(null);
 const coverUrl = ref<string | null>(null);
@@ -81,11 +143,32 @@ const visibleLyrics = computed(() => {
   }));
 });
 
+const parseLrc = (raw: string): LyricLine[] => {
+  const lines = raw.split(/\r?\n/);
+  const grouped = new Map<number, string[]>();
+  const timeReg = /\[(\d{1,2}):(\d{1,2})(?:\.(\d{1,3}))?]/g;
+
+  lines.forEach((line) => {
+    const text = line.replace(timeReg, "").trim() || "♪";
+    let match: RegExpExecArray | null;
+    while ((match = timeReg.exec(line)) !== null) {
+      const minutes = Number(match[1]);
+      const seconds = Number(match[2]);
+      const millis = Number(match[3] || 0);
+      const time = Number((minutes * 60 + seconds + millis / 1000).toFixed(2));
+      const bucket = grouped.get(time) || [];
+      bucket.push(text);
+      grouped.set(time, bucket);
+    }
+  });
+
+  return Array.from(grouped.entries())
+    .map(([time, texts]) => ({ time, text: texts.join(" / ") }))
+    .sort((a, b) => a.time - b.time);
+};
+
 const loadLyrics = async () => {
-  if (!currentTrack.value?.lyric) {
-    lyrics.value = [];
-    return;
-  }
+  if (!currentTrack.value) return;
   lyricLoading.value = true;
   try {
     const res = await fetch(currentTrack.value.lyric);
@@ -169,7 +252,7 @@ const guessMime = (url: string) => {
 const loadCover = async () => {
   (globalThis as any).Buffer = (globalThis as any).Buffer || Buffer;
   const track = currentTrack.value;
-  if (!track?.url) return;
+  if (!track) return;
   const cached = coverCache.get(track.id);
   if (cached) {
     coverUrl.value = cached;
@@ -179,20 +262,12 @@ const loadCover = async () => {
   coverLoading.value = true;
   try {
     const mm = await import("music-metadata-browser");
-    const fetchBlob = async (range?: string) => {
-      const response = await fetch(track.url, range ? { headers: { Range: range } } : undefined);
-      const buffer = await response.arrayBuffer();
-      return new Blob([new Uint8Array(buffer)], { type: guessMime(track.url) });
-    };
-
-    let metadata;
-    try {
-      const blob = await fetchBlob("bytes=0-400000");
-      metadata = await mm.parseBlob(blob);
-    } catch (err) {
-      const blob = await fetchBlob();
-      metadata = await mm.parseBlob(blob);
-    }
+    const response = await fetch(track.url, {
+      headers: { Range: "bytes=0-400000" },
+    });
+    const arrayBuffer = await response.arrayBuffer();
+    const blob = new Blob([new Uint8Array(arrayBuffer)], { type: guessMime(track.url) });
+    const metadata = await mm.parseBlob(blob);
     const picture = metadata.common.picture?.[0];
     if (picture) {
       const blob = new Blob([picture.data as any], { type: picture.format || "image/jpeg" });
@@ -233,15 +308,14 @@ const detachAudioEvents = () => {
 
 const loadTrack = async (autoplay = false) => {
   const audio = audioRef.value;
-  const track = currentTrack.value;
-  if (!audio || !track?.url) return;
+  if (!audio || !currentTrack.value) return;
   isReady.value = false;
   isPlaying.value = false;
   currentTime.value = 0;
   progress.value = 0;
   duration.value = 0;
   audio.currentTime = 0;
-  audio.src = track.url;
+  audio.src = currentTrack.value.url;
   audio.load();
   await loadLyrics();
   await loadCover();
@@ -365,11 +439,11 @@ onBeforeUnmount(() => {
           </div>
         </div>
         <div class="hero-text">
-            <p class="eyebrow">Meow Memoirs · Music Lab</p>
-            <h1 class="title">{{ currentTrack?.name || "选择一首歌吧" }}</h1>
-            <p class="subtitle">{{ currentTrack?.artist || "等待播放列表" }}</p>
-            <div class="chips">
-              <span class="chip">{{ modeLabel }}</span>
+          <p class="eyebrow">Meow Memoirs · Music Lab</p>
+          <h1 class="title">{{ currentTrack?.name || "选择一首歌吧" }}</h1>
+          <p class="subtitle">{{ currentTrack?.artist || "等待播放列表" }}</p>
+          <div class="chips">
+            <span class="chip">{{ modeLabel }}</span>
             <span class="chip muted" v-if="muted">静音</span>
             <span class="chip" v-if="currentTrack?.duration">
               时长 {{ formatTime(currentTrack.duration || duration) }}
@@ -953,25 +1027,6 @@ button svg {
   gap: 0.35rem;
   max-height: 260px;
   overflow: hidden;
-  position: relative;
-}
-
-.lyrics-body::before,
-.lyrics-body::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 28px;
-  pointer-events: none;
-  z-index: 2;
-  background: linear-gradient(180deg, rgba(15, 21, 33, 0.9), rgba(15, 21, 33, 0));
-}
-
-.lyrics-body::after {
-  top: auto;
-  bottom: 0;
-  transform: rotate(180deg);
 }
 
 .lyric-line {
@@ -984,7 +1039,6 @@ button svg {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  transform-origin: center;
 }
 
 .lyric-line[data-active="true"] {
@@ -992,13 +1046,12 @@ button svg {
   opacity: 1;
   color: #fff;
   font-weight: 700;
-  transform: translateX(4px) scale(1.02);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  transform: translateX(4px);
 }
 
 .lyric-fade-enter-active,
 .lyric-fade-leave-active {
-  transition: all 0.28s ease, opacity 0.28s ease;
+  transition: all 0.28s ease;
 }
 .lyric-fade-enter-from,
 .lyric-fade-leave-to {
