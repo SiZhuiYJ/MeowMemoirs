@@ -7,12 +7,15 @@
 <style scoped lang="scss">
 .confession-container {
   width: 100vw;
-  height: 100vh;
-  background-color: #f1d5da;
+  min-height: 100vh;
+  // background-color: #f1d5da;
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
   flex-direction: column;
+  padding: 16px;
+  box-sizing: border-box;
+  overflow-y: auto;
 }
 </style>
