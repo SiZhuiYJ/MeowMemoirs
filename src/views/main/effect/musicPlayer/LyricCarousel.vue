@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, nextTick, ref, watch } from "vue";
 import type { LyricLine } from "./useMusicPlayer";
 
 const props = defineProps<{
@@ -8,12 +8,34 @@ const props = defineProps<{
   loading: boolean;
 }>();
 
+const listRef = ref<HTMLDivElement | null>(null);
+
 const decoratedLyrics = computed(() =>
   props.lines.map((line, idx) => ({
     ...line,
     offset: idx - props.activeIndex,
     key: `${line.time}-${idx}`,
   }))
+);
+
+const smoothScrollToActive = async () => {
+  await nextTick();
+  const container = listRef.value;
+  if (!container) return;
+
+  const active = container.querySelector<HTMLElement>(".lyric-slide.active");
+  if (!active) return;
+
+  const targetTop = active.offsetTop - container.clientHeight / 2 + active.offsetHeight / 2;
+  container.scrollTo({ top: targetTop, behavior: "smooth" });
+};
+
+watch(
+  () => [props.activeIndex, props.lines.length],
+  () => {
+    void smoothScrollToActive();
+  },
+  { immediate: true }
 );
 </script>
 
@@ -22,15 +44,16 @@ const decoratedLyrics = computed(() =>
     <div class="lyric-gradient top" />
     <div class="lyric-gradient bottom" />
 
-    <div class="slides" :data-empty="!lines.length">
-      <div
-        v-for="line in decoratedLyrics"
-        :key="line.key"
-        class="lyric-slide"
-        :class="{ active: line.offset === 0 }"
-        :style="{ '--offset': line.offset }"
-      >
-        <span>{{ line.text }}</span>
+    <div class="slides-viewport" ref="listRef">
+      <div class="slides" :data-empty="!lines.length">
+        <div
+          v-for="line in decoratedLyrics"
+          :key="line.key"
+          class="lyric-slide"
+          :class="{ active: line.offset === 0 }"
+        >
+          <span>{{ line.text }}</span>
+        </div>
       </div>
     </div>
 
@@ -42,7 +65,7 @@ const decoratedLyrics = computed(() =>
 <style scoped lang="scss">
 .lyric-carousel {
   position: relative;
-  min-height: 260px;
+  min-height: 280px;
   border-radius: 16px;
   background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.06), transparent 40%),
     radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.08), transparent 35%),
@@ -72,38 +95,53 @@ const decoratedLyrics = computed(() =>
   }
 }
 
+.slides-viewport {
+  position: relative;
+  max-height: 320px;
+  min-height: 220px;
+  overflow: hidden;
+  border-radius: 12px;
+  isolation: isolate;
+}
+
 .slides {
   position: relative;
-  display: grid;
-  justify-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
   gap: 0.75rem;
-  transform-style: preserve-3d;
-  transition: transform 0.6s ease;
-  min-height: 220px;
+  padding: 0.35rem 0.25rem;
+  height: 100%;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.slides::-webkit-scrollbar {
+  display: none;
 }
 
 .lyric-slide {
-  --offset: 0;
   position: relative;
   width: 100%;
   text-align: center;
   color: #cbd5e1;
   letter-spacing: 0.02em;
-  padding: 0.35rem 0.75rem;
+  padding: 0.6rem 0.9rem;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.04);
-  transform: translateY(calc(var(--offset) * 16px)) scale(calc(1 - (min(abs(var(--offset)), 5) * 0.05)));
-  opacity: calc(1 - min(abs(var(--offset)) * 0.18, 0.82));
-  filter: blur(calc(min(abs(var(--offset)), 2) * 0.8px));
-  transition: transform 0.55s ease, opacity 0.55s ease, filter 0.55s ease, background 0.3s;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.18);
+  transition: transform 0.35s ease, opacity 0.35s ease, filter 0.35s ease, background 0.35s,
+    box-shadow 0.35s ease;
+  transform-origin: center;
 }
 
 .lyric-slide.active {
   color: #f8fafc;
   background: linear-gradient(120deg, rgba(93, 165, 255, 0.25), rgba(236, 72, 153, 0.22));
   box-shadow: 0 20px 40px rgba(14, 165, 233, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  transform: translateY(0) scale(1.04);
+  transform: scale(1.03);
   opacity: 1;
   filter: none;
 }
