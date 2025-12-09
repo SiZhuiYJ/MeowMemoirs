@@ -9,7 +9,7 @@ const {
     playlist,
     album,
     title,
-    artist,
+    // artist,
     artists,
     coverUrl,
     coverLoading,
@@ -55,15 +55,10 @@ const modeLabel = computed(() => {
             <div class="glow"></div>
             <div class="hero-main">
                 <div class="vinyl-wrap">
-                    <div
-                        class="vinyl"
-                        :class="{ spinning: isPlaying }"
-                        :style="
-                            coverUrl
-                                ? { '--cover-url': `url(${coverUrl})` }
-                                : undefined
-                        "
-                    >
+                    <div class="vinyl" :class="{ spinning: isPlaying }" :style="coverUrl
+                        ? { '--cover-url': `url(${coverUrl})` }
+                        : undefined
+                        ">
                         <div v-if="coverLoading" class="cover-loading">
                             封面解析中...
                         </div>
@@ -75,8 +70,8 @@ const modeLabel = computed(() => {
                         {{ title || "--" }}
                     </h1>
                     <p class="subtitle">
-                        {{ artists ? artists.join("/") : "--" }}·{{album || "--"}}
-                        
+                        {{ artists ? artists.join("/") : "--" }}·{{ album || "--" }}
+
                     </p>
                     <div class="chips">
                         <span class="chip">{{ modeLabel }}</span>
@@ -94,191 +89,76 @@ const modeLabel = computed(() => {
             <div class="controls-card glass">
                 <div class="timeline">
                     <span class="time">{{ formattedCurrentTime }}</span>
-                    <input
-                        class="slider"
-                        type="range"
-                        min="0"
-                        max="100"
-                        step="0.1"
-                        :value="progress"
-                        @input="
-                            e =>
-                                seek(
-                                    Number((e.target as HTMLInputElement).value)
-                                )
-                        "
-                    />
+                    <input class="slider" type="range" min="0" max="100" step="0.1" :value="progress"
+                        @input="e => seek(Number((e.target as HTMLInputElement).value))" />
                     <span class="time">{{ formattedDuration }}</span>
                 </div>
 
                 <div class="controls">
                     <button class="ghost" :title="modeLabel" @click="cycleMode">
-                        <svg
-                            v-if="playMode === 'loop'"
-                            viewBox="0 0 24 24"
-                            aria-hidden="true"
-                        >
-                            <path
-                                d="M17 17H8a3 3 0 0 1 0-6h9"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            />
-                            <path
-                                d="M16 14l3-3-3-3"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            />
+                        <svg v-if="playMode === 'loop'" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M17 17H8a3 3 0 0 1 0-6h9" fill="none" stroke="currentColor" stroke-width="1.8"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M16 14l3-3-3-3" fill="none" stroke="currentColor" stroke-width="1.8"
+                                stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
-                        <svg
-                            v-else-if="playMode === 'single'"
-                            viewBox="0 0 24 24"
-                            aria-hidden="true"
-                        >
-                            <path
-                                d="M17 17H8a3 3 0 0 1 0-6h9"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            />
-                            <path
-                                d="M16 14l3-3-3-3"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            />
-                            <text
-                                x="9"
-                                y="14.5"
-                                font-size="6"
-                                fill="currentColor"
-                                font-family="monospace"
-                            >
+                        <svg v-else-if="playMode === 'single'" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M17 17H8a3 3 0 0 1 0-6h9" fill="none" stroke="currentColor" stroke-width="1.8"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M16 14l3-3-3-3" fill="none" stroke="currentColor" stroke-width="1.8"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                            <text x="9" y="14.5" font-size="6" fill="currentColor" font-family="monospace">
                                 1
                             </text>
                         </svg>
                         <svg v-else viewBox="0 0 24 24" aria-hidden="true">
-                            <path
-                                d="M4 5l6 6-6 6m10-12l6 6-6 6"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            />
+                            <path d="M4 5l6 6-6 6m10-12l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8"
+                                stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </button>
 
                     <button class="ghost" title="上一首" @click="playPrev">
                         <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path
-                                d="M19 5v14l-10-7 10-7Z M5 5v14"
-                                fill="currentColor"
-                                stroke="currentColor"
-                                stroke-width="1.5"
-                                stroke-linejoin="round"
-                            />
+                            <path d="M19 5v14l-10-7 10-7Z M5 5v14" fill="currentColor" stroke="currentColor"
+                                stroke-width="1.5" stroke-linejoin="round" />
                         </svg>
                     </button>
 
-                    <button
-                        class="primary"
-                        title="播放/暂停"
-                        @click="togglePlay"
-                    >
-                        <svg
-                            v-if="!isPlaying"
-                            viewBox="0 0 24 24"
-                            aria-hidden="true"
-                        >
+                    <button class="primary" title="播放/暂停" @click="togglePlay">
+                        <svg v-if="!isPlaying" viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M6 4l14 8-14 8V4Z" fill="currentColor" />
                         </svg>
                         <svg v-else viewBox="0 0 24 24" aria-hidden="true">
-                            <path
-                                d="M7 5h4v14H7zM13 5h4v14h-4z"
-                                fill="currentColor"
-                            />
+                            <path d="M7 5h4v14H7zM13 5h4v14h-4z" fill="currentColor" />
                         </svg>
                     </button>
 
                     <button class="ghost" title="下一首" @click="playNext">
                         <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path
-                                d="M5 19V5l10 7-10 7Z M19 19V5"
-                                fill="currentColor"
-                                stroke="currentColor"
-                                stroke-width="1.5"
-                                stroke-linejoin="round"
-                            />
+                            <path d="M5 19V5l10 7-10 7Z M19 19V5" fill="currentColor" stroke="currentColor"
+                                stroke-width="1.5" stroke-linejoin="round" />
                         </svg>
                     </button>
 
                     <div class="volume">
                         <button class="ghost" title="静音" @click="toggleMute">
-                            <svg
-                                v-if="muted || volume === 0"
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    d="M4 9v6h4l5 4V5L8 9H4Zm12 0 4 6m0-6-4 6"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="1.8"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                />
+                            <svg v-if="muted || volume === 0" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M4 9v6h4l5 4V5L8 9H4Zm12 0 4 6m0-6-4 6" fill="none" stroke="currentColor"
+                                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
-                            <svg
-                                v-else-if="volume < 0.5"
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    d="M4 9v6h4l5 4V5L8 9H4Zm10 3a2 2 0 0 0 2-2"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="1.8"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                />
+                            <svg v-else-if="volume < 0.5" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M4 9v6h4l5 4V5L8 9H4Zm10 3a2 2 0 0 0 2-2" fill="none" stroke="currentColor"
+                                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
                             <svg v-else viewBox="0 0 24 24" aria-hidden="true">
-                                <path
-                                    d="M4 9v6h4l5 4V5L8 9H4Zm10 3a3 3 0 0 0 3-3m-3 3a5 5 0 0 0 5 5"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="1.8"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                />
+                                <path d="M4 9v6h4l5 4V5L8 9H4Zm10 3a3 3 0 0 0 3-3m-3 3a5 5 0 0 0 5 5" fill="none"
+                                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                                    stroke-linejoin="round" />
                             </svg>
                         </button>
-                        <input
-                            class="slider volume-slider"
-                            type="range"
-                            min="0"
-                            max="1"
-                            step="0.01"
+                        <input class="slider volume-slider" type="range" min="0" max="1" step="0.01"
                             :value="muted ? 0 : volume"
-                            @input="
-                                e =>
-                                    changeVolume(
-                                        Number(
-                                            (e.target as HTMLInputElement).value
-                                        )
-                                    )
-                            "
-                        />
+                            @input="e => changeVolume(Number((e.target as HTMLInputElement).value))" />
                     </div>
                 </div>
             </div>
@@ -292,11 +172,7 @@ const modeLabel = computed(() => {
                         </div>
                         <span class="pill" v-if="lyricLoading">加载中...</span>
                     </header>
-                    <LyricCarousel
-                        :lines="lyrics"
-                        :active-index="activeLyricIndex"
-                        :loading="lyricLoading"
-                    />
+                    <LyricCarousel :lines="lyrics" :active-index="activeLyricIndex" :loading="lyricLoading" />
                 </div>
 
                 <div class="panel glass">
@@ -308,15 +184,10 @@ const modeLabel = computed(() => {
                         <span class="pill">{{ playlist.length }} 首</span>
                     </header>
                     <div class="playlist">
-                        <button
-                            v-for="(track, index) in playlist"
-                            :key="track.id"
-                            class="track"
-                            :class="{ active: currentIndex === index }"
-                            @click="playAt(index)"
-                        >
+                        <button v-for="(track, index) in playlist" :key="track.id" class="track"
+                            :class="{ active: currentIndex === index }" @click="playAt(index)">
                             <div class="track-meta">
-                                <p class="name">{{ track.name }}</p>
+                                <p class="name">{{ track.title }}</p>
                                 <p class="artist">{{ track.artist }}</p>
                             </div>
                             <div class="track-extra">
@@ -327,11 +198,7 @@ const modeLabel = computed(() => {
                                             : "..."
                                     }}
                                 </span>
-                                <span
-                                    class="badge"
-                                    v-if="currentIndex === index"
-                                    >播放中</span
-                                >
+                                <span class="badge" v-if="currentIndex === index">播放中</span>
                             </div>
                         </button>
                     </div>
@@ -348,23 +215,13 @@ const modeLabel = computed(() => {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    padding: clamp(1rem, 1vw + 0.5rem, 2.5rem);
+    // padding: clamp(1rem, 1vw + 0.5rem, 2.5rem);
     color: #e8ecf1;
-    background: radial-gradient(
-            circle at 20% 20%,
-            rgba(103, 87, 255, 0.08),
-            transparent 35%
-        ),
-        radial-gradient(
-            circle at 80% 0%,
-            rgba(255, 142, 180, 0.12),
-            transparent 35%
-        ),
-        #0f1521;
+    // background: radial-gradient(circle at 20% 20%, rgba(103, 87, 255, 0.08), transparent 35%), radial-gradient(circle at 80% 0%, rgba(255, 142, 180, 0.12), transparent 35%), #0f1521;
     min-height: 100vh;
     box-sizing: border-box;
     width: min(1200px, 100%);
-    margin: 0 auto;
+    // margin: 0 auto;
     position: relative;
     overflow: hidden;
     border-radius: 28px;
@@ -382,39 +239,33 @@ const modeLabel = computed(() => {
     box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
 
     &.theme-1 {
-        background: linear-gradient(
-            135deg,
-            rgba(99, 102, 241, 0.32),
-            rgba(14, 165, 233, 0.32)
-        );
+        background: linear-gradient(135deg,
+                rgba(99, 102, 241, 0.32),
+                rgba(14, 165, 233, 0.32));
     }
+
     &.theme-2 {
-        background: linear-gradient(
-            135deg,
-            rgba(249, 115, 22, 0.32),
-            rgba(236, 72, 153, 0.32)
-        );
+        background: linear-gradient(135deg,
+                rgba(249, 115, 22, 0.32),
+                rgba(236, 72, 153, 0.32));
     }
+
     &.theme-3 {
-        background: linear-gradient(
-            135deg,
-            rgba(74, 222, 128, 0.28),
-            rgba(59, 130, 246, 0.28)
-        );
+        background: linear-gradient(135deg,
+                rgba(74, 222, 128, 0.28),
+                rgba(59, 130, 246, 0.28));
     }
+
     &.theme-4 {
-        background: linear-gradient(
-            135deg,
-            rgba(250, 204, 21, 0.24),
-            rgba(236, 72, 153, 0.3)
-        );
+        background: linear-gradient(135deg,
+                rgba(250, 204, 21, 0.24),
+                rgba(236, 72, 153, 0.3));
     }
+
     &.theme-5 {
-        background: linear-gradient(
-            135deg,
-            rgba(236, 72, 153, 0.35),
-            rgba(14, 165, 233, 0.28)
-        );
+        background: linear-gradient(135deg,
+                rgba(236, 72, 153, 0.35),
+                rgba(14, 165, 233, 0.28));
     }
 }
 
@@ -422,16 +273,12 @@ const modeLabel = computed(() => {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background: radial-gradient(
-            circle at 60% 20%,
+    background: radial-gradient(circle at 60% 20%,
             rgba(255, 255, 255, 0.16),
-            transparent 45%
-        ),
-        radial-gradient(
-            circle at 10% 80%,
+            transparent 45%),
+        radial-gradient(circle at 10% 80%,
             rgba(255, 255, 255, 0.12),
-            transparent 40%
-        );
+            transparent 40%);
     mix-blend-mode: screen;
     opacity: 0.9;
     z-index: 0;
@@ -460,17 +307,13 @@ const modeLabel = computed(() => {
     width: min(260px, 55vw);
     aspect-ratio: 1 / 1;
     border-radius: 50%;
-    background: radial-gradient(
-            circle,
+    background: radial-gradient(circle,
             #0b0d13 45%,
             rgba(255, 255, 255, 0.08) 46%,
-            #0b0d13 65%
-        ),
-        repeating-conic-gradient(
-            from 0deg,
+            #0b0d13 65%),
+        repeating-conic-gradient(from 0deg,
             rgba(255, 255, 255, 0.08) 0deg 2deg,
-            transparent 2deg 4deg
-        );
+            transparent 2deg 4deg);
     display: grid;
     place-items: center;
     box-shadow:
@@ -499,15 +342,10 @@ const modeLabel = computed(() => {
     position: absolute;
     inset: 18%;
     border-radius: 50%;
-    background: var(
-            --cover-url,
-            radial-gradient(
-                circle at 30% 30%,
+    background: var(--cover-url,
+            radial-gradient(circle at 30% 30%,
                 rgba(255, 255, 255, 0.15),
-                rgba(0, 0, 0, 0.65)
-            )
-        )
-        center/cover no-repeat;
+                rgba(0, 0, 0, 0.65))) center/cover no-repeat;
     opacity: 0.92;
     mix-blend-mode: screen;
     box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5);
@@ -531,11 +369,9 @@ const modeLabel = computed(() => {
     width: 42%;
     aspect-ratio: 1 / 1;
     border-radius: 50%;
-    background: radial-gradient(
-            circle at 30% 30%,
+    background: radial-gradient(circle at 30% 30%,
             rgba(255, 255, 255, 0.15),
-            rgba(0, 0, 0, 0.55)
-        ),
+            rgba(0, 0, 0, 0.55)),
         #ff7a9a;
     display: grid;
     place-items: center;
@@ -552,6 +388,7 @@ const modeLabel = computed(() => {
     font-size: clamp(0.8rem, 1vw, 1.05rem);
     line-height: 1.25;
 }
+
 .label-artist {
     font-size: 0.8rem;
     opacity: 0.8;
@@ -739,11 +576,9 @@ button svg {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    background: linear-gradient(
-        160deg,
-        rgba(255, 255, 255, 0.06),
-        rgba(255, 255, 255, 0.02)
-    );
+    background: linear-gradient(160deg,
+            rgba(255, 255, 255, 0.06),
+            rgba(255, 255, 255, 0.02));
     border: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.05),
@@ -755,6 +590,7 @@ button svg {
     align-items: center;
     justify-content: space-between;
     gap: 0.6rem;
+    height: 50px;
 }
 
 .panel-head h3 {
@@ -855,24 +691,26 @@ button svg {
     .controls-card {
         padding: 1rem 0.75rem;
     }
+
     .controls {
         justify-content: space-between;
     }
+
     .volume {
         width: 100%;
     }
+
     .hero-text .title {
         font-size: clamp(1.5rem, 8vw, 2.1rem);
     }
-    .player-page {
-        padding: 1rem;
-    }
+
 }
 
 @keyframes spin {
     from {
         transform: rotate(0deg);
     }
+
     to {
         transform: rotate(360deg);
     }

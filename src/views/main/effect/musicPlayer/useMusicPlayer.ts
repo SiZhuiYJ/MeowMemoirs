@@ -4,8 +4,10 @@ import { useStorage } from "@vueuse/core";
 
 export interface Track {
     id: number;
-    name: string;
+    title: string;
     artist: string;
+    album: string;
+    artists: string[];
     url: string;
     lyric: string;
     duration?: number;
@@ -24,15 +26,19 @@ const buildAssetUrl = (folder: "Musics" | "Lyrics", fileName: string) =>
 const defaultPlaylist: Track[] = [
     {
         id: 1,
-        name: "我只能离开",
+        title: "我只能离开",
         artist: "颜人中",
+        artists: ["颜人中"],
+        album: "我只能离开",
         url: buildAssetUrl("Musics", "我只能离开 - 颜人中.flac"),
         lyric: buildAssetUrl("Lyrics", "我只能离开 - 颜人中.lrc")
     },
     {
         id: 2,
-        name: "Star Crossing Night (feat. GALI)",
+        title: "Star Crossing Night (feat. GALI)",
         artist: "徐明浩; GALI",
+        artists: ["徐明浩", "GALI"],
+        album: "Star Crossing Night (feat. GALI)",
         url: buildAssetUrl(
             "Musics",
             "Star Crossing Night (feat. GALI) - 徐明浩; GALI.flac"
@@ -44,8 +50,10 @@ const defaultPlaylist: Track[] = [
     },
     {
         id: 3,
-        name: "Take My Hand",
+        title: "Take My Hand",
+        album: "Take My Hand",
         artist: "DAISHI DANCE; Cécile Corbel",
+        artists: ["DAISHI DANCE", "Cécile Corbel"],
         url: buildAssetUrl(
             "Musics",
             "Take My Hand - DAISHI DANCE; Cécile Corbel.flac"
@@ -57,29 +65,37 @@ const defaultPlaylist: Track[] = [
     },
     {
         id: 4,
-        name: "The King",
+        title: "The King",
+        album: "The King",
         artist: "Paper.MAN",
+        artists: ["Paper.MAN"],
         url: buildAssetUrl("Musics", "The King - Paper.MAN.flac"),
         lyric: buildAssetUrl("Lyrics", "The King - Paper.MAN.lrc")
     },
     {
         id: 5,
-        name: "勾指起誓",
+        title: "勾指起誓",
+        album: "勾指起誓",
         artist: "洛天依Official",
+        artists: ["洛天依Official"],
         url: buildAssetUrl("Musics", "勾指起誓 - 洛天依Official; ilem.flac"),
         lyric: buildAssetUrl("Lyrics", "勾指起誓 - 洛天依Official,ilem.lrc")
     },
     {
         id: 6,
-        name: "江南",
+        title: "江南",
+        album: "江南",
         artist: "林俊杰",
+        artists: ["林俊杰"],
         url: buildAssetUrl("Musics", "江南 - 林俊杰.flac"),
         lyric: buildAssetUrl("Lyrics", "江南 - 林俊杰.lrc")
     },
     {
         id: 7,
-        name: "我害怕",
+        title: "我害怕",
+        album: "我害怕",
         artist: "薛之谦",
+        artists: ["薛之谦"],
         url: buildAssetUrl("Musics", "我害怕 - 薛之谦.flac"),
         lyric: buildAssetUrl("Lyrics", "我害怕 - 薛之谦.lrc")
     }
@@ -125,6 +141,7 @@ export const useMusicPlayer = (audioRef: {
     value: HTMLAudioElement | null;
 }) => {
     const playlist = useStorage<Track[]>("mm-player-playlist", defaultPlaylist);
+    console.log("Playlist loaded:", playlist.value);
     const playerState = useStorage("mm-player-state", {
         currentIndex: 0,
         time: 0,
@@ -262,11 +279,6 @@ export const useMusicPlayer = (audioRef: {
             if (data.artist) artist.value = data.artist;
             if (data.album) album.value = data.album;
             if (data.artists) artists.value = data.artists;
-
-            console.log(
-                album.value + title.value + artist.value + artists.value
-            );
-
             if (picture) {
                 const blob = new Blob([picture.data as any], {
                     type: picture.format || "image/jpeg"
@@ -388,9 +400,9 @@ export const useMusicPlayer = (audioRef: {
         audio.currentTime = currentTime.value || 0;
         audio.src = currentTrack.value.url;
         audio.load();
-        title.value = currentTrack.value.name;
+        title.value = currentTrack.value.title;
         artist.value = currentTrack.value.artist;
-        album.value = currentTrack.value.value; 
+        album.value = currentTrack.value.album; 
         artists.value = currentTrack.value.artists; 
         await loadLyrics();
         await loadCover();
