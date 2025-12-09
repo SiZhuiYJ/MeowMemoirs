@@ -8,40 +8,29 @@ const props = defineProps<{
   loading: boolean;
 }>();
 
-const visibleLyrics = computed(() =>
-  props.lines
-    .map((line, idx) => {
-      const distance = idx - props.activeIndex;
-      return {
-        ...line,
-        distance,
-        isActive: distance === 0,
-        key: `${line.time}-${idx}`,
-      };
-    })
-    .filter((line) => Math.abs(line.distance) <= 8)
+const decoratedLyrics = computed(() =>
+  props.lines.map((line, idx) => ({
+    ...line,
+    offset: idx - props.activeIndex,
+    key: `${line.time}-${idx}`,
+  }))
 );
 </script>
 
 <template>
-  <div class="lyric-shell">
-    <div class="mesh"></div>
-    <div class="halo"></div>
-    <div class="halo secondary"></div>
+  <div class="lyric-carousel">
+    <div class="lyric-gradient top" />
+    <div class="lyric-gradient bottom" />
 
-    <div class="lyric-track" :data-empty="!lines.length">
+    <div class="slides" :data-empty="!lines.length">
       <div
-        v-for="line in visibleLyrics"
+        v-for="line in decoratedLyrics"
         :key="line.key"
-        class="lyric-line"
-        :class="{ active: line.isActive }"
-        :style="{
-          '--distance': line.distance,
-          '--abs-distance': Math.abs(line.distance),
-        }"
+        class="lyric-slide"
+        :class="{ active: line.offset === 0 }"
+        :style="{ '--offset': line.offset }"
       >
-        <span class="bullet" aria-hidden="true"></span>
-        <p class="text">{{ line.text }}</p>
+        <span>{{ line.text }}</span>
       </div>
     </div>
 
@@ -51,124 +40,72 @@ const visibleLyrics = computed(() =>
 </template>
 
 <style scoped lang="scss">
-.lyric-shell {
+.lyric-carousel {
   position: relative;
-  min-height: 280px;
-  border-radius: 18px;
-  background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1), transparent 36%),
-    radial-gradient(circle at 80% 82%, rgba(255, 255, 255, 0.08), transparent 38%),
-    linear-gradient(135deg, rgba(28, 42, 61, 0.92), rgba(19, 26, 41, 0.94));
+  min-height: 260px;
+  border-radius: 16px;
+  background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.06), transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.08), transparent 35%),
+    rgba(17, 24, 39, 0.6);
   overflow: hidden;
-  padding: 1.75rem 1.25rem;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(8px);
+  padding: 1.5rem 1.25rem;
+  backdrop-filter: blur(10px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 20px 50px rgba(0, 0, 0, 0.35);
 }
 
-.mesh::before,
-.mesh::after {
-  content: "";
+.lyric-gradient {
   position: absolute;
-  inset: -10%;
-  background-image: linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-  background-size: 20px 20px;
-  opacity: 0.35;
-  mix-blend-mode: soft-light;
-  transform: rotate(2deg);
-}
-
-.mesh::after {
-  transform: rotate(-2deg);
-  opacity: 0.2;
-}
-
-.halo {
-  position: absolute;
-  inset: 10% 12%;
-  background: radial-gradient(circle at 50% 40%, rgba(80, 140, 255, 0.4), rgba(255, 255, 255, 0) 55%);
-  filter: blur(26px);
-  opacity: 0.75;
-  animation: pulse 8s ease-in-out infinite;
+  left: 0;
+  right: 0;
+  height: 90px;
   pointer-events: none;
+  z-index: 2;
+
+  &.top {
+    top: 0;
+    background: linear-gradient(to bottom, rgba(19, 25, 40, 0.9), rgba(19, 25, 40, 0));
+  }
+
+  &.bottom {
+    bottom: 0;
+    background: linear-gradient(to top, rgba(19, 25, 40, 0.92), rgba(19, 25, 40, 0));
+  }
 }
 
-.halo.secondary {
-  inset: 18% 20%;
-  background: radial-gradient(circle at 60% 60%, rgba(255, 156, 245, 0.35), rgba(255, 255, 255, 0) 60%);
-  animation-delay: -2.5s;
-  opacity: 0.55;
-}
-
-.lyric-track {
+.slides {
   position: relative;
   display: grid;
-  gap: 0.85rem;
   justify-items: center;
+  gap: 0.75rem;
   transform-style: preserve-3d;
-  perspective: 1000px;
-  z-index: 1;
-}
-
-.lyric-track[data-empty="true"] {
+  transition: transform 0.6s ease;
   min-height: 220px;
 }
 
-.lyric-line {
-  --distance: 0;
-  --abs-distance: 0;
-  width: min(100%, 720px);
-  padding: 0.65rem 0.85rem 0.65rem 1.75rem;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.05);
-  color: #d6e3ff;
-  letter-spacing: 0.01em;
-  backdrop-filter: blur(2px);
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  transform: translateY(calc(var(--distance) * 28px)) translateZ(calc((6 - var(--abs-distance)) * 6px))
-    rotateX(calc(var(--distance) * 2deg));
-  opacity: calc(1 - var(--abs-distance) * 0.12);
-  filter: blur(calc(var(--abs-distance) * 0.35px));
-  transition: transform 480ms cubic-bezier(0.33, 1, 0.68, 1), opacity 420ms ease, filter 420ms ease,
-    background 320ms ease;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-}
-
-.lyric-line .text {
-  margin: 0;
-  font-size: 0.98rem;
-  line-height: 1.5;
-}
-
-.lyric-line .bullet {
+.lyric-slide {
+  --offset: 0;
   position: relative;
-  display: inline-flex;
-  width: 9px;
-  height: 9px;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #7dd3fc, #c084fc);
-  box-shadow: 0 0 0 8px rgba(125, 211, 252, 0.08);
-  opacity: 0.45;
-  transition: all 280ms ease;
+  width: 100%;
+  text-align: center;
+  color: #cbd5e1;
+  letter-spacing: 0.02em;
+  padding: 0.35rem 0.75rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  transform: translateY(calc(var(--offset) * 16px)) scale(calc(1 - (min(abs(var(--offset)), 5) * 0.05)));
+  opacity: calc(1 - min(abs(var(--offset)) * 0.18, 0.82));
+  filter: blur(calc(min(abs(var(--offset)), 2) * 0.8px));
+  transition: transform 0.55s ease, opacity 0.55s ease, filter 0.55s ease, background 0.3s;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
-.lyric-line.active {
-  color: #f8fbff;
-  background: linear-gradient(120deg, rgba(94, 234, 212, 0.16), rgba(94, 234, 212, 0.08)),
-    rgba(255, 255, 255, 0.06);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(94, 234, 212, 0.15);
-  transform: translateY(0) translateZ(46px) scale(1.03);
+.lyric-slide.active {
+  color: #f8fafc;
+  background: linear-gradient(120deg, rgba(93, 165, 255, 0.25), rgba(236, 72, 153, 0.22));
+  box-shadow: 0 20px 40px rgba(14, 165, 233, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transform: translateY(0) scale(1.04);
   opacity: 1;
   filter: none;
-}
-
-.lyric-line.active .bullet {
-  width: 12px;
-  height: 12px;
-  background: linear-gradient(135deg, #34d399, #60a5fa);
-  box-shadow: 0 0 0 10px rgba(52, 211, 153, 0.12), 0 0 24px rgba(96, 165, 250, 0.55);
-  opacity: 1;
 }
 
 .lyric-status {
@@ -177,21 +114,9 @@ const visibleLyrics = computed(() =>
   display: grid;
   place-items: center;
   font-size: 0.95rem;
-  color: #dfe7ff;
-  background: rgba(12, 19, 33, 0.7);
+  color: #cbd5e1;
+  background: rgba(15, 23, 42, 0.7);
   backdrop-filter: blur(4px);
-  z-index: 2;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 0.65;
-  }
-  50% {
-    transform: scale(1.08);
-    opacity: 0.9;
-  }
+  z-index: 3;
 }
 </style>
