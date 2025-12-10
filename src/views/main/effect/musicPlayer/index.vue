@@ -255,7 +255,7 @@ const modeLabel = computed(() => {
 
 .hero-main {
     display: grid;
-    grid-template-columns: 320px 1fr 2fr;
+    grid-template-columns: 320px 1fr 1.5fr;
     grid-template-rows: repeat(3, auto);
     gap: clamp(1.25rem, 2vw, 2.5rem);
     align-items: center;
