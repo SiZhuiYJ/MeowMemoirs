@@ -10,7 +10,6 @@ const {
     playlist,
     album,
     title,
-    // artist,
     artists,
     coverUrl,
     coverLoading,
@@ -221,24 +220,16 @@ const modeLabel = computed(() => {
     --hero-text: #e8ecf1;
     --accent-a: #7c8bff;
     --accent-b: #ff7a9a;
-    // 
-    // padding: clamp(1rem, 1vw + 0.5rem, 2.5rem);
     color: var(--hero-text);
-    // background: radial-gradient(circle at 20% 20%, rgba(103, 87, 255, 0.08), transparent 35%), radial-gradient(circle at 80% 0%, rgba(255, 142, 180, 0.12), transparent 35%), #0f1521;
     min-height: 100vh;
     box-sizing: border-box;
-    // width: min(1200px, 100%);
     min-width: 100vw;
-    // margin: 0 auto;
     position: relative;
     overflow: hidden;
-    // border-radius: 28px;
-    // box-shadow: 0 20px 80px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.02);
 }
 
 .player-hero {
     position: relative;
-    // border-radius: 24px;
     height: calc(100vh - clamp(1.25rem, 4vw, 2.5rem) * 2);
     width: calc(100vw - clamp(1.25rem, 4vw, 2.5rem) * 2);
     overflow: hidden;
@@ -249,8 +240,7 @@ const modeLabel = computed(() => {
     box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
     background: linear-gradient(135deg, var(--hero-start), var(--hero-end));
     color: var(--hero-text);
-    // 背景变化的时间为.6秒，使用ease过渡效果
-    transition: color 0.3s ease;
+    transition: background 0.6s ease, color 0.3s ease;
 }
 
 .player-hero .glow {
