@@ -13,7 +13,7 @@
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  padding: clamp(16px, 3vw, 32px);
+  // padding: clamp(16px, 3vw, 32px);
   box-sizing: border-box;
   overflow-y: auto;
   background: radial-gradient(circle at 18% 24%, rgba(255, 255, 255, 0.18), transparent 28%),

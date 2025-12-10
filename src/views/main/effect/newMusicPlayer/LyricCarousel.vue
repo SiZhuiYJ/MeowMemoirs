@@ -20,6 +20,8 @@ const decoratedLyrics = computed(() =>
 
 <template>
     <div class="lyric-carousel">
+        <div class="lyric-gradient top" />
+        <div class="lyric-gradient bottom" />
 
         <div class="slides-stack">
             <div v-for="line in decoratedLyrics" :key="line.key" class="lyric-slide"
@@ -34,17 +36,36 @@ const decoratedLyrics = computed(() =>
 </template>
 
 <style scoped lang="scss">
-$max-visible-offset: 10; // 活动行上方/下方的可见行数
+$max-visible-offset: 8; // 活动行上方/下方的可见行数
 
 .lyric-carousel {
     position: relative;
     // min-height: calc(100% - 0.75rem - 50px); // account for padding + controls
     border-radius: 16px;
     --row-height: 52px; // baseline row height, adjustable via media query
-    // background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.06), transparent 40%), radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.08), transparent 35%), rgba(17, 24, 39, 0.6);
+    background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.06), transparent 40%), radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.08), transparent 35%), rgba(17, 24, 39, 0.6);
     overflow: hidden;
     backdrop-filter: blur(10px);
-    // box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 20px 50px rgba(0, 0, 0, 0.35);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 20px 50px rgba(0, 0, 0, 0.35);
+}
+
+.lyric-gradient {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 30%;
+    pointer-events: none;
+    z-index: 5;
+
+    &.top {
+        top: 0;
+        background: linear-gradient(to bottom, rgba(15, 21, 33, 0.95), rgba(15, 21, 33, 0));
+    }
+
+    &.bottom {
+        bottom: 0;
+        background: linear-gradient(to top, rgba(15, 21, 33, 0.95), rgba(15, 21, 33, 0));
+    }
 }
 
 .slides-stack {
@@ -64,7 +85,7 @@ $max-visible-offset: 10; // 活动行上方/下方的可见行数
     left: 50%;
     width: 90%;
     text-align: center;
-    color: var(--hero-text);
+    color: #cbd5e1;
     letter-spacing: 0.02em;
     padding: 0.6rem 0.9rem;
     border-radius: 12px;
@@ -78,7 +99,7 @@ $max-visible-offset: 10; // 活动行上方/下方的可见行数
     background: transparent;
     box-shadow: none;
 
-    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.4s ease, background 0.4s, text-shadow 0.4s ease, color 0.4s ease;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.4s ease, background 0.4s;
 
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.6) translateY(0) rotateX(40deg);
@@ -86,7 +107,7 @@ $max-visible-offset: 10; // 活动行上方/下方的可见行数
     z-index: 1;
 
     &>span {
-        transition: text-shadow 0.4s ease;
+        transition: color 0.4s ease;
         filter: blur(0.5px);
 
         overflow: hidden;
@@ -96,10 +117,10 @@ $max-visible-offset: 10; // 活动行上方/下方的可见行数
 
     @for $i from 1 through $max-visible-offset {
         // 歌词堆叠效果
-        $scale-factor: 1 - $i * 0.02; // 每层缩小6%
-        $opacity-factor: 1 - $i * 0.10; // 每层透明度降低15%
+        $scale-factor: 1 - $i * 0.04; // 每层缩小6%
+        $opacity-factor: 1 - $i * 0.15; // 每层透明度降低15%
         $blur-factor: $i * 0.4px; // 每层模糊增加0.4px
-        $rotate-x: 2deg * $i; // 每层旋转增加5度
+        $rotate-x: 5deg * $i; // 每层旋转增加5度
 
         &[data-offset="#{-$i}"] {
             opacity: $opacity-factor;
@@ -131,20 +152,13 @@ $max-visible-offset: 10; // 活动行上方/下方的可见行数
 
 .lyric-slide.active {
     opacity: 1;
-    color: var(--hero-text);
-    transform: translate(-50%, -50%) scale(1.3) translateY(0) rotateX(0deg);
+    color: #f8fafc;
+    transform: translate(-50%, -50%) scale(1.03) translateY(0) rotateX(0deg);
     z-index: $max-visible-offset + 2;
     pointer-events: auto;
 
     &>span {
-        color: var(--hero-text);
-        text-shadow:
-            0 0 1px var(--hero-text),
-            /* 内层发光 */
-            0 0 2px var(--hero-text),
-            /* 中层发光 */
-            0 0 3px var(--hero-text);
-        /* 外层发光 */
+        color: #fff;
         filter: none;
     }
 }

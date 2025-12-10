@@ -2,6 +2,7 @@
 import { computed, ref } from "vue";
 import LyricCarousel from "./LyricCarousel.vue";
 import { useMusicPlayer } from "./useMusicPlayer";
+import SvgIcon from "@/components/SvgIcons/index.vue";
 
 const audioRef = ref<HTMLAudioElement | null>(null);
 
@@ -38,7 +39,7 @@ const {
     formatTime
 } = useMusicPlayer(audioRef);
 
-const heroStyle = computed(() => {
+const heroStyle = computed((): { [key: string]: string } | undefined => {
     const palette = dominantColor.value;
     if (!palette) return undefined;
     return {
@@ -67,7 +68,7 @@ const modeLabel = computed(() => {
         <section class="player-hero" :style="heroStyle">
             <div class="glow"></div>
             <div class="hero-main">
-                <div class="vinyl-wrap">
+                <div class="vinyl-wrap" style="grid-row: 2; grid-column: 1;">
                     <div class="vinyl" :class="{ spinning: isPlaying }" :style="coverUrl
                         ? { '--cover-url': `url(${coverUrl})` }
                         : undefined
@@ -77,7 +78,7 @@ const modeLabel = computed(() => {
                         </div>
                     </div>
                 </div>
-                <div class="hero-text">
+                <div class="hero-text" style="grid-row: 2; grid-column: 2;">
                     <p class="eyebrow">Meow Memoirs · Music Lab</p>
                     <h1 class="title">
                         {{ title || "--" }}
@@ -95,99 +96,86 @@ const modeLabel = computed(() => {
                         </span>
                     </div>
                 </div>
+                <LyricCarousel :lines="lyrics" :active-index="activeLyricIndex" :loading="lyricLoading"
+                    style="height: 100%;grid-row: 1 / 4;  /* 跨越三行 */grid-column: 3;    /* 固定第三列 */ " />
+
+                <div class="controls-card" style="grid-row: 3;grid-column: 1 / 3; /* 占据前两列 */">
+                    <div class="glass">
+                        <div class="timeline">
+                            <span class="time">{{ formattedCurrentTime }}</span>
+                            <input class="slider" type="range" min="0" max="100" step="0.1" :value="progress"
+                                @input="e => seek(Number((e.target as HTMLInputElement).value))" />
+                            <span class="time">{{ formattedDuration }}</span>
+                        </div>
+
+                        <div class="controls">
+                            <button class="ghost" :title="modeLabel" @click="cycleMode">
+                                <svg v-if="playMode === 'loop'" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M17 17H8a3 3 0 0 1 0-6h9" fill="none" stroke="currentColor"
+                                        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M16 14l3-3-3-3" fill="none" stroke="currentColor" stroke-width="1.8"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                                <svg v-else-if="playMode === 'single'" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M17 17H8a3 3 0 0 1 0-6h9" fill="none" stroke="currentColor"
+                                        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M16 14l3-3-3-3" fill="none" stroke="currentColor" stroke-width="1.8"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                    <text x="9" y="14.5" font-size="6" fill="currentColor" font-family="monospace">
+                                        1
+                                    </text>
+                                </svg>
+                                <svg v-else viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M4 5l6 6-6 6m10-12l6 6-6 6" fill="none" stroke="currentColor"
+                                        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </button>
+
+                            <button class="ghost" title="上一首" @click="playPrev">
+                                <svg-icon icon-class="previous" size="24px" style="color: currentColor" />
+                            </button>
+
+                            <button class="primary" title="播放/暂停" @click="togglePlay">
+                                <svg-icon :icon-class="!isPlaying ? 'play' : 'pause'" size="24px"
+                                    style="color: currentColor" />
+                            </button>
+
+                            <button class="ghost" title="下一首" @click="playNext">
+                                <svg-icon icon-class="next" size="24px" style="color: currentColor" />
+                            </button>
+
+                            <button class="ghost" title="播放列表">
+                                <svg-icon icon-class="playlist-music" size="24px" style="color: currentColor" />
+                            </button>
+
+                        </div>
+                        <div class="volume">
+                            <button class="ghost" title="静音" @click="toggleMute">
+                                <svg v-if="muted || volume === 0" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M4 9v6h4l5 4V5L8 9H4Zm12 0 4 6m0-6-4 6" fill="none" stroke="currentColor"
+                                        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                                <svg v-else-if="volume < 0.5" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M4 9v6h4l5 4V5L8 9H4Zm10 3a2 2 0 0 0 2-2" fill="none" stroke="currentColor"
+                                        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                                <svg v-else viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M4 9v6h4l5 4V5L8 9H4Zm10 3a3 3 0 0 0 3-3m-3 3a5 5 0 0 0 5 5" fill="none"
+                                        stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+                            </button>
+                            <input class="slider volume-slider" type="range" min="0" max="1" step="0.01"
+                                :value="muted ? 0 : volume"
+                                @input="e => changeVolume(Number((e.target as HTMLInputElement).value))" />
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
         <section class="player-panel">
-            <div class="controls-card glass">
-                <div class="timeline">
-                    <span class="time">{{ formattedCurrentTime }}</span>
-                    <input class="slider" type="range" min="0" max="100" step="0.1" :value="progress"
-                        @input="e => seek(Number((e.target as HTMLInputElement).value))" />
-                    <span class="time">{{ formattedDuration }}</span>
-                </div>
-
-                <div class="controls">
-                    <button class="ghost" :title="modeLabel" @click="cycleMode">
-                        <svg v-if="playMode === 'loop'" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M17 17H8a3 3 0 0 1 0-6h9" fill="none" stroke="currentColor" stroke-width="1.8"
-                                stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="M16 14l3-3-3-3" fill="none" stroke="currentColor" stroke-width="1.8"
-                                stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        <svg v-else-if="playMode === 'single'" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M17 17H8a3 3 0 0 1 0-6h9" fill="none" stroke="currentColor" stroke-width="1.8"
-                                stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="M16 14l3-3-3-3" fill="none" stroke="currentColor" stroke-width="1.8"
-                                stroke-linecap="round" stroke-linejoin="round" />
-                            <text x="9" y="14.5" font-size="6" fill="currentColor" font-family="monospace">
-                                1
-                            </text>
-                        </svg>
-                        <svg v-else viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M4 5l6 6-6 6m10-12l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8"
-                                stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                    </button>
-
-                    <button class="ghost" title="上一首" @click="playPrev">
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M19 5v14l-10-7 10-7Z M5 5v14" fill="currentColor" stroke="currentColor"
-                                stroke-width="1.5" stroke-linejoin="round" />
-                        </svg>
-                    </button>
-
-                    <button class="primary" title="播放/暂停" @click="togglePlay">
-                        <svg v-if="!isPlaying" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M6 4l14 8-14 8V4Z" fill="currentColor" />
-                        </svg>
-                        <svg v-else viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M7 5h4v14H7zM13 5h4v14h-4z" fill="currentColor" />
-                        </svg>
-                    </button>
-
-                    <button class="ghost" title="下一首" @click="playNext">
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M5 19V5l10 7-10 7Z M19 19V5" fill="currentColor" stroke="currentColor"
-                                stroke-width="1.5" stroke-linejoin="round" />
-                        </svg>
-                    </button>
-
-                    <div class="volume">
-                        <button class="ghost" title="静音" @click="toggleMute">
-                            <svg v-if="muted || volume === 0" viewBox="0 0 24 24" aria-hidden="true">
-                                <path d="M4 9v6h4l5 4V5L8 9H4Zm12 0 4 6m0-6-4 6" fill="none" stroke="currentColor"
-                                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-                            </svg>
-                            <svg v-else-if="volume < 0.5" viewBox="0 0 24 24" aria-hidden="true">
-                                <path d="M4 9v6h4l5 4V5L8 9H4Zm10 3a2 2 0 0 0 2-2" fill="none" stroke="currentColor"
-                                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-                            </svg>
-                            <svg v-else viewBox="0 0 24 24" aria-hidden="true">
-                                <path d="M4 9v6h4l5 4V5L8 9H4Zm10 3a3 3 0 0 0 3-3m-3 3a5 5 0 0 0 5 5" fill="none"
-                                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                                    stroke-linejoin="round" />
-                            </svg>
-                        </button>
-                        <input class="slider volume-slider" type="range" min="0" max="1" step="0.01"
-                            :value="muted ? 0 : volume"
-                            @input="e => changeVolume(Number((e.target as HTMLInputElement).value))" />
-                    </div>
-                </div>
-            </div>
-
             <div class="grid">
-                <div class="panel glass">
-                    <header class="panel-head">
-                        <div>
-                            <p class="eyebrow">歌词</p>
-                            <h3>Lyric View</h3>
-                        </div>
-                        <span class="pill" v-if="lyricLoading">加载中...</span>
-                    </header>
-                    <LyricCarousel :lines="lyrics" :active-index="activeLyricIndex" :loading="lyricLoading" />
-                </div>
-
                 <div class="panel glass">
                     <header class="panel-head">
                         <div>
@@ -233,22 +221,26 @@ const modeLabel = computed(() => {
     --hero-text: #e8ecf1;
     --accent-a: #7c8bff;
     --accent-b: #ff7a9a;
+    // 
     // padding: clamp(1rem, 1vw + 0.5rem, 2.5rem);
-    color: #e8ecf1;
+    color: var(--hero-text);
     // background: radial-gradient(circle at 20% 20%, rgba(103, 87, 255, 0.08), transparent 35%), radial-gradient(circle at 80% 0%, rgba(255, 142, 180, 0.12), transparent 35%), #0f1521;
     min-height: 100vh;
     box-sizing: border-box;
-    width: min(1200px, 100%);
+    // width: min(1200px, 100%);
+    min-width: 100vw;
     // margin: 0 auto;
     position: relative;
     overflow: hidden;
-    border-radius: 28px;
+    // border-radius: 28px;
     // box-shadow: 0 20px 80px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.02);
 }
 
 .player-hero {
     position: relative;
-    border-radius: 24px;
+    // border-radius: 24px;
+    height: calc(100vh - clamp(1.25rem, 4vw, 2.5rem) * 2);
+    width: calc(100vw - clamp(1.25rem, 4vw, 2.5rem) * 2);
     overflow: hidden;
     padding: clamp(1.25rem, 4vw, 2.5rem);
     backdrop-filter: blur(8px);
@@ -257,18 +249,15 @@ const modeLabel = computed(() => {
     box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
     background: linear-gradient(135deg, var(--hero-start), var(--hero-end));
     color: var(--hero-text);
+    // 背景变化的时间为.6秒，使用ease过渡效果
+    transition: color 0.3s ease;
 }
 
 .player-hero .glow {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background: radial-gradient(circle at 60% 20%,
-            rgba(255, 255, 255, 0.16),
-            transparent 45%),
-        radial-gradient(circle at 10% 80%,
-            rgba(255, 255, 255, 0.12),
-            transparent 40%);
+    background: radial-gradient(circle at 60% 20%, rgba(255, 255, 255, 0.16), transparent 45%), radial-gradient(circle at 10% 80%, rgba(255, 255, 255, 0.12), transparent 40%);
     mix-blend-mode: screen;
     opacity: 0.9;
     z-index: 0;
@@ -276,11 +265,13 @@ const modeLabel = computed(() => {
 
 .hero-main {
     display: grid;
-    grid-template-columns: 320px 1fr;
+    grid-template-columns: 320px 1fr 2fr;
+    grid-template-rows: repeat(3, auto);
     gap: clamp(1.25rem, 2vw, 2.5rem);
     align-items: center;
     position: relative;
     z-index: 1;
+    height: 100%;
 
     @media (max-width: 900px) {
         grid-template-columns: 1fr;
@@ -297,29 +288,17 @@ const modeLabel = computed(() => {
     width: min(260px, 55vw);
     aspect-ratio: 1 / 1;
     border-radius: 50%;
-    background: radial-gradient(circle,
-            #0b0d13 45%,
-            rgba(255, 255, 255, 0.08) 46%,
-            #0b0d13 65%),
-        repeating-conic-gradient(from 0deg,
-            rgba(255, 255, 255, 0.08) 0deg 2deg,
-            transparent 2deg 4deg);
+    background: radial-gradient(circle, #0b0d13 45%, rgba(255, 255, 255, 0.08) 46%, #0b0d13 65%), repeating-conic-gradient(from 0deg, rgba(255, 255, 255, 0.08) 0deg 2deg, transparent 2deg 4deg);
     display: grid;
     place-items: center;
-    box-shadow:
-        0 25px 60px rgba(0, 0, 0, 0.45),
-        inset 0 0 35px rgba(0, 0, 0, 0.4);
-    transition:
-        transform 0.6s ease,
-        box-shadow 0.4s ease;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45), inset 0 0 35px rgba(0, 0, 0, 0.4);
+    transition: transform 0.6s ease, box-shadow 0.4s ease;
     position: relative;
     overflow: hidden;
 
     &.spinning {
         animation: spin 14s linear infinite;
-        box-shadow:
-            0 25px 70px rgba(0, 0, 0, 0.55),
-            inset 0 0 40px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 25px 70px rgba(0, 0, 0, 0.55), inset 0 0 40px rgba(0, 0, 0, 0.5);
     }
 
     &:hover {
@@ -332,10 +311,7 @@ const modeLabel = computed(() => {
     position: absolute;
     inset: 18%;
     border-radius: 50%;
-    background: var(--cover-url,
-            radial-gradient(circle at 30% 30%,
-                rgba(255, 255, 255, 0.15),
-                rgba(0, 0, 0, 0.65))) center/cover no-repeat;
+    background: var(--cover-url, radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.15), rgba(0, 0, 0, 0.65))) center/cover no-repeat;
     opacity: 0.92;
     mix-blend-mode: screen;
     box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5);
@@ -359,10 +335,7 @@ const modeLabel = computed(() => {
     width: 42%;
     aspect-ratio: 1 / 1;
     border-radius: 50%;
-    background: radial-gradient(circle at 30% 30%,
-            rgba(255, 255, 255, 0.15),
-            rgba(0, 0, 0, 0.55)),
-        #ff7a9a;
+    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.15), rgba(0, 0, 0, 0.55)), #ff7a9a;
     display: grid;
     place-items: center;
     text-align: center;
@@ -400,7 +373,7 @@ const modeLabel = computed(() => {
 
 .hero-text .subtitle {
     margin: 0.4rem 0 0.6rem;
-    color: #d6dce7;
+    color: var(--hero-end);
     font-size: clamp(1rem, 2.4vw, 1.25rem);
 }
 
@@ -418,7 +391,7 @@ const modeLabel = computed(() => {
     padding: 0.4rem 0.8rem;
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.14);
-    color: #0f1521;
+    color: var(--hero-text);
     font-weight: 700;
     backdrop-filter: blur(8px);
 }
@@ -434,6 +407,10 @@ const modeLabel = computed(() => {
 }
 
 .glass {
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 18px;
@@ -442,10 +419,10 @@ const modeLabel = computed(() => {
 }
 
 .controls-card {
-    padding: 1.2rem;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    height: 100%;
+    justify-content: flex-end;
 }
 
 .timeline {
@@ -566,13 +543,9 @@ button svg {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    background: linear-gradient(160deg,
-            rgba(255, 255, 255, 0.06),
-            rgba(255, 255, 255, 0.02));
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
     border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.05),
-        0 16px 30px rgba(0, 0, 0, 0.22);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 16px 30px rgba(0, 0, 0, 0.22);
 }
 
 .panel-head {
