@@ -20,7 +20,6 @@ const decoratedLyrics = computed(() =>
 
 <template>
     <div class="lyric-carousel">
-
         <div class="slides-stack">
             <div v-for="line in decoratedLyrics" :key="line.key" class="lyric-slide"
                 :class="{ active: line.offset === 0 }" :data-offset="line.offset">
@@ -35,16 +34,12 @@ const decoratedLyrics = computed(() =>
 
 <style scoped lang="scss">
 $max-visible-offset: 10; // 活动行上方/下方的可见行数
+$max-text-offset: 3; // 活动行上方/下方的最大文本偏移行数
 
 .lyric-carousel {
     position: relative;
-    // min-height: calc(100% - 0.75rem - 50px); // account for padding + controls
-    border-radius: 16px;
     --row-height: 52px; // baseline row height, adjustable via media query
-    // background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.06), transparent 40%), radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.08), transparent 35%), rgba(17, 24, 39, 0.6);
     overflow: hidden;
-    backdrop-filter: blur(10px);
-    // box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 20px 50px rgba(0, 0, 0, 0.35);
 }
 
 .slides-stack {
@@ -78,7 +73,7 @@ $max-visible-offset: 10; // 活动行上方/下方的可见行数
     background: transparent;
     box-shadow: none;
 
-    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.4s ease, background 0.4s, text-shadow 0.4s ease, color 0.4s ease;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.4s ease;
 
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.6) translateY(0) rotateX(40deg);
@@ -145,6 +140,7 @@ $max-visible-offset: 10; // 活动行上方/下方的可见行数
             /* 中层发光 */
             0 0 3px var(--hero-text);
         /* 外层发光 */
+
         filter: none;
     }
 }
@@ -155,9 +151,7 @@ $max-visible-offset: 10; // 活动行上方/下方的可见行数
     display: grid;
     place-items: center;
     font-size: 0.95rem;
-    color: #cbd5e1;
-    background: rgba(15, 23, 42, 0.85);
-    backdrop-filter: blur(4px);
+    color: var(--hero-text);
     z-index: 6;
 }
 

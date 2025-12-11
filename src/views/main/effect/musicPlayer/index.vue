@@ -150,19 +150,11 @@ const modeLabel = computed(() => {
                         </div>
                         <div class="volume">
                             <button class="ghost" title="静音" @click="toggleMute">
-                                <svg v-if="muted || volume === 0" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path d="M4 9v6h4l5 4V5L8 9H4Zm12 0 4 6m0-6-4 6" fill="none" stroke="currentColor"
-                                        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-                                </svg>
-                                <svg v-else-if="volume < 0.5" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path d="M4 9v6h4l5 4V5L8 9H4Zm10 3a2 2 0 0 0 2-2" fill="none" stroke="currentColor"
-                                        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-                                </svg>
-                                <svg v-else viewBox="0 0 24 24" aria-hidden="true">
-                                    <path d="M4 9v6h4l5 4V5L8 9H4Zm10 3a3 3 0 0 0 3-3m-3 3a5 5 0 0 0 5 5" fill="none"
-                                        stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                </svg>
+                                <svg-icon v-if="muted || volume === 0" icon-class="mute" size="24px"
+                                    style="color: currentColor" />
+                                <svg-icon v-else-if="volume < 0.5" icon-class="alto" size="24px"
+                                    style="color: currentColor" />
+                                <svg-icon v-else icon-class="great-sound" size="24px" style="color: currentColor" />
                             </button>
                             <input class="slider volume-slider" type="range" min="0" max="1" step="0.01"
                                 :value="muted ? 0 : volume"
@@ -192,11 +184,7 @@ const modeLabel = computed(() => {
                             </div>
                             <div class="track-extra">
                                 <span class="duration">
-                                    {{
-                                        track.duration
-                                            ? formatTime(track.duration)
-                                            : "..."
-                                    }}
+                                    {{ track.duration ? formatTime(track.duration) : "..." }}
                                 </span>
                                 <span class="badge" v-if="currentIndex === index">播放中</span>
                             </div>
@@ -228,6 +216,18 @@ const modeLabel = computed(() => {
     overflow: hidden;
 }
 
+@property --hero-start {
+    syntax: '<color>';
+    inherits: false;
+    initial-value: #9b9c9b;
+}
+
+@property --hero-end {
+    syntax: '<color>';
+    inherits: false;
+    initial-value: #e0e0df;
+}
+
 .player-hero {
     position: relative;
     height: calc(100vh - clamp(1.25rem, 4vw, 2.5rem) * 2);
@@ -240,8 +240,11 @@ const modeLabel = computed(() => {
     box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
     background: linear-gradient(135deg, var(--hero-start), var(--hero-end));
     color: var(--hero-text);
-    transition: background 0.6s ease, color 0.3s ease;
+    transition:
+        --hero-start 0.4s ease-in-out,
+        --hero-end 0.4s ease-in-out;
 }
+
 
 .player-hero .glow {
     position: absolute;
@@ -282,7 +285,7 @@ const modeLabel = computed(() => {
     display: grid;
     place-items: center;
     box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45), inset 0 0 35px rgba(0, 0, 0, 0.4);
-    transition: transform 0.6s ease, box-shadow 0.4s ease;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
     position: relative;
     overflow: hidden;
 
@@ -305,7 +308,7 @@ const modeLabel = computed(() => {
     opacity: 0.92;
     mix-blend-mode: screen;
     box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5);
-    transition: opacity 0.3s ease;
+    transition: opacity 0.4s ease;
     z-index: 0;
 }
 
