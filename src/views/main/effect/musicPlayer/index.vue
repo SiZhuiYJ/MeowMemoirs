@@ -4,6 +4,52 @@ import LyricCarousel from "./LyricCarousel.vue";
 import { useMusicPlayer } from "./useMusicPlayer";
 import SvgIcon from "@/components/SvgIcons/index.vue";
 
+const hexToRgb = (hex: string): [number, number, number] | null => {
+    const normalized = hex.replace("#", "");
+    if (normalized.length !== 6) return null;
+    const bigint = parseInt(normalized, 16);
+    return [
+        (bigint >> 16) & 255,
+        (bigint >> 8) & 255,
+        bigint & 255
+    ];
+};
+
+const relativeLuminance = (rgb: [number, number, number]): number => {
+    const srgb = rgb.map(v => v / 255).map(v =>
+        v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)
+    );
+    return 0.2126 * srgb[0] + 0.7152 * srgb[1] + 0.0722 * srgb[2];
+};
+
+const contrastRatio = (a: string, b: string): number => {
+    const ra = hexToRgb(a);
+    const rb = hexToRgb(b);
+    if (!ra || !rb) return 1;
+    const la = relativeLuminance(ra);
+    const lb = relativeLuminance(rb);
+    const [lighter, darker] = la > lb ? [la, lb] : [lb, la];
+    return (lighter + 0.05) / (darker + 0.05);
+};
+
+const pickReadable = (
+    bgA: string,
+    bgB: string,
+    preferred: string,
+    light = "#f8fafc",
+    dark = "#0f172a"
+) => {
+    const candidates = [preferred, light, dark];
+    return (
+        candidates
+            .map(color => ({
+                color,
+                score: Math.min(contrastRatio(color, bgA), contrastRatio(color, bgB))
+            }))
+            .sort((a, b) => b.score - a.score)[0].color || preferred
+    );
+};
+
 const audioRef = ref<HTMLAudioElement | null>(null);
 
 const {
@@ -41,12 +87,17 @@ const {
 const heroStyle = computed((): { [key: string]: string } | undefined => {
     const palette = dominantColor.value;
     if (!palette) return undefined;
+    const heroText = pickReadable(palette.primary, palette.secondary, palette.text);
+    const buttonText = pickReadable(palette.primary, palette.secondary, heroText);
     return {
         "--hero-start": palette.primary,
         "--hero-end": palette.secondary,
-        "--hero-text": palette.text,
+        "--hero-text": heroText,
         "--accent-a": palette.secondary,
-        "--accent-b": palette.primary
+        "--accent-b": palette.primary,
+        "--button-text": buttonText,
+        "--ghost-surface": `color-mix(in srgb, ${heroText} 12%, transparent)`,
+        "--ghost-border": `color-mix(in srgb, ${heroText} 28%, transparent)`
     };
 });
 
@@ -111,46 +162,49 @@ const modeLabel = computed(() => {
                             <!-- 设置 -->
                             <div class="settings-btn">
                                 <button class="ghost" title="热度">
-                                    <svg-icon icon-class="chart-bar" size="24px" style="color: currentColor" />
+                                    <svg-icon icon-class="chart-bar" size="24px" style="color: var(--hero-text)" />
                                 </button>
                                 <button class="ghost" title="关注">
-                                    <svg-icon icon-class="follow-grayscale" size="24px" style="color: currentColor" />
+                                    <svg-icon icon-class="follow-grayscale" size="24px"
+                                        style="color: var(--hero-text)" />
                                 </button>
                             </div>
                             <div class="controls-pyler">
                                 <button class="ghost" :title="modeLabel" @click="cycleMode">
                                     <svg-icon v-if="playMode === 'loop'" icon-class="list-loop" size="24px"
-                                        style="color: currentColor" />
+                                        style="color: var(--hero-text)" />
                                     <svg-icon v-else-if="playMode === 'single'" icon-class="repeat-single" size="24px"
-                                        style="color: currentColor" />
-                                    <svg-icon v-else icon-class="random-loop" size="24px" style="color: currentColor" />
+                                        style="color: var(--hero-text)" />
+                                    <svg-icon v-else icon-class="random-loop" size="24px"
+                                        style="color: var(--hero-text)" />
                                 </button>
 
                                 <button class="ghost" title="上一首" @click="playPrev">
-                                    <svg-icon icon-class="previous" size="24px" style="color: currentColor" />
+                                    <svg-icon icon-class="previous" size="24px" style="color: var(--hero-text)" />
                                 </button>
 
                                 <button class="primary" title="播放/暂停" @click="togglePlay">
                                     <svg-icon :icon-class="!isPlaying ? 'play' : 'pause'" size="24px"
-                                        style="color: currentColor" />
+                                        style="color: var(--hero-text)" />
                                 </button>
 
                                 <button class="ghost" title="下一首" @click="playNext">
-                                    <svg-icon icon-class="next" size="24px" style="color: currentColor" />
+                                    <svg-icon icon-class="next" size="24px" style="color: var(--hero-text)" />
                                 </button>
 
                                 <button class="ghost" title="播放列表">
-                                    <svg-icon icon-class="playlist-music" size="24px" style="color: currentColor" />
+                                    <svg-icon icon-class="playlist-music" size="24px" style="color: var(--hero-text)" />
                                 </button>
 
                             </div>
                             <div class="volume">
                                 <button class="ghost" title="静音" @click="toggleMute">
                                     <svg-icon v-if="muted || volume === 0" icon-class="mute" size="24px"
-                                        style="color: currentColor" />
+                                        style="color: var(--hero-text)" />
                                     <svg-icon v-else-if="volume < 0.5" icon-class="alto" size="24px"
-                                        style="color: currentColor" />
-                                    <svg-icon v-else icon-class="great-sound" size="24px" style="color: currentColor" />
+                                        style="color: var(--hero-text)" />
+                                    <svg-icon v-else icon-class="great-sound" size="24px"
+                                        style="color: var(--hero-text)" />
                                 </button>
                                 <input class="slider volume-slider" type="range" min="0" max="1" step="0.01"
                                     :value="muted ? 0 : volume"
@@ -206,6 +260,9 @@ const modeLabel = computed(() => {
     --hero-text: #e8ecf1;
     --accent-a: #7c8bff;
     --accent-b: #ff7a9a;
+    --button-text: #e8ecf1;
+    --ghost-surface: rgba(255, 255, 255, 0.06);
+    --ghost-border: rgba(255, 255, 255, 0.1);
     color: var(--hero-text);
     min-height: 100vh;
     box-sizing: border-box;
@@ -562,7 +619,7 @@ const modeLabel = computed(() => {
 button {
     border: none;
     cursor: pointer;
-    color: #e8ecf1;
+    color: var(--button-text, var(--hero-text));
     background: transparent;
     display: inline-flex;
     align-items: center;
@@ -579,12 +636,12 @@ button svg {
     width: 42px;
     height: 42px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--ghost-surface);
+    border: 1px solid var(--ghost-border);
 }
 
 .ghost:hover {
-    background: rgba(255, 255, 255, 0.12);
+    background: color-mix(in srgb, var(--ghost-surface) 60%, var(--hero-text) 25%);
     transform: translateY(-1px);
 }
 
