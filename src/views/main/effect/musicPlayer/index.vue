@@ -103,62 +103,60 @@ const modeLabel = computed(() => {
                         <div class="timeline">
                             <span class="time">{{ formattedCurrentTime }}</span>
                             <input class="slider" type="range" min="0" max="100" step="0.1" :value="progress"
+                                :style="{ '--slider-progress': `${progress}%` }"
                                 @input="e => seek(Number((e.target as HTMLInputElement).value))" />
                             <span class="time">{{ formattedDuration }}</span>
                         </div>
-
                         <div class="controls">
-                            <button class="ghost" :title="modeLabel" @click="cycleMode">
-                                <svg v-if="playMode === 'loop'" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path d="M17 17H8a3 3 0 0 1 0-6h9" fill="none" stroke="currentColor"
-                                        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-                                    <path d="M16 14l3-3-3-3" fill="none" stroke="currentColor" stroke-width="1.8"
-                                        stroke-linecap="round" stroke-linejoin="round" />
-                                </svg>
-                                <svg v-else-if="playMode === 'single'" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path d="M17 17H8a3 3 0 0 1 0-6h9" fill="none" stroke="currentColor"
-                                        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-                                    <path d="M16 14l3-3-3-3" fill="none" stroke="currentColor" stroke-width="1.8"
-                                        stroke-linecap="round" stroke-linejoin="round" />
-                                    <text x="9" y="14.5" font-size="6" fill="currentColor" font-family="monospace">
-                                        1
-                                    </text>
-                                </svg>
-                                <svg v-else viewBox="0 0 24 24" aria-hidden="true">
-                                    <path d="M4 5l6 6-6 6m10-12l6 6-6 6" fill="none" stroke="currentColor"
-                                        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-                                </svg>
-                            </button>
+                            <!-- 设置 -->
+                            <div class="settings-btn">
+                                <button class="ghost" title="热度">
+                                    <svg-icon icon-class="chart-bar" size="24px" style="color: currentColor" />
+                                </button>
+                                <button class="ghost" title="关注">
+                                    <svg-icon icon-class="follow-grayscale" size="24px" style="color: currentColor" />
+                                </button>
+                            </div>
+                            <div class="controls-pyler">
+                                <button class="ghost" :title="modeLabel" @click="cycleMode">
+                                    <svg-icon v-if="playMode === 'loop'" icon-class="list-loop" size="24px"
+                                        style="color: currentColor" />
+                                    <svg-icon v-else-if="playMode === 'single'" icon-class="repeat-single" size="24px"
+                                        style="color: currentColor" />
+                                    <svg-icon v-else icon-class="random-loop" size="24px" style="color: currentColor" />
+                                </button>
 
-                            <button class="ghost" title="上一首" @click="playPrev">
-                                <svg-icon icon-class="previous" size="24px" style="color: currentColor" />
-                            </button>
+                                <button class="ghost" title="上一首" @click="playPrev">
+                                    <svg-icon icon-class="previous" size="24px" style="color: currentColor" />
+                                </button>
 
-                            <button class="primary" title="播放/暂停" @click="togglePlay">
-                                <svg-icon :icon-class="!isPlaying ? 'play' : 'pause'" size="24px"
-                                    style="color: currentColor" />
-                            </button>
+                                <button class="primary" title="播放/暂停" @click="togglePlay">
+                                    <svg-icon :icon-class="!isPlaying ? 'play' : 'pause'" size="24px"
+                                        style="color: currentColor" />
+                                </button>
 
-                            <button class="ghost" title="下一首" @click="playNext">
-                                <svg-icon icon-class="next" size="24px" style="color: currentColor" />
-                            </button>
+                                <button class="ghost" title="下一首" @click="playNext">
+                                    <svg-icon icon-class="next" size="24px" style="color: currentColor" />
+                                </button>
 
-                            <button class="ghost" title="播放列表">
-                                <svg-icon icon-class="playlist-music" size="24px" style="color: currentColor" />
-                            </button>
+                                <button class="ghost" title="播放列表">
+                                    <svg-icon icon-class="playlist-music" size="24px" style="color: currentColor" />
+                                </button>
 
-                        </div>
-                        <div class="volume">
-                            <button class="ghost" title="静音" @click="toggleMute">
-                                <svg-icon v-if="muted || volume === 0" icon-class="mute" size="24px"
-                                    style="color: currentColor" />
-                                <svg-icon v-else-if="volume < 0.5" icon-class="alto" size="24px"
-                                    style="color: currentColor" />
-                                <svg-icon v-else icon-class="great-sound" size="24px" style="color: currentColor" />
-                            </button>
-                            <input class="slider volume-slider" type="range" min="0" max="1" step="0.01"
-                                :value="muted ? 0 : volume"
-                                @input="e => changeVolume(Number((e.target as HTMLInputElement).value))" />
+                            </div>
+                            <div class="volume">
+                                <button class="ghost" title="静音" @click="toggleMute">
+                                    <svg-icon v-if="muted || volume === 0" icon-class="mute" size="24px"
+                                        style="color: currentColor" />
+                                    <svg-icon v-else-if="volume < 0.5" icon-class="alto" size="24px"
+                                        style="color: currentColor" />
+                                    <svg-icon v-else icon-class="great-sound" size="24px" style="color: currentColor" />
+                                </button>
+                                <input class="slider volume-slider" type="range" min="0" max="1" step="0.01"
+                                    :value="muted ? 0 : volume"
+                                    :style="{ '--slider-progress': `${(muted ? 0 : volume) * 100}%` }"
+                                    @input="e => changeVolume(Number((e.target as HTMLInputElement).value))" />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -433,11 +431,36 @@ const modeLabel = computed(() => {
 
 .slider {
     appearance: none;
-    width: 100%;
+    width: calc(100% - 43px);
     height: 6px;
     border-radius: 999px;
-    background: linear-gradient(90deg, #6dd3ff, #ff7a9a);
+    background: linear-gradient(90deg, var(--accent-a), var(--accent-b));
     outline: none;
+    margin: 0;
+    display: block;
+}
+
+.timeline .slider {
+    background:
+        linear-gradient(90deg, var(--accent-a), var(--accent-b)) 0 0 / var(--slider-progress, 0%) 100% no-repeat,
+        color-mix(in srgb, var(--hero-text) 22%, transparent);
+    transition: background 0.2s ease;
+}
+
+.timeline .slider::-webkit-slider-runnable-track {
+    height: 6px;
+    border-radius: 999px;
+    background:
+        linear-gradient(90deg, var(--accent-a), var(--accent-b)) 0 0 / var(--slider-progress, 0%) 100% no-repeat,
+        color-mix(in srgb, var(--hero-text) 22%, transparent);
+}
+
+.timeline .slider::-moz-range-track {
+    height: 6px;
+    border-radius: 999px;
+    background:
+        linear-gradient(90deg, var(--accent-a), var(--accent-b)) 0 0 / var(--slider-progress, 0%) 100% no-repeat,
+        color-mix(in srgb, var(--hero-text) 22%, transparent);
 }
 
 .slider::-webkit-slider-thumb {
@@ -446,8 +469,12 @@ const modeLabel = computed(() => {
     height: 16px;
     border-radius: 50%;
     background: #fff;
-    border: 2px solid #0f1521;
+    border: 2px solid transparent;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    transform: scale(0.65);
+    margin-top: -5px;
+    transition: opacity 0.18s ease, transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
 .slider::-moz-range-thumb {
@@ -455,11 +482,76 @@ const modeLabel = computed(() => {
     height: 16px;
     border-radius: 50%;
     background: #fff;
-    border: 2px solid #0f1521;
+    border: 2px solid transparent;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    transform: scale(0.65);
+    margin-top: -5px;
+    transition: opacity 0.18s ease, transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.timeline:hover .slider::-webkit-slider-thumb,
+.timeline .slider:active::-webkit-slider-thumb,
+.timeline:focus-within .slider::-webkit-slider-thumb {
+    opacity: 1;
+    transform: scale(1);
+    border-color: var(--accent-b);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35), 0 0 0 4px color-mix(in srgb, var(--accent-b) 28%, transparent);
+}
+
+.timeline:hover .slider::-moz-range-thumb,
+.timeline .slider:active::-moz-range-thumb,
+.timeline:focus-within .slider::-moz-range-thumb {
+    opacity: 1;
+    transform: scale(1);
+    border-color: var(--accent-b);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35), 0 0 0 4px color-mix(in srgb, var(--accent-b) 28%, transparent);
+}
+
+.volume-slider::-webkit-slider-thumb {
+    opacity: 0.9;
+    transform: scale(0.9);
+    border-color: var(--accent-a);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28);
+}
+
+.volume-slider::-moz-range-thumb {
+    opacity: 0.9;
+    transform: scale(0.9);
+    border-color: var(--accent-a);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28);
+}
+
+.volume:hover .volume-slider::-webkit-slider-thumb,
+.volume:focus-within .volume-slider::-webkit-slider-thumb {
+    opacity: 1;
+    transform: scale(1);
+    border-color: var(--accent-b);
+}
+
+.volume:hover .volume-slider::-moz-range-thumb,
+.volume:focus-within .volume-slider::-moz-range-thumb {
+    opacity: 1;
+    transform: scale(1);
+    border-color: var(--accent-b);
 }
 
 .controls {
+    display: grid;
+    // 三等分
+    grid-template-columns: 1fr 2fr 1fr;
+    align-items: center;
+}
+
+.settings-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.controls-pyler {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -516,7 +608,25 @@ button svg {
 }
 
 .volume-slider {
-    background: linear-gradient(90deg, var(--accent-a), var(--accent-b));
+    background:
+        linear-gradient(90deg, var(--hero-text), var(--hero-text)) 0 0 / var(--slider-progress, 0%) 100% no-repeat,
+        color-mix(in srgb, var(--hero-text) 22%, transparent);
+    transition: background 0.2s ease;
+}
+
+.volume-slider::-webkit-slider-runnable-track {
+    height: 6px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--hero-end), var(--hero-end)) 0 0 / var(--slider-progress, 0%) 100% no-repeat,
+        color-mix(in srgb, var(--hero-end) 22%, transparent);
+}
+
+.volume-slider::-moz-range-track {
+    height: 6px;
+    border-radius: 999px;
+    background:
+        linear-gradient(90deg, var(--hero-text), var(--hero-text)) 0 0 / var(--slider-progress, 0%) 100% no-repeat,
+        color-mix(in srgb, var(--hero-text) 22%, transparent);
 }
 
 .grid {
