@@ -114,7 +114,11 @@ const modeLabel = computed(() => {
                                     <svg-icon icon-class="chart-bar" size="24px" style="color: var(--hero-text)" />
                                 </button>
                                 <button class="ghost" title="关注">
-                                    <svg-icon icon-class="follow-grayscale" size="24px" style="color: var(--hero-text)" />
+                                    <svg-icon icon-class="follow-grayscale" size="24px"
+                                        style="color: var(--hero-text)" />
+                                </button>
+                                <button class="ghost" title="下载">
+                                    <svg-icon icon-class="download" size="24px" style="color: var(--hero-text)" />
                                 </button>
                             </div>
                             <div class="controls-pyler">
@@ -123,7 +127,8 @@ const modeLabel = computed(() => {
                                         style="color: var(--hero-text)" />
                                     <svg-icon v-else-if="playMode === 'single'" icon-class="repeat-single" size="24px"
                                         style="color: var(--hero-text)" />
-                                    <svg-icon v-else icon-class="random-loop" size="24px" style="color: var(--hero-text)" />
+                                    <svg-icon v-else icon-class="random-loop" size="24px"
+                                        style="color: var(--hero-text)" />
                                 </button>
 
                                 <button class="ghost" title="上一首" @click="playPrev">
@@ -150,7 +155,8 @@ const modeLabel = computed(() => {
                                         style="color: var(--hero-text)" />
                                     <svg-icon v-else-if="volume < 0.5" icon-class="alto" size="24px"
                                         style="color: var(--hero-text)" />
-                                    <svg-icon v-else icon-class="great-sound" size="24px" style="color: var(--hero-text)" />
+                                    <svg-icon v-else icon-class="great-sound" size="24px"
+                                        style="color: var(--hero-text)" />
                                 </button>
                                 <input class="slider volume-slider" type="range" min="0" max="1" step="0.01"
                                     :value="muted ? 0 : volume"
