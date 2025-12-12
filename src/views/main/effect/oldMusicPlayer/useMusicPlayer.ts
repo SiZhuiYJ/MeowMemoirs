@@ -248,15 +248,8 @@ export const useMusicPlayer = (audioRef: {
         return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
     };
 
-    /**
-     * @description 将颜色通道值与目标颜色混合。
-     * @param value 原始颜色通道值 (0-255)
-     * @param target 目标颜色通道值 (0-255)
-     * @param weight 原始值保留的权重 (0-1)
-     * @returns 混合后的通道值
-     */
     const mixChannel = (value: number, target: number, weight: number) =>
-        value * weight + target * (1 - weight); // 调整权重计算以符合直觉
+        value * (1 - weight) + target * weight;
 
     const extractPalette = async (url: string) => {
         const img = await new Promise<HTMLImageElement>((resolve, reject) => {
@@ -294,44 +287,20 @@ export const useMusicPlayer = (audioRef: {
         }
         if (!count) return null;
         const base = [r / count, g / count, b / count];
-
-        /**
-         * 强化颜色搭配逻辑
-         * 目标：生成一个深色背景 (Primary/Secondary) 和一个亮色文本/强调色 (Text)。
-         */
-
-        // 1. 定义深蓝色调作为混合目标 (Dark Base Color: #12243e ≈ RGB(18, 36, 62))
-        const darkBaseRgb = [18, 36, 62];
-        const mixWeight = 0.6; // 保留原始颜色 60% 的特征
-
-        // 2. 生成 Primary Color (深色背景起始点)
-        // 混合原始颜色与深蓝色调，并轻微压暗
-        const primaryRgb = base.map((channel, i) =>
-            mixChannel(
-                mixChannel(channel, darkBaseRgb[i], mixWeight),
-                0, // 压暗到黑色
-                0.9 // 保留 90% 的混合结果 (即压暗 10%)
-            )
-        );
-
-        // 3. 生成 Secondary Color (浅色强调色，用于渐变结束和进度条)
-        // 混合原始颜色与纯白色 (255)，使其更亮，更具活力
-        const secondaryRgb = base.map(channel =>
-            mixChannel(channel, 255, 0.4) // 保留 40% 原始色，混合 60% 白色
-        );
-        
-        // 4. 固定文本颜色为浅色 (#f8fafc) 以保证可读性
-        const textHex = "#f8fafc"; // 确保高对比度
-
+        const darker = base.map(channel => mixChannel(channel, 0, 0.25));
+        const lighter = base.map(channel => mixChannel(channel, 255, 0.35));
+        const luminance =
+            0.299 * base[0] + 0.587 * base[1] + 0.114 * base[2];
+        const text = luminance > 170 ? "#0f172a" : "#f8fafc";
         return {
-            primary: rgbToHex(primaryRgb[0], primaryRgb[1], primaryRgb[2]),
-            secondary: rgbToHex(secondaryRgb[0], secondaryRgb[1], secondaryRgb[2]),
-            text: textHex
+            primary: rgbToHex(darker[0], darker[1], darker[2]),
+            secondary: rgbToHex(lighter[0], lighter[1], lighter[2]),
+            text
         };
     };
 
     const loadLyrics = async () => {
-    	if (!currentTrack.value) return;
+        if (!currentTrack.value) return;
         lyricLoading.value = true;
         try {
             const res = await fetch(currentTrack.value.lyric);
@@ -343,7 +312,6 @@ export const useMusicPlayer = (audioRef: {
         } finally {
             lyricLoading.value = false;
         }
-        
     };
 
     const loadCover = async () => {

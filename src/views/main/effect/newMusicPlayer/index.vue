@@ -2,6 +2,7 @@
 import { computed, ref } from "vue";
 import LyricCarousel from "./LyricCarousel.vue";
 import { useMusicPlayer } from "./useMusicPlayer";
+import SvgIcon from "@/components/SvgIcons/index.vue";
 
 const audioRef = ref<HTMLAudioElement | null>(null);
 
@@ -9,7 +10,6 @@ const {
     playlist,
     album,
     title,
-    // artist,
     artists,
     coverUrl,
     coverLoading,
@@ -38,15 +38,16 @@ const {
     formatTime
 } = useMusicPlayer(audioRef);
 
-const heroStyle = computed(() => {
+const heroStyle = computed((): { [key: string]: string } | undefined => {
     const palette = dominantColor.value;
     if (!palette) return undefined;
     return {
-        "--hero-start": palette.primary,
-        "--hero-end": palette.secondary,
-        "--hero-text": palette.text,
-        "--accent-a": palette.secondary,
-        "--accent-b": palette.primary
+        // Primary 和 Secondary 颜色现在经过优化
+        "--hero-start": palette.primary,   // 新的深色基础色 (Primary)
+        "--hero-end": palette.secondary,   // 新的亮色强调色 (Secondary)
+        "--hero-text": palette.text,       // 固定的浅色文本
+        "--accent-a": palette.secondary,   // 强调色 A (使用 Secondary)
+        "--accent-b": palette.primary      // 强调色 B (使用 Primary)
     };
 });
 
@@ -68,10 +69,15 @@ const modeLabel = computed(() => {
             <div class="glow"></div>
             <div class="hero-main">
                 <div class="vinyl-wrap">
-                    <div class="vinyl" :class="{ spinning: isPlaying }" :style="coverUrl
-                        ? { '--cover-url': `url(${coverUrl})` }
-                        : undefined
-                        ">
+                    <div
+                        class="vinyl"
+                        :class="{ spinning: isPlaying }"
+                        :style="
+                            coverUrl
+                                ? { '--cover-url': `url(${coverUrl})` }
+                                : undefined
+                        "
+                    >
                         <div v-if="coverLoading" class="cover-loading">
                             封面解析中...
                         </div>
@@ -83,8 +89,9 @@ const modeLabel = computed(() => {
                         {{ title || "--" }}
                     </h1>
                     <p class="subtitle">
-                        {{ artists ? artists.join("/") : "--" }}·{{ album || "--" }}
-
+                        {{ artists ? artists.join("/") : "--" }}·{{
+                            album || "--"
+                        }}
                     </p>
                     <div class="chips">
                         <span class="chip">{{ modeLabel }}</span>
@@ -95,101 +102,191 @@ const modeLabel = computed(() => {
                         </span>
                     </div>
                 </div>
-                <LyricCarousel :lines="lyrics" :active-index="activeLyricIndex" :loading="lyricLoading" style="height: 100%;"/>
+                <LyricCarousel
+                    :lines="lyrics"
+                    :active-index="activeLyricIndex"
+                    :loading="lyricLoading"
+                    style="height: 100%"
+                    class="lyric-area"
+                />
+
+                <div class="controls-card">
+                    <div class="glass">
+                        <div class="timeline">
+                            <span class="time">{{ formattedCurrentTime }}</span>
+                            <input
+                                class="slider"
+                                type="range"
+                                min="0"
+                                max="100"
+                                step="0.1"
+                                :value="progress"
+                                :style="{ '--slider-progress': `${progress}%` }"
+                                @input="
+                                    e =>
+                                        seek(
+                                            Number(
+                                                (e.target as HTMLInputElement)
+                                                    .value
+                                            )
+                                        )
+                                "
+                            />
+                            <span class="time">{{ formattedDuration }}</span>
+                        </div>
+                        <div class="controls">
+                            <div class="settings-btn">
+                                <button class="ghost" title="热度">
+                                    <svg-icon
+                                        icon-class="chart-bar"
+                                        size="24px"
+                                        style="color: var(--hero-text)"
+                                    />
+                                </button>
+                                <button class="ghost" title="关注">
+                                    <svg-icon
+                                        icon-class="follow-grayscale"
+                                        size="24px"
+                                        style="color: var(--hero-text)"
+                                    />
+                                </button>
+                                <button class="ghost" title="下载">
+                                    <svg-icon
+                                        icon-class="download"
+                                        size="24px"
+                                        style="color: var(--hero-text)"
+                                    />
+                                </button>
+                            </div>
+                            <div class="controls-pyler">
+                                <button
+                                    class="ghost"
+                                    :title="modeLabel"
+                                    @click="cycleMode"
+                                >
+                                    <svg-icon
+                                        v-if="playMode === 'loop'"
+                                        icon-class="list-loop"
+                                        size="24px"
+                                        style="color: var(--hero-text)"
+                                    />
+                                    <svg-icon
+                                        v-else-if="playMode === 'single'"
+                                        icon-class="repeat-single"
+                                        size="24px"
+                                        style="color: var(--hero-text)"
+                                    />
+                                    <svg-icon
+                                        v-else
+                                        icon-class="random-loop"
+                                        size="24px"
+                                        style="color: var(--hero-text)"
+                                    />
+                                </button>
+
+                                <button
+                                    class="ghost"
+                                    title="上一首"
+                                    @click="playPrev"
+                                >
+                                    <svg-icon
+                                        icon-class="previous"
+                                        size="24px"
+                                        style="color: var(--hero-text)"
+                                    />
+                                </button>
+
+                                <button
+                                    class="primary"
+                                    title="播放/暂停"
+                                    @click="togglePlay"
+                                >
+                                    <svg-icon
+                                        :icon-class="
+                                            !isPlaying ? 'play' : 'pause'
+                                        "
+                                        size="24px"
+                                        style="color: var(--hero-text)"
+                                    />
+                                </button>
+
+                                <button
+                                    class="ghost"
+                                    title="下一首"
+                                    @click="playNext"
+                                >
+                                    <svg-icon
+                                        icon-class="next"
+                                        size="24px"
+                                        style="color: var(--hero-text)"
+                                    />
+                                </button>
+
+                                <button class="ghost" title="播放列表">
+                                    <svg-icon
+                                        icon-class="playlist-music"
+                                        size="24px"
+                                        style="color: var(--hero-text)"
+                                    />
+                                </button>
+                            </div>
+                            <div class="volume">
+                                <button
+                                    class="ghost"
+                                    title="静音"
+                                    @click="toggleMute"
+                                >
+                                    <svg-icon
+                                        v-if="muted || volume === 0"
+                                        icon-class="mute"
+                                        size="24px"
+                                        style="color: var(--hero-text)"
+                                    />
+                                    <svg-icon
+                                        v-else-if="volume < 0.5"
+                                        icon-class="alto"
+                                        size="24px"
+                                        style="color: var(--hero-text)"
+                                    />
+                                    <svg-icon
+                                        v-else
+                                        icon-class="great-sound"
+                                        size="24px"
+                                        style="color: var(--hero-text)"
+                                    />
+                                </button>
+                                <input
+                                    class="slider volume-slider"
+                                    type="range"
+                                    min="0"
+                                    max="1"
+                                    step="0.01"
+                                    :value="muted ? 0 : volume"
+                                    :style="{
+                                        '--slider-progress': `${
+                                            (muted ? 0 : volume) * 100
+                                        }%`
+                                    }"
+                                    @input="
+                                        e =>
+                                            changeVolume(
+                                                Number(
+                                                    (
+                                                        e.target as HTMLInputElement
+                                                    ).value
+                                                )
+                                            )
+                                    "
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
         <section class="player-panel">
-            <div class="controls-card glass">
-                <div class="timeline">
-                    <span class="time">{{ formattedCurrentTime }}</span>
-                    <input class="slider" type="range" min="0" max="100" step="0.1" :value="progress"
-                        @input="e => seek(Number((e.target as HTMLInputElement).value))" />
-                    <span class="time">{{ formattedDuration }}</span>
-                </div>
-
-                <div class="controls">
-                    <button class="ghost" :title="modeLabel" @click="cycleMode">
-                        <svg v-if="playMode === 'loop'" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M17 17H8a3 3 0 0 1 0-6h9" fill="none" stroke="currentColor" stroke-width="1.8"
-                                stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="M16 14l3-3-3-3" fill="none" stroke="currentColor" stroke-width="1.8"
-                                stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        <svg v-else-if="playMode === 'single'" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M17 17H8a3 3 0 0 1 0-6h9" fill="none" stroke="currentColor" stroke-width="1.8"
-                                stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="M16 14l3-3-3-3" fill="none" stroke="currentColor" stroke-width="1.8"
-                                stroke-linecap="round" stroke-linejoin="round" />
-                            <text x="9" y="14.5" font-size="6" fill="currentColor" font-family="monospace">
-                                1
-                            </text>
-                        </svg>
-                        <svg v-else viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M4 5l6 6-6 6m10-12l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8"
-                                stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                    </button>
-
-                    <button class="ghost" title="上一首" @click="playPrev">
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M19 5v14l-10-7 10-7Z M5 5v14" fill="currentColor" stroke="currentColor"
-                                stroke-width="1.5" stroke-linejoin="round" />
-                        </svg>
-                    </button>
-
-                    <button class="primary" title="播放/暂停" @click="togglePlay">
-                        <svg v-if="!isPlaying" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M6 4l14 8-14 8V4Z" fill="currentColor" />
-                        </svg>
-                        <svg v-else viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M7 5h4v14H7zM13 5h4v14h-4z" fill="currentColor" />
-                        </svg>
-                    </button>
-
-                    <button class="ghost" title="下一首" @click="playNext">
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M5 19V5l10 7-10 7Z M19 19V5" fill="currentColor" stroke="currentColor"
-                                stroke-width="1.5" stroke-linejoin="round" />
-                        </svg>
-                    </button>
-
-                    <div class="volume">
-                        <button class="ghost" title="静音" @click="toggleMute">
-                            <svg v-if="muted || volume === 0" viewBox="0 0 24 24" aria-hidden="true">
-                                <path d="M4 9v6h4l5 4V5L8 9H4Zm12 0 4 6m0-6-4 6" fill="none" stroke="currentColor"
-                                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-                            </svg>
-                            <svg v-else-if="volume < 0.5" viewBox="0 0 24 24" aria-hidden="true">
-                                <path d="M4 9v6h4l5 4V5L8 9H4Zm10 3a2 2 0 0 0 2-2" fill="none" stroke="currentColor"
-                                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-                            </svg>
-                            <svg v-else viewBox="0 0 24 24" aria-hidden="true">
-                                <path d="M4 9v6h4l5 4V5L8 9H4Zm10 3a3 3 0 0 0 3-3m-3 3a5 5 0 0 0 5 5" fill="none"
-                                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                                    stroke-linejoin="round" />
-                            </svg>
-                        </button>
-                        <input class="slider volume-slider" type="range" min="0" max="1" step="0.01"
-                            :value="muted ? 0 : volume"
-                            @input="e => changeVolume(Number((e.target as HTMLInputElement).value))" />
-                    </div>
-                </div>
-            </div>
-
             <div class="grid">
-                <div class="panel glass">
-                    <header class="panel-head">
-                        <div>
-                            <p class="eyebrow">歌词</p>
-                            <h3>Lyric View</h3>
-                        </div>
-                        <span class="pill" v-if="lyricLoading">加载中...</span>
-                    </header>
-                    <LyricCarousel :lines="lyrics" :active-index="activeLyricIndex" :loading="lyricLoading"
-                        style="    min-height: calc(100% - 0.75rem - 50px);" />
-                </div>
-
                 <div class="panel glass">
                     <header class="panel-head">
                         <div>
@@ -199,8 +296,13 @@ const modeLabel = computed(() => {
                         <span class="pill">{{ playlist.length }} 首</span>
                     </header>
                     <div class="playlist">
-                        <button v-for="(track, index) in playlist" :key="track.id" class="track"
-                            :class="{ active: currentIndex === index }" @click="playAt(index)">
+                        <button
+                            v-for="(track, index) in playlist"
+                            :key="track.id"
+                            class="track"
+                            :class="{ active: currentIndex === index }"
+                            @click="playAt(index)"
+                        >
                             <div class="track-meta">
                                 <p class="name">{{ track.title }}</p>
                                 <p class="artist">{{ track.artist }}</p>
@@ -213,7 +315,11 @@ const modeLabel = computed(() => {
                                             : "..."
                                     }}
                                 </span>
-                                <span class="badge" v-if="currentIndex === index">播放中</span>
+                                <span
+                                    class="badge"
+                                    v-if="currentIndex === index"
+                                    >播放中</span
+                                >
                             </div>
                         </button>
                     </div>
@@ -235,22 +341,34 @@ const modeLabel = computed(() => {
     --hero-text: #e8ecf1;
     --accent-a: #7c8bff;
     --accent-b: #ff7a9a;
-    // padding: clamp(1rem, 1vw + 0.5rem, 2.5rem);
-    color: #e8ecf1;
-    // background: radial-gradient(circle at 20% 20%, rgba(103, 87, 255, 0.08), transparent 35%), radial-gradient(circle at 80% 0%, rgba(255, 142, 180, 0.12), transparent 35%), #0f1521;
+    color: var(--hero-text);
     min-height: 100vh;
     box-sizing: border-box;
-    width: min(1200px, 100%);
-    // margin: 0 auto;
+    min-width: 100vw;
     position: relative;
-    overflow: hidden;
-    border-radius: 28px;
-    // box-shadow: 0 20px 80px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.02);
+    overflow-x: hidden;
+    /* 修复水平滚动条 */
+    padding-bottom: 2rem;
+    /* 确保 Panel 部分可见 */
+}
+
+@property --hero-start {
+    syntax: "<color>";
+    inherits: false;
+    initial-value: #9b9c9b;
+}
+
+@property --hero-end {
+    syntax: "<color>";
+    inherits: false;
+    initial-value: #e0e0df;
 }
 
 .player-hero {
     position: relative;
-    border-radius: 24px;
+    // 桌面版尺寸
+    height: calc(100vh - clamp(1.25rem, 4vw, 2.5rem) * 2);
+    width: calc(100vw - clamp(1.25rem, 4vw, 2.5rem) * 2);
     overflow: hidden;
     padding: clamp(1.25rem, 4vw, 2.5rem);
     backdrop-filter: blur(8px);
@@ -259,18 +377,32 @@ const modeLabel = computed(() => {
     box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
     background: linear-gradient(135deg, var(--hero-start), var(--hero-end));
     color: var(--hero-text);
+    transition:
+        --hero-start 0.4s ease-in-out,
+        --hero-end 0.4s ease-in-out;
+
+    @media (max-width: 768px) {
+        width: 100vw;
+        height: auto;
+        border-radius: 0;
+        padding: clamp(1rem, 4vw, 1.5rem);
+    }
 }
 
 .player-hero .glow {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background: radial-gradient(circle at 60% 20%,
+    background: radial-gradient(
+            circle at 60% 20%,
             rgba(255, 255, 255, 0.16),
-            transparent 45%),
-        radial-gradient(circle at 10% 80%,
+            transparent 45%
+        ),
+        radial-gradient(
+            circle at 10% 80%,
             rgba(255, 255, 255, 0.12),
-            transparent 40%);
+            transparent 40%
+        );
     mix-blend-mode: screen;
     opacity: 0.9;
     z-index: 0;
@@ -278,15 +410,96 @@ const modeLabel = computed(() => {
 
 .hero-main {
     display: grid;
-    grid-template-columns: 320px 1fr 2fr;
+    // 桌面布局：[320px 封面] [1fr 信息] [1.5fr 歌词]
+    grid-template-columns: 320px 1fr 1.5fr;
+    grid-template-rows: repeat(3, auto);
     gap: clamp(1.25rem, 2vw, 2.5rem);
     align-items: center;
     position: relative;
     z-index: 1;
+    height: 100%;
 
-    @media (max-width: 900px) {
+    // Grid Area 定义 (默认桌面布局)
+    grid-template-areas:
+        ".        info   lyrics"
+        "vinyl    info   lyrics"
+        "controls controls lyrics";
+
+    .vinyl-wrap {
+        grid-area: vinyl;
+        display: grid;
+        place-items: center;
+    }
+
+    .hero-text {
+        grid-area: info;
+    }
+
+    .lyric-area {
+        grid-area: lyrics;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .controls-card {
+        grid-area: controls;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        height: 100%;
+    }
+
+    // --- 屏幕宽度 < 1200px (平板布局) ---
+    @media (max-width: 1200px) {
+        // 布局变为 2 列：[封面] [信息], [控制] (全宽), [歌词] (全宽)
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto auto;
+
+        grid-template-areas:
+            "vinyl info"
+            "controls controls"
+            "lyrics lyrics";
+
+        // 调整歌词区域高度，在小屏幕上不占满垂直空间
+        .lyric-area {
+            height: 300px !important;
+            min-height: 200px;
+        }
+    }
+
+    // --- 屏幕宽度 < 768px (手机布局) ---
+    @media (max-width: 768px) {
+        // 布局变为 1 列，全部垂直堆叠
         grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto auto;
+
+        grid-template-areas:
+            "vinyl"
+            "info"
+            "controls"
+            "lyrics";
+
         text-align: center;
+        gap: 1.5rem;
+
+        // 确保封面居中
+        .vinyl-wrap {
+            display: flex;
+            justify-content: center;
+        }
+
+        .hero-text {
+            text-align: center;
+        }
+
+        .chips {
+            justify-content: center;
+        }
+
+        // 歌词在移动端可以更小
+        .lyric-area {
+            height: 250px !important;
+        }
     }
 }
 
@@ -299,20 +512,24 @@ const modeLabel = computed(() => {
     width: min(260px, 55vw);
     aspect-ratio: 1 / 1;
     border-radius: 50%;
-    background: radial-gradient(circle,
+    background: radial-gradient(
+            circle,
             #0b0d13 45%,
             rgba(255, 255, 255, 0.08) 46%,
-            #0b0d13 65%),
-        repeating-conic-gradient(from 0deg,
+            #0b0d13 65%
+        ),
+        repeating-conic-gradient(
+            from 0deg,
             rgba(255, 255, 255, 0.08) 0deg 2deg,
-            transparent 2deg 4deg);
+            transparent 2deg 4deg
+        );
     display: grid;
     place-items: center;
     box-shadow:
         0 25px 60px rgba(0, 0, 0, 0.45),
         inset 0 0 35px rgba(0, 0, 0, 0.4);
     transition:
-        transform 0.6s ease,
+        transform 0.4s ease,
         box-shadow 0.4s ease;
     position: relative;
     overflow: hidden;
@@ -327,6 +544,10 @@ const modeLabel = computed(() => {
     &:hover {
         transform: translateY(-4px);
     }
+
+    @media (max-width: 768px) {
+        width: min(220px, 70vw);
+    }
 }
 
 .vinyl::after {
@@ -334,14 +555,19 @@ const modeLabel = computed(() => {
     position: absolute;
     inset: 18%;
     border-radius: 50%;
-    background: var(--cover-url,
-            radial-gradient(circle at 30% 30%,
+    background: var(
+            --cover-url,
+            radial-gradient(
+                circle at 30% 30%,
                 rgba(255, 255, 255, 0.15),
-                rgba(0, 0, 0, 0.65))) center/cover no-repeat;
+                rgba(0, 0, 0, 0.65)
+            )
+        )
+        center/cover no-repeat;
     opacity: 0.92;
     mix-blend-mode: screen;
     box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5);
-    transition: opacity 0.3s ease;
+    transition: opacity 0.4s ease;
     z-index: 0;
 }
 
@@ -361,9 +587,11 @@ const modeLabel = computed(() => {
     width: 42%;
     aspect-ratio: 1 / 1;
     border-radius: 50%;
-    background: radial-gradient(circle at 30% 30%,
+    background: radial-gradient(
+            circle at 30% 30%,
             rgba(255, 255, 255, 0.15),
-            rgba(0, 0, 0, 0.55)),
+            rgba(0, 0, 0, 0.55)
+        ),
         #ff7a9a;
     display: grid;
     place-items: center;
@@ -398,11 +626,15 @@ const modeLabel = computed(() => {
     font-size: clamp(1.6rem, 4vw, 2.8rem);
     margin: 0;
     line-height: 1.15;
+
+    @media (max-width: 768px) {
+        font-size: clamp(1.5rem, 8vw, 2.1rem);
+    }
 }
 
 .hero-text .subtitle {
     margin: 0.4rem 0 0.6rem;
-    color: #d6dce7;
+    color: var(--hero-end);
     font-size: clamp(1rem, 2.4vw, 1.25rem);
 }
 
@@ -420,7 +652,7 @@ const modeLabel = computed(() => {
     padding: 0.4rem 0.8rem;
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.14);
-    color: #0f1521;
+    color: var(--hero-text);
     font-weight: 700;
     backdrop-filter: blur(8px);
 }
@@ -433,9 +665,18 @@ const modeLabel = computed(() => {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    padding: 0 clamp(1.25rem, 4vw, 2.5rem);
+
+    @media (max-width: 768px) {
+        padding: 0 clamp(1rem, 4vw, 1.5rem);
+    }
 }
 
 .glass {
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 18px;
@@ -444,10 +685,10 @@ const modeLabel = computed(() => {
 }
 
 .controls-card {
-    padding: 1.2rem;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    height: 100%;
+    justify-content: flex-end;
 }
 
 .timeline {
@@ -465,11 +706,47 @@ const modeLabel = computed(() => {
 
 .slider {
     appearance: none;
-    width: 100%;
+    width: calc(100% - 43px);
     height: 6px;
     border-radius: 999px;
-    background: linear-gradient(90deg, #6dd3ff, #ff7a9a);
+    // 默认背景（未填充部分）
+    background: color-mix(in srgb, var(--hero-text) 22%, transparent);
     outline: none;
+    margin: 0;
+    display: block;
+}
+
+// ===============================================
+// 1. 播放进度条 (timeline slider)
+// ===============================================
+
+.timeline .slider {
+    // 使用单色 var(--hero-end)
+    background:
+        linear-gradient(90deg, var(--hero-end), var(--hero-end)) 0 0 /
+            var(--slider-progress, 0%) 100% no-repeat,
+        color-mix(in srgb, var(--hero-text) 22%, transparent);
+    transition: background 0.2s ease;
+}
+
+.timeline .slider::-webkit-slider-runnable-track {
+    height: 6px;
+    border-radius: 999px;
+    // 使用单色 var(--hero-end)
+    background:
+        linear-gradient(90deg, var(--hero-end), var(--hero-end)) 0 0 /
+            var(--slider-progress, 0%) 100% no-repeat,
+        color-mix(in srgb, var(--hero-text) 22%, transparent);
+}
+
+.timeline .slider::-moz-range-track {
+    height: 6px;
+    border-radius: 999px;
+    // 使用单色 var(--hero-end)
+    background:
+        linear-gradient(90deg, var(--hero-end), var(--hero-end)) 0 0 /
+            var(--slider-progress, 0%) 100% no-repeat,
+        color-mix(in srgb, var(--hero-text) 22%, transparent);
 }
 
 .slider::-webkit-slider-thumb {
@@ -478,8 +755,16 @@ const modeLabel = computed(() => {
     height: 16px;
     border-radius: 50%;
     background: #fff;
-    border: 2px solid #0f1521;
+    border: 2px solid transparent;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    transform: scale(0.65);
+    margin-top: -5px;
+    transition:
+        opacity 0.18s ease,
+        transform 0.18s ease,
+        border-color 0.18s ease,
+        box-shadow 0.18s ease;
 }
 
 .slider::-moz-range-thumb {
@@ -487,16 +772,180 @@ const modeLabel = computed(() => {
     height: 16px;
     border-radius: 50%;
     background: #fff;
-    border: 2px solid #0f1521;
+    border: 2px solid transparent;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    transform: scale(0.65);
+    margin-top: -5px;
+    transition:
+        opacity 0.18s ease,
+        transform 0.18s ease,
+        border-color 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+.timeline:hover .slider::-webkit-slider-thumb,
+.timeline .slider:active::-webkit-slider-thumb,
+.timeline:focus-within .slider::-webkit-slider-thumb {
+    opacity: 1;
+    transform: scale(1);
+    // 统一使用主题色作为边框和阴影
+    border-color: var(--hero-end);
+    box-shadow:
+        0 6px 18px rgba(0, 0, 0, 0.35),
+        0 0 0 4px color-mix(in srgb, var(--hero-end) 28%, transparent);
+}
+
+.timeline:hover .slider::-moz-range-thumb,
+.timeline .slider:active::-moz-range-thumb,
+.timeline:focus-within .slider::-moz-range-thumb {
+    opacity: 1;
+    transform: scale(1);
+    // 统一使用主题色作为边框和阴影
+    border-color: var(--hero-end);
+    box-shadow:
+        0 6px 18px rgba(0, 0, 0, 0.35),
+        0 0 0 4px color-mix(in srgb, var(--hero-end) 28%, transparent);
+}
+
+// ===============================================
+// 2. 音量进度条 (volume slider)
+// ===============================================
+.volume-slider::-webkit-slider-thumb {
+    opacity: 0.9;
+    transform: scale(0.9);
+    // 统一使用主题色作为边框
+    border-color: var(--hero-end);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28);
+}
+
+.volume-slider::-moz-range-thumb {
+    opacity: 0.9;
+    transform: scale(0.9);
+    // 统一使用主题色作为边框
+    border-color: var(--hero-end);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28);
+}
+
+.volume:hover .volume-slider::-webkit-slider-thumb,
+.volume:focus-within .volume-slider::-webkit-slider-thumb {
+    opacity: 1;
+    transform: scale(1);
+    // 统一使用主题色作为边框
+    border-color: var(--hero-end);
+}
+
+.volume:hover .volume-slider::-moz-range-thumb,
+.volume:focus-within .volume-slider::-moz-range-thumb {
+    opacity: 1;
+    transform: scale(1);
+    // 统一使用主题色作为边框
+    border-color: var(--hero-end);
+}
+
+.volume-slider {
+    // 通用背景 (非伪元素)
+    background:
+        linear-gradient(90deg, var(--hero-end), var(--hero-end)) 0 0 /
+            var(--slider-progress, 0%) 100% no-repeat,
+        color-mix(in srgb, var(--hero-end) 22%, transparent);
+    transition: background 0.2s ease;
+
+    // Webkit 轨道
+    &::-webkit-slider-runnable-track {
+        height: 6px;
+        border-radius: 999px;
+        background:
+            linear-gradient(90deg, var(--hero-end), var(--hero-end)) 0 0 /
+                var(--slider-progress, 0%) 100% no-repeat,
+            color-mix(in srgb, var(--hero-end) 22%, transparent);
+    }
+
+    // Moz 轨道
+    &::-moz-range-track {
+        height: 6px;
+        border-radius: 999px;
+        background:
+            linear-gradient(90deg, var(--hero-end), var(--hero-end)) 0 0 /
+                var(--slider-progress, 0%) 100% no-repeat,
+            color-mix(in srgb, var(--hero-end) 22%, transparent);
+    }
 }
 
 .controls {
-    display: flex;
-    justify-content: center;
+    display: grid;
+    // 桌面默认: 三等分 [设置] [播放器] [音量]
+    grid-template-columns: 1fr 2fr 1fr;
     align-items: center;
     gap: 0.75rem;
-    flex-wrap: wrap;
+
+    .settings-btn {
+        grid-area: settings;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .controls-pyler {
+        grid-area: player;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .volume {
+        grid-area: volume;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        min-width: 180px;
+        justify-content: flex-end;
+    }
+
+    // --- 手机布局 (max-width: 768px) ---
+    @media (max-width: 768px) {
+        // 布局变为 1 列，垂直堆叠
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "player"
+            "volume"
+            "settings";
+        gap: 1rem; // 增加间距
+
+        .controls-pyler {
+            justify-content: center;
+            order: 1; // 主要播放控件排第一
+        }
+
+        .volume {
+            min-width: unset;
+            justify-content: center;
+            padding: 0 1rem;
+            order: 2; // 音量排第二
+        }
+
+        .settings-btn {
+            justify-content: center;
+            order: 3; // 设置按钮排最后
+        }
+    }
+
+    // --- 手机按钮尺寸调整 (max-width: 480px) ---
+    @media (max-width: 480px) {
+        .primary {
+            width: 54px;
+            height: 54px;
+        }
+
+        .ghost {
+            width: 38px;
+            height: 38px;
+        }
+    }
 }
 
 button {
@@ -540,23 +989,15 @@ button svg {
     transform: translateY(-2px) scale(1.02);
 }
 
-.volume {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    min-width: 180px;
-}
-
-.volume-slider {
-    background: linear-gradient(90deg, var(--accent-a), var(--accent-b));
-}
-
 .grid {
     display: grid;
+    // 桌面默认: 1.2fr [Playlist] 0.8fr [Panel Placeholder]
     grid-template-columns: 1.2fr 0.8fr;
     gap: 1rem;
     align-items: stretch;
+    width: 100%;
 
+    // --- 屏幕宽度 < 1100px (平板/手机) ---
     @media (max-width: 1100px) {
         grid-template-columns: 1fr;
     }
@@ -568,9 +1009,11 @@ button svg {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    background: linear-gradient(160deg,
-            rgba(255, 255, 255, 0.06),
-            rgba(255, 255, 255, 0.02));
+    background: linear-gradient(
+        160deg,
+        rgba(255, 255, 255, 0.06),
+        rgba(255, 255, 255, 0.02)
+    );
     border: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.05),
@@ -677,25 +1120,6 @@ button svg {
     color: #0f1521;
     border-radius: 999px;
     font-weight: 700;
-}
-
-@media (max-width: 720px) {
-    .controls-card {
-        padding: 1rem 0.75rem;
-    }
-
-    .controls {
-        justify-content: space-between;
-    }
-
-    .volume {
-        width: 100%;
-    }
-
-    .hero-text .title {
-        font-size: clamp(1.5rem, 8vw, 2.1rem);
-    }
-
 }
 
 @keyframes spin {
