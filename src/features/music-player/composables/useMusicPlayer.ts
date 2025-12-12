@@ -21,7 +21,7 @@ export interface LyricLine {
 export type PlayMode = "loop" | "single" | "shuffle";
 
 const buildAssetUrl = (folder: "Musics" | "Lyrics", fileName: string) =>
-    new URL(`../../../../assets/${folder}/${fileName}`, import.meta.url).href;
+    new URL(`../../assets/${folder}/${fileName}`, import.meta.url).href;
 
 const defaultPlaylist: Track[] = [
     {
@@ -39,14 +39,8 @@ const defaultPlaylist: Track[] = [
         artist: "徐明浩; GALI",
         artists: ["徐明浩", "GALI"],
         album: "Star Crossing Night (feat. GALI)",
-        url: buildAssetUrl(
-            "Musics",
-            "Star Crossing Night (feat. GALI) - 徐明浩; GALI.flac"
-        ),
-        lyric: buildAssetUrl(
-            "Lyrics",
-            "Star Crossing Night (feat. GALI) - 徐明浩,GALI.lrc"
-        )
+        url: buildAssetUrl("Musics", "Star Crossing Night (feat. GALI) - 徐明浩; GALI.flac"),
+        lyric: buildAssetUrl("Lyrics", "Star Crossing Night (feat. GALI) - 徐明浩,GALI.lrc")
     },
     {
         id: 3,
@@ -54,14 +48,8 @@ const defaultPlaylist: Track[] = [
         album: "Take My Hand",
         artist: "DAISHI DANCE; Cécile Corbel",
         artists: ["DAISHI DANCE", "Cécile Corbel"],
-        url: buildAssetUrl(
-            "Musics",
-            "Take My Hand - DAISHI DANCE; Cécile Corbel.flac"
-        ),
-        lyric: buildAssetUrl(
-            "Lyrics",
-            "Take My Hand - DAISHI DANCE,Cécile Corbel.lrc"
-        )
+        url: buildAssetUrl("Musics", "Take My Hand - DAISHI DANCE; Cécile Corbel.flac"),
+        lyric: buildAssetUrl("Lyrics", "Take My Hand - DAISHI DANCE,Cécile Corbel.lrc")
     },
     {
         id: 4,
@@ -76,8 +64,8 @@ const defaultPlaylist: Track[] = [
         id: 5,
         title: "勾指起誓",
         album: "勾指起誓",
-        artist: "洛天依Official",
-        artists: ["洛天依Official"],
+        artist: "洛天依Official; ilem",
+        artists: ["洛天依Official", "ilem"],
         url: buildAssetUrl("Musics", "勾指起誓 - 洛天依Official; ilem.flac"),
         lyric: buildAssetUrl("Lyrics", "勾指起誓 - 洛天依Official,ilem.lrc")
     },
@@ -141,7 +129,6 @@ export const useMusicPlayer = (audioRef: {
     value: HTMLAudioElement | null;
 }) => {
     const playlist = useStorage<Track[]>("mm-player-playlist", defaultPlaylist);
-    console.log("Playlist loaded:", playlist.value);
     const playerState = useStorage("mm-player-state", {
         currentIndex: 0,
         time: 0,
@@ -150,10 +137,10 @@ export const useMusicPlayer = (audioRef: {
         volume: 0.7,
         muted: false
     });
-    const album = ref<string | null>(null); // 专辑
-    const title = ref<string | null>(null); // 歌名
-    const artist = ref<string | null>(null); // 创作者
-    const artists = ref<string[] | null>(null); // 联合创作者
+    const album = ref<string | null>(null);
+    const title = ref<string | null>(null);
+    const artist = ref<string | null>(null);
+    const artists = ref<string[] | null>(null);
 
     const coverUrl = ref<string | null>(null);
     const coverLoading = ref(false);
@@ -248,15 +235,8 @@ export const useMusicPlayer = (audioRef: {
         return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
     };
 
-    /**
-     * @description 将颜色通道值与目标颜色混合。
-     * @param value 原始颜色通道值 (0-255)
-     * @param target 目标颜色通道值 (0-255)
-     * @param weight 原始值保留的权重 (0-1)
-     * @returns 混合后的通道值
-     */
     const mixChannel = (value: number, target: number, weight: number) =>
-        value * weight + target * (1 - weight); // 调整权重计算以符合直觉
+        value * weight + target * (1 - weight);
 
     const extractPalette = async (url: string) => {
         const img = await new Promise<HTMLImageElement>((resolve, reject) => {
@@ -286,7 +266,7 @@ export const useMusicPlayer = (audioRef: {
         let count = 0;
         for (let i = 0; i < data.length; i += 4) {
             const alpha = data[i + 3];
-            if (alpha < 10) continue; // skip fully transparent pixels
+            if (alpha < 10) continue;
             r += data[i];
             g += data[i + 1];
             b += data[i + 2];
@@ -295,43 +275,36 @@ export const useMusicPlayer = (audioRef: {
         if (!count) return null;
         const base = [r / count, g / count, b / count];
 
-        /**
-         * 强化颜色搭配逻辑
-         * 目标：生成一个深色背景 (Primary/Secondary) 和一个亮色文本/强调色 (Text)。
-         */
-
-        // 1. 定义深蓝色调作为混合目标 (Dark Base Color: #12243e ≈ RGB(18, 36, 62))
         const darkBaseRgb = [18, 36, 62];
-        const mixWeight = 0.6; // 保留原始颜色 60% 的特征
+        const mixWeight = 0.6;
 
-        // 2. 生成 Primary Color (深色背景起始点)
-        // 混合原始颜色与深蓝色调，并轻微压暗
         const primaryRgb = base.map((channel, i) =>
             mixChannel(
                 mixChannel(channel, darkBaseRgb[i], mixWeight),
-                0, // 压暗到黑色
-                0.9 // 保留 90% 的混合结果 (即压暗 10%)
+                0,
+                0.9
             )
         );
 
-        // 3. 生成 Secondary Color (浅色强调色，用于渐变结束和进度条)
-        // 混合原始颜色与纯白色 (255)，使其更亮，更具活力
         const secondaryRgb = base.map(channel =>
-            mixChannel(channel, 255, 0.4) // 保留 40% 原始色，混合 60% 白色
+            mixChannel(channel, 255, 0.4)
         );
-        
-        // 4. 固定文本颜色为浅色 (#f8fafc) 以保证可读性
-        const textHex = "#f8fafc"; // 确保高对比度
+
+        const textHex = "#f8fafc";
 
         return {
             primary: rgbToHex(primaryRgb[0], primaryRgb[1], primaryRgb[2]),
-            secondary: rgbToHex(secondaryRgb[0], secondaryRgb[1], secondaryRgb[2]),
+            secondary: rgbToHex(
+                secondaryRgb[0],
+                secondaryRgb[1],
+                secondaryRgb[2]
+            ),
             text: textHex
         };
     };
 
     const loadLyrics = async () => {
-    	if (!currentTrack.value) return;
+        if (!currentTrack.value) return;
         lyricLoading.value = true;
         try {
             const res = await fetch(currentTrack.value.lyric);
@@ -343,7 +316,6 @@ export const useMusicPlayer = (audioRef: {
         } finally {
             lyricLoading.value = false;
         }
-        
     };
 
     const loadCover = async () => {
@@ -376,16 +348,15 @@ export const useMusicPlayer = (audioRef: {
             const picture = metadata.common.picture?.[0];
             const data = metadata.common;
 
-            // 覆盖 title 和 artist，如果元数据中有更准确的标签
             if (data.title) title.value = data.title;
             if (data.artist) artist.value = data.artist;
             if (data.album) album.value = data.album;
             if (data.artists) artists.value = data.artists;
             if (picture) {
-                const blob = new Blob([picture.data as any], {
+                const coverBlob = new Blob([picture.data as any], {
                     type: picture.format || "image/jpeg"
                 });
-                const objectUrl = URL.createObjectURL(blob);
+                const objectUrl = URL.createObjectURL(coverBlob);
                 coverCache.set(track.id, objectUrl);
                 coverUrl.value = objectUrl;
                 try {
@@ -516,8 +487,8 @@ export const useMusicPlayer = (audioRef: {
         audio.load();
         title.value = currentTrack.value.title;
         artist.value = currentTrack.value.artist;
-        album.value = currentTrack.value.album; 
-        artists.value = currentTrack.value.artists; 
+        album.value = currentTrack.value.album;
+        artists.value = currentTrack.value.artists;
         await loadLyrics();
         await loadCover();
         if (autoplay) {

@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import LyricCarousel from "./LyricCarousel.vue";
-import { useMusicPlayer } from "./useMusicPlayer";
+import LyricCarousel from "./lyric-carousel.vue";
+import { useMusicPlayer } from "../composables/useMusicPlayer";
 import SvgIcon from "@/components/SvgIcons/index.vue";
 
 const audioRef = ref<HTMLAudioElement | null>(null);
+const toNumber = (value: string | number) => {
+    const num = Number(value);
+    return Number.isFinite(num) ? num : 0;
+};
 
 const {
     playlist,
@@ -38,16 +42,26 @@ const {
     formatTime
 } = useMusicPlayer(audioRef);
 
+const timelineStyle = computed(() => ({
+    "--slider-progress": `${progress.value}%`
+}));
+
+const volumeStyle = computed(() => {
+    const volumeProgress = muted.value ? 0 : Math.max(0, Math.min(volume.value, 1));
+    return {
+        "--slider-progress": `${volumeProgress * 100}%`
+    };
+});
+
 const heroStyle = computed((): { [key: string]: string } | undefined => {
     const palette = dominantColor.value;
     if (!palette) return undefined;
     return {
-        // Primary 和 Secondary 颜色现在经过优化
-        "--hero-start": palette.primary,   // 新的深色基础色 (Primary)
-        "--hero-end": palette.secondary,   // 新的亮色强调色 (Secondary)
-        "--hero-text": palette.text,       // 固定的浅色文本
-        "--accent-a": palette.secondary,   // 强调色 A (使用 Secondary)
-        "--accent-b": palette.primary      // 强调色 B (使用 Primary)
+        "--hero-start": palette.primary,
+        "--hero-end": palette.secondary,
+        "--hero-text": palette.text,
+        "--accent-a": palette.secondary,
+        "--accent-b": palette.primary
     };
 });
 
@@ -61,6 +75,16 @@ const modeLabel = computed(() => {
             return "顺序循环";
     }
 });
+
+const onTimelineInput = (event: Event) => {
+    const next = toNumber((event.target as HTMLInputElement).value);
+    seek(next);
+};
+
+const onVolumeInput = (event: Event) => {
+    const next = toNumber((event.target as HTMLInputElement).value);
+    changeVolume(next);
+};
 </script>
 
 <template>
@@ -69,10 +93,11 @@ const modeLabel = computed(() => {
             <div class="glow"></div>
             <div class="hero-main">
                 <div class="vinyl-wrap">
-                    <div class="vinyl" :class="{ spinning: isPlaying }" :style="coverUrl
-                        ? { '--cover-url': `url(${coverUrl})` }
-                        : undefined
-                        ">
+                    <div
+                        class="vinyl"
+                        :class="{ spinning: isPlaying }"
+                        :style="coverUrl ? { '--cover-url': `url(${coverUrl})` } : undefined"
+                    >
                         <div v-if="coverLoading" class="cover-loading">
                             封面解析中...
                         </div>
@@ -84,9 +109,7 @@ const modeLabel = computed(() => {
                         {{ title || "--" }}
                     </h1>
                     <p class="subtitle">
-                        {{ artists ? artists.join("/") : "--" }}·{{
-                            album || "--"
-                        }}
+                        {{ artists ? artists.join("/") : "--" }} · {{ album || "--" }}
                     </p>
                     <div class="chips">
                         <span class="chip">{{ modeLabel }}</span>
@@ -97,23 +120,28 @@ const modeLabel = computed(() => {
                         </span>
                     </div>
                 </div>
-                <LyricCarousel :lines="lyrics" :active-index="activeLyricIndex" :loading="lyricLoading"
-                    style="height: 100%" class="lyric-area" />
+                <LyricCarousel
+                    :lines="lyrics"
+                    :active-index="activeLyricIndex"
+                    :loading="lyricLoading"
+                    style="height: 100%"
+                    class="lyric-area"
+                />
 
                 <div class="controls-card">
                     <div class="glass">
                         <div class="timeline">
                             <span class="time">{{ formattedCurrentTime }}</span>
-                            <input class="slider" type="range" min="0" max="100" step="0.1" :value="progress"
-                                :style="{ '--slider-progress': `${progress}%` }" @input="
-                                    e =>
-                                        seek(
-                                            Number(
-                                                (e.target as HTMLInputElement)
-                                                    .value
-                                            )
-                                        )
-                                " />
+                            <input
+                                class="slider"
+                                type="range"
+                                min="0"
+                                max="100"
+                                step="0.1"
+                                :value="progress"
+                                :style="timelineStyle"
+                                @input="onTimelineInput"
+                            />
                             <span class="time">{{ formattedDuration }}</span>
                         </div>
                         <div class="controls">
@@ -122,8 +150,7 @@ const modeLabel = computed(() => {
                                     <svg-icon icon-class="chart-bar" size="24px" style="color: var(--hero-text)" />
                                 </button>
                                 <button class="ghost" title="关注">
-                                    <svg-icon icon-class="follow-grayscale" size="24px"
-                                        style="color: var(--hero-text)" />
+                                    <svg-icon icon-class="follow-grayscale" size="24px" style="color: var(--hero-text)" />
                                 </button>
                                 <button class="ghost" title="下载">
                                     <svg-icon icon-class="download" size="24px" style="color: var(--hero-text)" />
@@ -131,24 +158,20 @@ const modeLabel = computed(() => {
                             </div>
                             <div class="controls-pyler">
                                 <button class="ghost" :title="modeLabel" @click="cycleMode">
-                                    <svg-icon v-if="playMode === 'loop'" icon-class="list-loop" size="24px"
-                                        style="color: var(--hero-text)" />
-                                    <svg-icon v-else-if="playMode === 'single'" icon-class="repeat-single" size="24px"
-                                        style="color: var(--hero-text)" />
-                                    <svg-icon v-else icon-class="random-loop" size="24px"
-                                        style="color: var(--hero-text)" />
+                                    <svg-icon v-if="playMode === 'loop'" icon-class="list-loop" size="24px" style="color: var(--hero-text)" />
+                                    <svg-icon v-else-if="playMode === 'single'" icon-class="repeat-single" size="24px" style="color: var(--hero-text)" />
+                                    <svg-icon v-else icon-class="random-loop" size="24px" style="color: var(--hero-text)" />
                                 </button>
 
-                                <button class="ghost" title="上一首" @click="playPrev">
+                                <button class="ghost" title="上一曲" @click="playPrev">
                                     <svg-icon icon-class="previous" size="24px" style="color: var(--hero-text)" />
                                 </button>
 
                                 <button class="primary" title="播放/暂停" @click="togglePlay">
-                                    <svg-icon :icon-class="!isPlaying ? 'play' : 'pause'
-                                        " size="24px" style="color: var(--hero-text)" />
+                                    <svg-icon :icon-class="!isPlaying ? 'play' : 'pause'" size="24px" style="color: var(--hero-text)" />
                                 </button>
 
-                                <button class="ghost" title="下一首" @click="playNext">
+                                <button class="ghost" title="下一曲" @click="playNext">
                                     <svg-icon icon-class="next" size="24px" style="color: var(--hero-text)" />
                                 </button>
 
@@ -158,27 +181,20 @@ const modeLabel = computed(() => {
                             </div>
                             <div class="volume">
                                 <button class="ghost" title="静音" @click="toggleMute">
-                                    <svg-icon v-if="muted || volume === 0" icon-class="mute" size="24px"
-                                        style="color: var(--hero-text)" />
-                                    <svg-icon v-else-if="volume < 0.5" icon-class="alto" size="24px"
-                                        style="color: var(--hero-text)" />
-                                    <svg-icon v-else icon-class="great-sound" size="24px"
-                                        style="color: var(--hero-text)" />
+                                    <svg-icon v-if="muted || volume === 0" icon-class="mute" size="24px" style="color: var(--hero-text)" />
+                                    <svg-icon v-else-if="volume < 0.5" icon-class="alto" size="24px" style="color: var(--hero-text)" />
+                                    <svg-icon v-else icon-class="great-sound" size="24px" style="color: var(--hero-text)" />
                                 </button>
-                                <input class="slider volume-slider" type="range" min="0" max="1" step="0.01"
-                                    :value="muted ? 0 : volume" :style="{
-                                        '--slider-progress': `${(muted ? 0 : volume) * 100
-                                            }%`
-                                    }" @input="
-                                        e =>
-                                            changeVolume(
-                                                Number(
-                                                    (
-                                                        e.target as HTMLInputElement
-                                                    ).value
-                                                )
-                                            )
-                                    " />
+                                <input
+                                    class="slider volume-slider"
+                                    type="range"
+                                    min="0"
+                                    max="1"
+                                    step="0.01"
+                                    :value="muted ? 0 : volume"
+                                    :style="volumeStyle"
+                                    @input="onVolumeInput"
+                                />
                             </div>
                         </div>
                     </div>
@@ -197,19 +213,20 @@ const modeLabel = computed(() => {
                         <span class="pill">{{ playlist.length }} 首</span>
                     </header>
                     <div class="playlist">
-                        <button v-for="(track, index) in playlist" :key="track.id" class="track"
-                            :class="{ active: currentIndex === index }" @click="playAt(index)">
+                        <button
+                            v-for="(track, index) in playlist"
+                            :key="track.id"
+                            class="track"
+                            :class="{ active: currentIndex === index }"
+                            @click="playAt(index)"
+                        >
                             <div class="track-meta">
                                 <p class="name">{{ track.title }}</p>
                                 <p class="artist">{{ track.artist }}</p>
                             </div>
                             <div class="track-extra">
                                 <span class="duration">
-                                    {{
-                                        track.duration
-                                            ? formatTime(track.duration)
-                                            : "..."
-                                    }}
+                                    {{ track.duration ? formatTime(track.duration) : "..." }}
                                 </span>
                                 <span class="badge" v-if="currentIndex === index">播放中</span>
                             </div>
@@ -239,9 +256,9 @@ const modeLabel = computed(() => {
     min-width: 100vw;
     position: relative;
     overflow-x: hidden;
-    /* 修复水平滚动条 */
+    /* Prevent horizontal scroll bleed */
     padding-bottom: 2rem;
-    /* 确保 Panel 部分可见 */
+    /* Keep panel section visible */
 }
 
 @property --hero-start {
@@ -258,7 +275,6 @@ const modeLabel = computed(() => {
 
 .player-hero {
     position: relative;
-    // 桌面版尺寸
     height: calc(100vh - clamp(1.25rem, 4vw, 2.5rem) * 2);
     width: calc(100vw - clamp(1.25rem, 4vw, 2.5rem) * 2);
     overflow: hidden;
@@ -298,7 +314,6 @@ const modeLabel = computed(() => {
 
 .hero-main {
     display: grid;
-    // 桌面布局：[320px 封面] [1fr 信息] [1.5fr 歌词]
     grid-template-columns: 320px 1fr 1.5fr;
     grid-template-rows: repeat(3, auto);
     gap: clamp(1.25rem, 2vw, 2.5rem);
@@ -307,7 +322,6 @@ const modeLabel = computed(() => {
     z-index: 1;
     height: 100%;
 
-    // Grid Area 定义 (默认桌面布局)
     grid-template-areas:
         ".        info   lyrics"
         "vinyl    info   lyrics"
@@ -337,9 +351,7 @@ const modeLabel = computed(() => {
         height: 100%;
     }
 
-    // --- 屏幕宽度 < 1200px (平板布局) ---
     @media (max-width: 1200px) {
-        // 布局变为 2 列：[封面] [信息], [控制] (全宽), [歌词] (全宽)
         grid-template-columns: 1fr 1fr;
         grid-template-rows: auto auto auto;
 
@@ -348,16 +360,13 @@ const modeLabel = computed(() => {
             "controls controls"
             "lyrics lyrics";
 
-        // 调整歌词区域高度，在小屏幕上不占满垂直空间
         .lyric-area {
             height: 300px !important;
             min-height: 200px;
         }
     }
 
-    // --- 屏幕宽度 < 768px (手机布局) ---
     @media (max-width: 768px) {
-        // 布局变为 1 列，全部垂直堆叠
         grid-template-columns: 1fr;
         grid-template-rows: auto auto auto auto;
 
@@ -370,7 +379,6 @@ const modeLabel = computed(() => {
         text-align: center;
         gap: 1.5rem;
 
-        // 确保封面居中
         .vinyl-wrap {
             display: flex;
             justify-content: center;
@@ -384,7 +392,6 @@ const modeLabel = computed(() => {
             justify-content: center;
         }
 
-        // 歌词在移动端可以更小
         .lyric-area {
             height: 250px !important;
         }
@@ -586,19 +593,13 @@ const modeLabel = computed(() => {
     width: calc(100% - 43px);
     height: 6px;
     border-radius: 999px;
-    // 默认背景（未填充部分）
     background: color-mix(in srgb, var(--hero-text) 22%, transparent);
     outline: none;
     margin: 0;
     display: block;
 }
 
-// ===============================================
-// 1. 播放进度条 (timeline slider)
-// ===============================================
-
 .timeline .slider {
-    // 使用单色 var(--hero-end)
     background:
         linear-gradient(90deg, var(--hero-end), var(--hero-end)) 0 0 / var(--slider-progress, 0%) 100% no-repeat,
         color-mix(in srgb, var(--hero-text) 22%, transparent);
@@ -609,7 +610,6 @@ const modeLabel = computed(() => {
 .timeline .slider::-webkit-slider-runnable-track {
     height: 6px;
     border-radius: 999px;
-    // 使用单色 var(--hero-end)
     background:
         linear-gradient(90deg, var(--hero-end), var(--hero-end)) 0 0 / var(--slider-progress, 0%) 100% no-repeat,
         color-mix(in srgb, var(--hero-text) 22%, transparent);
@@ -618,7 +618,6 @@ const modeLabel = computed(() => {
 .timeline .slider::-moz-range-track {
     height: 6px;
     border-radius: 999px;
-    // 使用单色 var(--hero-end)
     background:
         linear-gradient(90deg, var(--hero-end), var(--hero-end)) 0 0 / var(--slider-progress, 0%) 100% no-repeat,
         color-mix(in srgb, var(--hero-text) 22%, transparent);
@@ -664,7 +663,6 @@ const modeLabel = computed(() => {
 .timeline:focus-within .slider::-webkit-slider-thumb {
     opacity: 1;
     transform: scale(1);
-    // 统一使用主题色作为边框和阴影
     border-color: var(--hero-end);
     box-shadow:
         0 6px 18px rgba(0, 0, 0, 0.35),
@@ -676,20 +674,15 @@ const modeLabel = computed(() => {
 .timeline:focus-within .slider::-moz-range-thumb {
     opacity: 1;
     transform: scale(1);
-    // 统一使用主题色作为边框和阴影
     border-color: var(--hero-end);
     box-shadow:
         0 6px 18px rgba(0, 0, 0, 0.35),
         0 0 0 4px color-mix(in srgb, var(--hero-end) 28%, transparent);
 }
 
-// ===============================================
-// 2. 音量进度条 (volume slider)
-// ===============================================
 .volume-slider::-webkit-slider-thumb {
     opacity: 0.9;
     transform: scale(0.9);
-    // 统一使用主题色作为边框
     border-color: var(--hero-end);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28);
 }
@@ -697,7 +690,6 @@ const modeLabel = computed(() => {
 .volume-slider::-moz-range-thumb {
     opacity: 0.9;
     transform: scale(0.9);
-    // 统一使用主题色作为边框
     border-color: var(--hero-end);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28);
 }
@@ -706,7 +698,6 @@ const modeLabel = computed(() => {
 .volume:focus-within .volume-slider::-webkit-slider-thumb {
     opacity: 1;
     transform: scale(1);
-    // 统一使用主题色作为边框
     border-color: var(--hero-end);
 }
 
@@ -714,18 +705,15 @@ const modeLabel = computed(() => {
 .volume:focus-within .volume-slider::-moz-range-thumb {
     opacity: 1;
     transform: scale(1);
-    // 统一使用主题色作为边框
     border-color: var(--hero-end);
 }
 
 .volume-slider {
-    // 通用背景 (非伪元素)
     background:
         linear-gradient(90deg, var(--hero-end), var(--hero-end)) 0 0 / var(--slider-progress, 0%) 100% no-repeat,
         color-mix(in srgb, var(--hero-end) 22%, transparent);
     transition: background 0.2s ease;
 
-    // Webkit 轨道
     &::-webkit-slider-runnable-track {
         height: 6px;
         border-radius: 999px;
@@ -734,7 +722,6 @@ const modeLabel = computed(() => {
             color-mix(in srgb, var(--hero-end) 22%, transparent);
     }
 
-    // Moz 轨道
     &::-moz-range-track {
         height: 6px;
         border-radius: 999px;
@@ -778,35 +765,32 @@ const modeLabel = computed(() => {
         justify-content: flex-end;
     }
 
-    // --- 手机布局 (max-width: 768px) ---
     @media (max-width: 768px) {
-        // 布局变为 1 列，垂直堆叠
         grid-template-columns: 1fr;
         grid-template-areas:
             "player"
             "volume"
             "settings";
-        gap: 1rem; // 增加间距
+        gap: 1rem;
 
         .controls-pyler {
             justify-content: center;
-            order: 1; // 主要播放控件排第一
+            order: 1;
         }
 
         .volume {
             min-width: unset;
             justify-content: center;
             padding: 0 1rem;
-            order: 2; // 音量排第二
+            order: 2;
         }
 
         .settings-btn {
             justify-content: center;
-            order: 3; // 设置按钮排最后
+            order: 3;
         }
     }
 
-    // --- 手机按钮尺寸调整 (max-width: 480px) ---
     @media (max-width: 480px) {
         .primary {
             width: 54px;
@@ -863,13 +847,11 @@ button svg {
 
 .grid {
     display: grid;
-    // 桌面默认: 1.2fr [Playlist] 0.8fr [Panel Placeholder]
     grid-template-columns: 1.2fr 0.8fr;
     gap: 1rem;
     align-items: stretch;
     width: 100%;
 
-    // --- 屏幕宽度 < 1100px (平板/手机) ---
     @media (max-width: 1100px) {
         grid-template-columns: 1fr;
     }

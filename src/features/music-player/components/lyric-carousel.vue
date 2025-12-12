@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import type { LyricLine } from "./useMusicPlayer";
+import type { LyricLine } from "../composables/useMusicPlayer";
 
 const props = defineProps<{
     lines: LyricLine[];
