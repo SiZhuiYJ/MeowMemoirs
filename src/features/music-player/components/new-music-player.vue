@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, onBeforeUnmount, ref, watch } from "vue";
 import LyricCarousel from "./lyric-carousel.vue";
 import { useMusicPlayer } from "../composables/useMusicPlayer";
 import SvgIcon from "@/components/SvgIcons/index.vue";
 
 const audioRef = ref<HTMLAudioElement | null>(null);
+const visualizerCanvas = ref<HTMLCanvasElement | null>(null);
 const toNumber = (value: string | number) => {
     const num = Number(value);
     return Number.isFinite(num) ? num : 0;
@@ -85,6 +86,119 @@ const onVolumeInput = (event: Event) => {
     const next = toNumber((event.target as HTMLInputElement).value);
     changeVolume(next);
 };
+
+let audioContext: AudioContext | null = null;
+let analyser: AnalyserNode | null = null;
+let sourceNode: MediaElementAudioSourceNode | null = null;
+let visualizationFrame: number | null = null;
+let frequencyBuffer: Uint8Array | null = null;
+
+const resizeCanvas = (canvas: HTMLCanvasElement) => {
+    const { width, height } = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    const displayWidth = Math.round(width * dpr);
+    const displayHeight = Math.round(height * dpr);
+    if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
+        canvas.width = displayWidth;
+        canvas.height = displayHeight;
+    }
+};
+
+const drawVisualizer = () => {
+    const canvas = visualizerCanvas.value;
+    if (!canvas || !analyser) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    resizeCanvas(canvas);
+
+    const width = canvas.width;
+    const height = canvas.height;
+
+    if (!frequencyBuffer || frequencyBuffer.length !== analyser.frequencyBinCount) {
+        frequencyBuffer = new Uint8Array(analyser.frequencyBinCount);
+    }
+
+    analyser.getByteFrequencyData(frequencyBuffer);
+
+    ctx.clearRect(0, 0, width, height);
+    const gradient = ctx.createLinearGradient(0, 0, width, 0);
+    gradient.addColorStop(0, "#8ab4ff");
+    gradient.addColorStop(0.5, "#b8ffec");
+    gradient.addColorStop(1, "#ff9ed9");
+    ctx.fillStyle = gradient;
+
+    const barCount = 48;
+    const step = Math.max(1, Math.floor(frequencyBuffer.length / barCount));
+    const barWidth = width / barCount;
+
+    for (let i = 0; i < barCount; i++) {
+        const start = i * step;
+        const end = Math.min(start + step, frequencyBuffer.length);
+        let sum = 0;
+        for (let j = start; j < end; j++) sum += frequencyBuffer[j];
+        const avg = sum / (end - start);
+        const magnitude = (avg / 255) * (height * 0.85);
+        const x = i * barWidth;
+        const y = height - magnitude;
+        const radius = Math.min(barWidth / 2.5, 14);
+        ctx.beginPath();
+        ctx.roundRect(x + barWidth * 0.18, y, barWidth * 0.64, magnitude, radius);
+        ctx.fill();
+    }
+
+    ctx.fillStyle = "rgba(255, 255, 255, 0.06)";
+    ctx.fillRect(0, height - 6, width, 6);
+
+    visualizationFrame = requestAnimationFrame(drawVisualizer);
+};
+
+const stopVisualizer = () => {
+    if (visualizationFrame !== null) {
+        cancelAnimationFrame(visualizationFrame);
+        visualizationFrame = null;
+    }
+};
+
+const startVisualizer = async () => {
+    if (!audioRef.value) return;
+    if (!audioContext) {
+        audioContext = new AudioContext();
+    }
+    if (audioContext.state === "suspended") {
+        await audioContext.resume();
+    }
+    if (!sourceNode) {
+        sourceNode = audioContext.createMediaElementSource(audioRef.value);
+    }
+    if (!analyser) {
+        analyser = audioContext.createAnalyser();
+        analyser.fftSize = 256;
+        analyser.smoothingTimeConstant = 0.72;
+    }
+
+    sourceNode.disconnect();
+    sourceNode.connect(analyser);
+    analyser.connect(audioContext.destination);
+
+    if (visualizationFrame === null) {
+        drawVisualizer();
+    }
+};
+
+watch(isPlaying, playing => {
+    if (playing) {
+        startVisualizer();
+    } else {
+        stopVisualizer();
+    }
+});
+
+onBeforeUnmount(() => {
+    stopVisualizer();
+    if (audioContext) {
+        audioContext.close();
+    }
+});
 </script>
 
 <template>
@@ -130,6 +244,9 @@ const onVolumeInput = (event: Event) => {
 
                 <div class="controls-card">
                     <div class="glass">
+                        <div class="visualizer">
+                            <canvas ref="visualizerCanvas" class="visualizer-canvas"></canvas>
+                        </div>
                         <div class="timeline">
                             <span class="time">{{ formattedCurrentTime }}</span>
                             <input
@@ -573,6 +690,37 @@ const onVolumeInput = (event: Event) => {
     flex-direction: column;
     height: 100%;
     justify-content: flex-end;
+}
+
+.visualizer {
+    width: 100%;
+    height: clamp(120px, 16vh, 180px);
+    border-radius: 18px;
+    overflow: hidden;
+    position: relative;
+    background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.06),
+            rgba(255, 255, 255, 0.02));
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        0 10px 24px rgba(0, 0, 0, 0.22);
+    margin-bottom: 0.85rem;
+}
+
+.visualizer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.12), transparent 45%),
+        radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.1), transparent 40%);
+    pointer-events: none;
+}
+
+.visualizer-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
 }
 
 .timeline {
