@@ -14,6 +14,9 @@ dayjs.locale("zh-cn");
 
 import { ConsoleMonitorWidget } from "@/features/console-monitor";
 
+// 判断是否是开发环境
+const isDev = import.meta.env.DEV
+
 /**
  * 管理员账户信息
  * {
@@ -241,7 +244,7 @@ onUnmounted(() => {
         <!-- 路由视图容器 -->
         <router-view></router-view>
     </el-config-provider>
-    <ConsoleMonitorWidget />
+    <ConsoleMonitorWidget v-if="isDev" />
 </template>
 
 <style scoped lang="scss">

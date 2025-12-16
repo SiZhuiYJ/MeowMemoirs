@@ -16,11 +16,11 @@
       ".el-carousel__item--card.is-in-stage",
       ".el-checkbox",
       ".el-checkbox__input",
-      ".el-collapse-item__header",
       ".el-color-alpha-slider__thumb",
       ".el-color-hue-slider__thumb",
       ".el-color-picker__trigger",
       ".el-color-predefine__color-selector",
+      ".el-color-svpanel__cursor",
       ".el-date-editor .clear-icon,.el-date-editor .close-icon",
       ".el-date-editor .el-range__close-icon",
       ".el-date-picker__header-label",
@@ -97,7 +97,6 @@
       ".el-checkbox__input.is-disabled .el-checkbox__inner",
       ".el-checkbox__input.is-disabled .el-checkbox__inner:after",
       ".el-checkbox__input.is-disabled+span.el-checkbox__label",
-      ".el-collapse-item.is-disabled .el-collapse-item__header",
       ".el-color-alpha-slider.is-disabled .el-color-alpha-slider__thumb",
       ".el-color-picker-panel.is-disabled .el-color-alpha-slider,.el-color-picker-panel.is-disabled .el-color-predefine .el-color-predefine__color-selector",
       ".el-color-picker-panel.is-disabled .el-color-hue-slider,.el-color-picker-panel.is-disabled .el-color-svpanel",
@@ -131,7 +130,6 @@
       ".el-range-editor.is-disabled",
       ".el-range-editor.is-disabled input",
       ".el-select-dropdown__item.is-disabled",
-      ".el-select__input.is-disabled",
       ".el-select__wrapper.is-disabled",
       ".el-select__wrapper.is-disabled .el-select__caret,.el-select__wrapper.is-disabled .el-tag,.el-select__wrapper.is-disabled input",
       ".el-sub-menu.is-disabled .el-menu-item,.el-sub-menu.is-disabled .el-sub-menu__title",
@@ -196,12 +194,6 @@
     "name": "ew-resize",
     "list": [
       ".el-drawer.ltr>.el-drawer__dragger,.el-drawer.rtl>.el-drawer__dragger"
-    ]
-  },
-  {
-    "name": "head",
-    "list": [
-      ".el-color-svpanel__cursor>div"
     ]
   },
   {

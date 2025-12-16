@@ -678,11 +678,11 @@ onBeforeUnmount(() => {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 18px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
-    backdrop-filter: blur(14px);
+    // background: rgba(255, 255, 255, 0.04);
+    // border: 1px solid rgba(255, 255, 255, 0.08);
+    // border-radius: 18px;
+    // box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+    // backdrop-filter: blur(14px);
 }
 
 .controls-card {
@@ -695,27 +695,27 @@ onBeforeUnmount(() => {
 .visualizer {
     width: 100%;
     height: clamp(120px, 16vh, 180px);
-    border-radius: 18px;
+    // border-radius: 18px;
     overflow: hidden;
     position: relative;
-    background: linear-gradient(135deg,
-            rgba(255, 255, 255, 0.06),
-            rgba(255, 255, 255, 0.02));
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.06),
-        0 10px 24px rgba(0, 0, 0, 0.22);
+    // background: linear-gradient(135deg,
+    //         rgba(255, 255, 255, 0.06),
+    //         rgba(255, 255, 255, 0.02));
+    // border: 1px solid rgba(255, 255, 255, 0.12);
+    // box-shadow:
+    //     inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    //     0 10px 24px rgba(0, 0, 0, 0.22);
     margin-bottom: 0.85rem;
 }
 
-.visualizer::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.12), transparent 45%),
-        radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.1), transparent 40%);
-    pointer-events: none;
-}
+// .visualizer::after {
+//     content: "";
+//     position: absolute;
+//     inset: 0;
+//     background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.12), transparent 45%),
+//         radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.1), transparent 40%);
+//     pointer-events: none;
+// }
 
 .visualizer-canvas {
     width: 100%;
