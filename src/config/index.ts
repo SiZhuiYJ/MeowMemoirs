@@ -39,5 +39,9 @@ export const ROUTER_WHITE_LIST: string[] = [
   "/main/effect/ipLocation",
   "/main/effect/musicPlayer",
   "/main/effect/newMusicPlayer",
-  "/src/views/assets/html/index.html",
+  "/html/index.html",
+  "/html/script.js",
+  "/html/style.css",
+  "/html/gsap.min.js",
+  "/main/effect/shooting"
 ];

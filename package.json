@@ -21,7 +21,7 @@
     "element-plus": "^2.9.9",
     "exifreader": "^4.30.0",
     "fast-glob": "^3.3.3",
-    "gsap": "^3.13.0",
+    "gsap": "^3.14.2",
     "lodash.throttle": "^4.1.1",
     "mitt": "^3.0.1",
     "music-metadata-browser": "^2.5.11",
