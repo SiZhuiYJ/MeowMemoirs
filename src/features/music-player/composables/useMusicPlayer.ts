@@ -20,8 +20,13 @@ export interface LyricLine {
 
 export type PlayMode = "loop" | "single" | "shuffle";
 
-const buildAssetUrl = (folder: "Musics" | "Lyrics", fileName: string) =>
-    new URL(`../../assets/${folder}/${fileName}`, import.meta.url).href;
+// const buildAssetUrl = (folder: "Musics" | "Lyrics", fileName: string) =>
+//     new URL(`/${folder}/${fileName}`, import.meta.url).href;
+// 修改 buildAssetUrl 函数
+const buildAssetUrl = (folder: "Musics" | "Lyrics", fileName: string) => {
+    // 直接从 public 目录获取
+    return `/${folder}/${fileName}`;
+};
 
 const defaultPlaylist: Track[] = [
     {
