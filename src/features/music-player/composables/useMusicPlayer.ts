@@ -1,5 +1,11 @@
 import { Buffer } from "buffer";
-import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import {
+    computed,
+    onBeforeUnmount,
+    onMounted,
+    ref,
+    type Ref
+} from "vue";
 import { useStorage } from "@vueuse/core";
 
 export interface Track {
@@ -20,12 +26,9 @@ export interface LyricLine {
 
 export type PlayMode = "loop" | "single" | "shuffle";
 
-// const buildAssetUrl = (folder: "Musics" | "Lyrics", fileName: string) =>
-//     new URL(`/${folder}/${fileName}`, import.meta.url).href;
-// 修改 buildAssetUrl 函数
 const buildAssetUrl = (folder: "Musics" | "Lyrics", fileName: string) => {
-    // 直接从 public 目录获取
-    return `/${folder}/${fileName}`;
+    // Encode filenames to avoid issues with spaces/Chinese chars when requesting static files
+    return `/${folder}/${encodeURIComponent(fileName)}`;
 };
 
 const defaultPlaylist: Track[] = [
@@ -44,8 +47,14 @@ const defaultPlaylist: Track[] = [
         artist: "徐明浩; GALI",
         artists: ["徐明浩", "GALI"],
         album: "Star Crossing Night (feat. GALI)",
-        url: buildAssetUrl("Musics", "Star Crossing Night (feat. GALI) - 徐明浩; GALI.flac"),
-        lyric: buildAssetUrl("Lyrics", "Star Crossing Night (feat. GALI) - 徐明浩,GALI.lrc")
+        url: buildAssetUrl(
+            "Musics",
+            "Star Crossing Night (feat. GALI) - 徐明浩; GALI.flac"
+        ),
+        lyric: buildAssetUrl(
+            "Lyrics",
+            "Star Crossing Night (feat. GALI) - 徐明浩,GALI.lrc"
+        )
     },
     {
         id: 3,
@@ -53,8 +62,14 @@ const defaultPlaylist: Track[] = [
         album: "Take My Hand",
         artist: "DAISHI DANCE; Cécile Corbel",
         artists: ["DAISHI DANCE", "Cécile Corbel"],
-        url: buildAssetUrl("Musics", "Take My Hand - DAISHI DANCE; Cécile Corbel.flac"),
-        lyric: buildAssetUrl("Lyrics", "Take My Hand - DAISHI DANCE,Cécile Corbel.lrc")
+        url: buildAssetUrl(
+            "Musics",
+            "Take My Hand - DAISHI DANCE; Cécile Corbel.flac"
+        ),
+        lyric: buildAssetUrl(
+            "Lyrics",
+            "Take My Hand - DAISHI DANCE,Cécile Corbel.lrc"
+        )
     },
     {
         id: 4,
@@ -94,6 +109,24 @@ const defaultPlaylist: Track[] = [
     }
 ];
 
+const hasValidSource = (url: string) => {
+    try {
+        const decoded = decodeURIComponent(url);
+        return /\.(flac|mp3|wav)$/i.test(decoded);
+    } catch {
+        return false;
+    }
+};
+
+const resetPlaylistIfCorrupted = (playlist: Ref<Track[]>) => {
+    const isBroken =
+        !Array.isArray(playlist.value) ||
+        playlist.value.some(track => !track || !track.url || !hasValidSource(track.url));
+    if (isBroken) {
+        playlist.value = defaultPlaylist.map(track => ({ ...track }));
+    }
+};
+
 const formatTime = (value: number) => {
     if (!value || Number.isNaN(value)) return "00:00";
     const minutes = Math.floor(value / 60)
@@ -130,10 +163,10 @@ export const parseLrc = (raw: string): LyricLine[] => {
         .sort((a, b) => a.time - b.time);
 };
 
-export const useMusicPlayer = (audioRef: {
-    value: HTMLAudioElement | null;
-}) => {
+export const useMusicPlayer = (audioRef: { value: HTMLAudioElement | null }) => {
     const playlist = useStorage<Track[]>("mm-player-playlist", defaultPlaylist);
+    resetPlaylistIfCorrupted(playlist);
+
     const playerState = useStorage("mm-player-state", {
         currentIndex: 0,
         time: 0,
