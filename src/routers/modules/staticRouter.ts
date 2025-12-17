@@ -368,6 +368,23 @@ export const layoutRouter: RouteRecordRaw[] = [
               isFull: "1",
               isAffix: "0",
             },
+          },
+          // 圣诞节
+          {
+            path: "/main/effect/christmas",
+            component: () => import("@/views/main/effect/christmas/index.vue"),
+            meta: {
+              title: "圣诞节特效",
+              enName: "christmas",
+              icon: "MeowMemoirs-christmas-tree",
+              isHeader: "0",
+              isHide: "1",
+              isLink: "",
+              isKeepAlive: "0",
+              isFull: "1",
+              isAffix: "0",
+            },
+
           }
         ],
       },

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, nextTick, computed, onUnmounted, watch } from "vue";
-import { setCursor } from "@/utils/cursor";
+// import { setCursor } from "@/utils/cursor";
 import { useTheme } from "@/utils/theme.ts";
 
 import { useGlobalStore, useAccessStore } from "@/stores";
@@ -15,7 +15,7 @@ dayjs.locale("zh-cn");
 import { ConsoleMonitorWidget } from "@/features/console-monitor";
 
 // 判断是否是开发环境
-const isDev = import.meta.env.DEV
+// const isDev = import.meta.env.DEV
 
 /**
  * 管理员账户信息
@@ -53,11 +53,11 @@ const handleThemeConfig = () => {
  * 初始化鼠标样式
  * 在下一个DOM更新周期后设置自定义鼠标样式（移动端除外）
  */
-const handleCursor = () => {
-    nextTick(() => {
-        if (!useScreenStore().isMobile.value) setCursor();
-    });
-};
+// const handleCursor = () => {
+//     nextTick(() => {
+//         if (!useScreenStore().isMobile.value) setCursor();
+//     });
+// };
 
 /**
  * 点击动画效果函数
@@ -203,14 +203,14 @@ onMounted(async () => {
     resetIdleTimer();
 
     // 初始化鼠标样式（使用requestIdleCallback避免阻塞关键资源加载）
-    if ("requestIdleCallback" in window) {
-        requestIdleCallback(() => {
-            handleCursor();
-        });
-    } else {
-        // 兼容不支持requestIdleCallback的浏览器
-        setTimeout(() => handleCursor(), 2000);
-    }
+    // if ("requestIdleCallback" in window) {
+    //     requestIdleCallback(() => {
+    //         handleCursor();
+    //     });
+    // } else {
+    //     // 兼容不支持requestIdleCallback的浏览器
+    //     setTimeout(() => handleCursor(), 2000);
+    // }
 
     // 初始化访问数据
     await initializeData();
@@ -244,7 +244,8 @@ onUnmounted(() => {
         <!-- 路由视图容器 -->
         <router-view></router-view>
     </el-config-provider>
-    <ConsoleMonitorWidget v-if="isDev" />
+    <!-- 控制台监控小部件 v-if="isDev" -->
+    <ConsoleMonitorWidget  />
 </template>
 
 <style scoped lang="scss">
