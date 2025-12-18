@@ -26,9 +26,25 @@ export interface LyricLine {
 
 export type PlayMode = "loop" | "single" | "shuffle";
 
+const PLAYLIST_STORAGE_KEY = "mm-player-playlist-v2";
+
+const withBase = (path: string) => {
+    const base = import.meta.env.BASE_URL || "/";
+    const normalizedBase = base.endsWith("/") ? base : `${base}/`;
+    return `${normalizedBase}${path.replace(/^\/+/, "")}`;
+};
+
+const ensureBasePrefixed = (path: string) => {
+    if (!path || /^https?:\/\//i.test(path)) return path;
+    const base = import.meta.env.BASE_URL || "/";
+    const normalizedBase = base.endsWith("/") ? base : `${base}/`;
+    if (path.startsWith(normalizedBase)) return path;
+    return withBase(path);
+};
+
 const buildAssetUrl = (folder: "Musics" | "Lyrics", fileName: string) => {
     // Encode filenames to avoid issues with spaces/Chinese chars when requesting static files
-    return `/${folder}/${encodeURIComponent(fileName)}`;
+    return withBase(`${folder}/${encodeURIComponent(fileName)}`);
 };
 
 const defaultPlaylist: Track[] = [
@@ -144,7 +160,7 @@ export const parseLrc = (raw: string): LyricLine[] => {
     const timeReg = /\[(\d{1,2}):(\d{1,2})(?:\.(\d{1,3}))?]/g;
 
     lines.forEach(line => {
-        const text = line.replace(timeReg, "").trim() || "♪";
+        const text = line.replace(timeReg, "").trim() || "[Instrumental]";
         let match: RegExpExecArray | null;
         while ((match = timeReg.exec(line)) !== null) {
             const minutes = Number(match[1]);
@@ -164,8 +180,13 @@ export const parseLrc = (raw: string): LyricLine[] => {
 };
 
 export const useMusicPlayer = (audioRef: { value: HTMLAudioElement | null }) => {
-    const playlist = useStorage<Track[]>("mm-player-playlist", defaultPlaylist);
+    const playlist = useStorage<Track[]>(PLAYLIST_STORAGE_KEY, defaultPlaylist);
     resetPlaylistIfCorrupted(playlist);
+    playlist.value = playlist.value.map(track => ({
+        ...track,
+        url: ensureBasePrefixed(track.url),
+        lyric: ensureBasePrefixed(track.lyric)
+    }));
 
     const playerState = useStorage("mm-player-state", {
         currentIndex: 0,
@@ -346,6 +367,9 @@ export const useMusicPlayer = (audioRef: { value: HTMLAudioElement | null }) => 
         lyricLoading.value = true;
         try {
             const res = await fetch(currentTrack.value.lyric);
+            if (!res.ok) {
+                throw new Error(`Lyric request failed: ${res.status}`);
+            }
             const text = await res.text();
             lyrics.value = parseLrc(text);
         } catch (error) {
@@ -366,10 +390,6 @@ export const useMusicPlayer = (audioRef: { value: HTMLAudioElement | null }) => 
             dominantColor.value = paletteCache.get(track.id) || null;
             return;
         }
-        album.value = null;
-        title.value = null;
-        artist.value = null;
-        artists.value = null;
         coverUrl.value = null;
         dominantColor.value = null;
         coverLoading.value = true;
@@ -378,9 +398,17 @@ export const useMusicPlayer = (audioRef: { value: HTMLAudioElement | null }) => 
             const response = await fetch(track.url, {
                 headers: { Range: "bytes=0-400000" }
             });
+            if (!response.ok) {
+                throw new Error(`Cover request failed: ${response.status}`);
+            }
+            const contentType = response.headers.get("content-type") || "";
+            if (contentType && !contentType.toLowerCase().startsWith("audio/")) {
+                console.warn(`Unexpected cover content-type: ${contentType}`);
+                return;
+            }
             const arrayBuffer = await response.arrayBuffer();
             const blob = new Blob([new Uint8Array(arrayBuffer)], {
-                type: guessMime(track.url)
+                type: contentType || guessMime(track.url)
             });
             const metadata = await mm.parseBlob(blob);
             const picture = metadata.common.picture?.[0];
@@ -498,7 +526,8 @@ export const useMusicPlayer = (audioRef: { value: HTMLAudioElement | null }) => 
         audio.addEventListener("play", handlePlay);
         audio.addEventListener("pause", handlePause);
         audio.addEventListener("error", () => {
-            console.error("音频加载失败");
+            const detail = audio.error;
+            console.error("Audio error", detail?.code, detail?.message);
         });
     };
 
@@ -535,7 +564,7 @@ export const useMusicPlayer = (audioRef: { value: HTMLAudioElement | null }) => 
                 isPlaying.value = true;
             } catch (error) {
                 isPlaying.value = false;
-                console.error("音频播放被阻止", error);
+                console.error("Audio playback was blocked", error);
             }
         }
     };
@@ -579,7 +608,7 @@ export const useMusicPlayer = (audioRef: { value: HTMLAudioElement | null }) => 
                 await audio.play();
                 isPlaying.value = true;
             } catch (error) {
-                console.error("播放失败", error);
+                console.error("Audio playback was blocked", error);
             }
         }
     };
@@ -671,3 +700,8 @@ export const useMusicPlayer = (audioRef: { value: HTMLAudioElement | null }) => 
         formatTime
     };
 };
+
+
+
+
+
