@@ -41,11 +41,16 @@ declare module "@kangc/v-md-editor/lib/codemirror-editor" {
   export const Codemirror: any;
   export function use(theme: any, options?: any): void;
 }
+
 // prismjs
 declare module "prismjs";
-// md相关类型声明结束
 
+// md相关类型声明结束
 declare module "webtorrent/dist/webtorrent.min.js" {
   import WebTorrent from "webtorrent";
   export default WebTorrent;
 }
+
+// 视频播放组件类型声明
+declare module 'vue3-video-play';
+declare module 'vue3-video-play/dist/index.mjs';

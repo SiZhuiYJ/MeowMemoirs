@@ -38,7 +38,8 @@ export const ROUTER_WHITE_LIST: string[] = [
   "/main/classSchedule",
   "/main/effect/ipLocation",
   "/main/effect/musicPlayer",
-  "/main/effect/newMusicPlayer",
+  "/main/effect/newVideoPlay",
   "/main/effect/shooting",
-  "/main/effect/christmas"
+  "/main/effect/christmas",
+  "/main/effect/videoPlay"
 ];

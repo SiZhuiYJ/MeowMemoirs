@@ -2,7 +2,8 @@
 import { computed, onBeforeUnmount, ref, watch } from "vue";
 import LyricCarousel from "./lyric-carousel.vue";
 import { useMusicPlayer } from "../composables/useMusicPlayer";
-import SvgIcon from "@/components/SvgIcons/index.vue";
+// import SvgIcon from "@/components/SvgIcons/index.vue";
+import GlobalIcon from "@/components/GlobalIcon/index.vue";
 
 const audioRef = ref<HTMLAudioElement | null>(null);
 const visualizerCanvas = ref<HTMLCanvasElement | null>(null);
@@ -207,11 +208,8 @@ onBeforeUnmount(() => {
             <div class="glow"></div>
             <div class="hero-main">
                 <div class="vinyl-wrap">
-                    <div
-                        class="vinyl"
-                        :class="{ spinning: isPlaying }"
-                        :style="coverUrl ? { '--cover-url': `url(${coverUrl})` } : undefined"
-                    >
+                    <div class="vinyl" :class="{ spinning: isPlaying }"
+                        :style="coverUrl ? { '--cover-url': `url(${coverUrl})` } : undefined">
                         <div v-if="coverLoading" class="cover-loading">
                             封面解析中...
                         </div>
@@ -234,13 +232,8 @@ onBeforeUnmount(() => {
                         </span>
                     </div>
                 </div>
-                <LyricCarousel
-                    :lines="lyrics"
-                    :active-index="activeLyricIndex"
-                    :loading="lyricLoading"
-                    style="height: 100%"
-                    class="lyric-area"
-                />
+                <LyricCarousel :lines="lyrics" :active-index="activeLyricIndex" :loading="lyricLoading"
+                    style="height: 100%" class="lyric-area" />
 
                 <div class="controls-card">
                     <div class="glass">
@@ -249,69 +242,71 @@ onBeforeUnmount(() => {
                         </div>
                         <div class="timeline">
                             <span class="time">{{ formattedCurrentTime }}</span>
-                            <input
-                                class="slider"
-                                type="range"
-                                min="0"
-                                max="100"
-                                step="0.1"
-                                :value="progress"
-                                :style="timelineStyle"
-                                @input="onTimelineInput"
-                            />
+                            <input class="slider" type="range" min="0" max="100" step="0.1" :value="progress"
+                                :style="timelineStyle" @input="onTimelineInput" />
                             <span class="time">{{ formattedDuration }}</span>
                         </div>
                         <div class="controls">
                             <div class="settings-btn">
                                 <button class="ghost" title="热度">
-                                    <svg-icon icon-class="chart-bar" size="24px" style="color: var(--hero-text)" />
+                                    <global-icon name="MeowMemoirs-chart-bar" size="24px"
+                                        style="color: var(--hero-text)" />
                                 </button>
                                 <button class="ghost" title="关注">
-                                    <svg-icon icon-class="follow-grayscale" size="24px" style="color: var(--hero-text)" />
+                                    <global-icon name="MeowMemoirs-follow-grayscale" size="24px"
+                                        style="color: var(--hero-text)" />
                                 </button>
                                 <button class="ghost" title="下载">
-                                    <svg-icon icon-class="download" size="24px" style="color: var(--hero-text)" />
+                                    <global-icon name="MeowMemoirs-download" size="24px"
+                                        style="color: var(--hero-text)" />
+                                </button>
+                                <button class="ghost" title="分享">
+                                    <global-icon name="share" size="24px" style="color: var(--hero-text)" />
+                                </button>
+                                <button class="ghost" title="设置">
+                                    <global-icon name="MeowMemoirs-more" size="24px" style="color: var(--hero-text)" />
                                 </button>
                             </div>
                             <div class="controls-pyler">
                                 <button class="ghost" :title="modeLabel" @click="cycleMode">
-                                    <svg-icon v-if="playMode === 'loop'" icon-class="list-loop" size="24px" style="color: var(--hero-text)" />
-                                    <svg-icon v-else-if="playMode === 'single'" icon-class="repeat-single" size="24px" style="color: var(--hero-text)" />
-                                    <svg-icon v-else icon-class="random-loop" size="24px" style="color: var(--hero-text)" />
+                                    <global-icon v-if="playMode === 'loop'" name="MeowMemoirs-list-loop" size="24px"
+                                        style="color: var(--hero-text)" />
+                                    <global-icon v-else-if="playMode === 'single'" name="MeowMemoirs-repeat-single"
+                                        size="24px" style="color: var(--hero-text)" />
+                                    <global-icon v-else name="MeowMemoirs-random-loop" size="24px"
+                                        style="color: var(--hero-text)" />
                                 </button>
 
                                 <button class="ghost" title="上一曲" @click="playPrev">
-                                    <svg-icon icon-class="previous" size="24px" style="color: var(--hero-text)" />
+                                    <global-icon name="MeowMemoirs-previous" size="24px"
+                                        style="color: var(--hero-text)" />
                                 </button>
 
                                 <button class="primary" title="播放/暂停" @click="togglePlay">
-                                    <svg-icon :icon-class="!isPlaying ? 'play' : 'pause'" size="24px" style="color: var(--hero-text)" />
+                                    <global-icon :name="!isPlaying ? 'MeowMemoirs-play' : 'MeowMemoirs-pause'"
+                                        size="24px" style="color: var(--hero-text)" />
                                 </button>
 
                                 <button class="ghost" title="下一曲" @click="playNext">
-                                    <svg-icon icon-class="next" size="24px" style="color: var(--hero-text)" />
+                                    <global-icon name="MeowMemoirs-next" size="24px" style="color: var(--hero-text)" />
                                 </button>
 
                                 <button class="ghost" title="播放列表">
-                                    <svg-icon icon-class="playlist-music" size="24px" style="color: var(--hero-text)" />
+                                    <global-icon name="MeowMemoirs-playlist-music" size="24px"
+                                        style="color: var(--hero-text)" />
                                 </button>
                             </div>
                             <div class="volume">
                                 <button class="ghost" title="静音" @click="toggleMute">
-                                    <svg-icon v-if="muted || volume === 0" icon-class="mute" size="24px" style="color: var(--hero-text)" />
-                                    <svg-icon v-else-if="volume < 0.5" icon-class="alto" size="24px" style="color: var(--hero-text)" />
-                                    <svg-icon v-else icon-class="great-sound" size="24px" style="color: var(--hero-text)" />
+                                    <global-icon v-if="muted || volume === 0" name="MeowMemoirs-mute" size="24px"
+                                        style="color: var(--hero-text)" />
+                                    <global-icon v-else-if="volume < 0.5" name="MeowMemoirs-alto" size="24px"
+                                        style="color: var(--hero-text)" />
+                                    <global-icon v-else name="MeowMemoirs-great-sound" size="24px"
+                                        style="color: var(--hero-text)" />
                                 </button>
-                                <input
-                                    class="slider volume-slider"
-                                    type="range"
-                                    min="0"
-                                    max="1"
-                                    step="0.01"
-                                    :value="muted ? 0 : volume"
-                                    :style="volumeStyle"
-                                    @input="onVolumeInput"
-                                />
+                                <input class="slider volume-slider" type="range" min="0" max="1" step="0.01"
+                                    :value="muted ? 0 : volume" :style="volumeStyle" @input="onVolumeInput" />
                             </div>
                         </div>
                     </div>
@@ -330,13 +325,8 @@ onBeforeUnmount(() => {
                         <span class="pill">{{ playlist.length }} 首</span>
                     </header>
                     <div class="playlist">
-                        <button
-                            v-for="(track, index) in playlist"
-                            :key="track.id"
-                            class="track"
-                            :class="{ active: currentIndex === index }"
-                            @click="playAt(index)"
-                        >
+                        <button v-for="(track, index) in playlist" :key="track.id" class="track"
+                            :class="{ active: currentIndex === index }" @click="playAt(index)">
                             <div class="track-meta">
                                 <p class="name">{{ track.title }}</p>
                                 <p class="artist">{{ track.artist }}</p>

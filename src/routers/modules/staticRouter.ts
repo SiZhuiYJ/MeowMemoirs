@@ -339,21 +339,7 @@ export const layoutRouter: RouteRecordRaw[] = [
               isAffix: "0",
             },
           },
-          {
-            path: "/main/effect/newMusicPlayer",
-            component: () => import("@/views/main/effect/newMusicPlayer/index.vue"),
-            meta: {
-              title: "新*音乐播放器",
-              enName: "newMusicPlayer",
-              icon: "Headset",
-              isHeader: "0",
-              isHide: "1",
-              isLink: "",
-              isKeepAlive: "0",
-              isFull: "1",
-              isAffix: "0",
-            },
-          },
+
           {
             path: "/main/effect/shooting",
             component: () => import("@/views/main/effect/shooting/index.vue"),
@@ -384,8 +370,36 @@ export const layoutRouter: RouteRecordRaw[] = [
               isFull: "1",
               isAffix: "0",
             },
-
-          }
+          },
+          {
+            path: "/main/effect/videoPlay",
+            component: () => import("@/views/main/effect/videoPlay/index.vue"),
+            meta: {
+              title: "视频播放",
+              enName: "videoPlay",
+              icon: "VideoCamera",
+              isHeader: "0",
+              isHide: "1",
+              isLink: "",
+              isKeepAlive: "0",
+              isFull: "1",
+              isAffix: "0",
+            },
+          }, {
+            path: "/main/effect/newVideoPlay",
+            component: () => import("@/views/main/effect/newVideoPlay/index.vue"),
+            meta: {
+              title: "新*视频播放器",
+              enName: "newVideoPlay",
+              icon: "VideoCamera",
+              isHeader: "0",
+              isHide: "1",
+              isLink: "",
+              isKeepAlive: "0",
+              isFull: "1",
+              isAffix: "0",
+            },
+          },
         ],
       },
     ],
