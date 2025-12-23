@@ -4,6 +4,20 @@
     "list": [
       ".TopMao",
       ".btn",
+      ".checkbox-wrapper-11 input[type=\"checkbox\"]",
+      ".checkbox-wrapper-11 label",
+      ".d-icon[data-v-bf21758a]",
+      ".d-player-contextmenu .d-player-contextmenu-body li[data-v-64367a85]",
+      ".d-player-dialog .d-player-dialog-body .d-player-dialog-title .icon-close[data-v-64367a85]",
+      ".d-player-dialog .d-player-dialog-body .d-player-filter-panel .d-player-filter-reset[data-v-64367a85]",
+      ".d-player-wrap .d-player-control .d-control-progress[data-v-ad0cee4b]",
+      ".d-player-wrap .d-player-control .d-control-tool .d-tool-bar .d-tool-item[data-v-ad0cee4b]",
+      ".d-player-wrap .d-player-control .d-control-tool .speed-main li[data-v-ad0cee4b]",
+      ".d-pointer[data-v-462eb232]",
+      ".d-pointer[data-v-64367a85]",
+      ".d-pointer[data-v-ad0cee4b]",
+      ".d-pointer[data-v-b4f9cb00]",
+      ".d-slider .d-slider__runway[data-v-703f29f7]",
       ".dropdown",
       ".el-alert .el-alert__close-btn",
       ".el-breadcrumb__inner a:hover,.el-breadcrumb__inner.is-link:hover",
@@ -77,9 +91,9 @@
       ".fold-summary",
       ".layout-container .el-header .common-header .menu-btn",
       ".plane-switch",
-      ".retry-btn",
       ".scrollbar__bar",
       ".scrollbar__thumb",
+      ".search-bar button,\n.add-to button",
       ".st-sunMoonThemeToggleBtn",
       ".v-md-editor .codemirror-wrapper.codemirror-reset .CodeMirror-overlayscroll-horizontal>div,.v-md-editor .codemirror-wrapper.codemirror-reset .CodeMirror-overlayscroll-vertical>div",
       ".v-md-editor__toc-nav-item",
@@ -145,6 +159,18 @@
     ]
   },
   {
+    "name": "default",
+    "list": [
+      ".CodeMirror-gutter-elt",
+      ".clock",
+      ".d-player-input[data-v-ad0cee4b]",
+      ".el-date-table td.week",
+      ".el-image-viewer__actions__inner",
+      ".el-image-viewer__progress",
+      ".el-time-spinner__wrapper.is-arrow .el-time-spinner__item:hover:not(.is-disabled):not(.is-active)"
+    ]
+  },
+  {
     "name": "inherit",
     "list": [
       ".el-date-picker.is-disabled .el-date-picker__header-label .el-icon",
@@ -154,17 +180,6 @@
       ".el-picker-panel.is-disabled .el-picker-panel__prev-btn .el-icon",
       ".el-picker-panel.is-disabled .el-picker-panel__shortcut .el-icon",
       ".el-picker-panel__icon-btn.is-disabled .el-icon"
-    ]
-  },
-  {
-    "name": "default",
-    "list": [
-      ".CodeMirror-gutter-elt",
-      ".clock",
-      ".el-date-table td.week",
-      ".el-image-viewer__actions__inner",
-      ".el-image-viewer__progress",
-      ".el-time-spinner__wrapper.is-arrow .el-time-spinner__item:hover:not(.is-disabled):not(.is-active)"
     ]
   },
   {
