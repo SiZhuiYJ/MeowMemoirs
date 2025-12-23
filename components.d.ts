@@ -75,6 +75,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     ShowDetails: typeof import('./src/components/ShowDetails/index.vue')['default']
     SvgIcons: typeof import('./src/components/SvgIcons/index.vue')['default']
+    TodoCheckbox: typeof import('./src/components/TodoCheckbox/index.vue')['default']
     Toolbar: typeof import('./src/components/Toolbar/index.vue')['default']
     TypewriterEffect: typeof import('./src/components/TypewriterEffect/index.vue')['default']
     WaterfallFlow: typeof import('./src/components/WaterfallFlow/index.vue')['default']
