@@ -90,12 +90,14 @@ const toggleTodo = (item: TodoItem, val: boolean) => {
 <style scoped lang="scss">
 .todo-list {
   width: 100%;
+  max-width: 1200px;
   margin: 0 auto;
   background-color: #fff;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 40px;
+  padding: 32px 24px 48px;
+  box-sizing: border-box;
 }
 
 .header {
@@ -121,26 +123,33 @@ const toggleTodo = (item: TodoItem, val: boolean) => {
   gap: 10px;
   flex-wrap: wrap;
   justify-content: center;
+  align-items: center;
+  width: 100%;
   margin-bottom: 12px;
 }
 
 .search-bar,
 .add-to {
   display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 640px;
   margin-top: 12px;
   margin-bottom: 8px;
+  gap: 8px;
 
   input {
     flex: 1;
     min-width: 220px;
-    padding: 8px;
+    padding: 10px 12px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    margin-right: 8px;
+    margin-right: 0;
   }
 
   button {
-    padding: 8px 16px;
+    padding: 10px 16px;
+    min-width: 110px;
     background-color: #42b983;
     color: white;
     border: none;
@@ -160,6 +169,7 @@ const toggleTodo = (item: TodoItem, val: boolean) => {
   width: 100%;
   padding: 0 24px;
   box-sizing: border-box;
+  align-items: start;
 }
 
 .list-column h1 {
@@ -232,5 +242,54 @@ const toggleTodo = (item: TodoItem, val: boolean) => {
 .log-text {
   font-size: 14px;
   color: #333;
+}
+
+@media (max-width: 768px) {
+  .todo-list {
+    padding: 20px 12px 32px;
+    align-items: stretch;
+  }
+
+  .todo-actions {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .search-bar,
+  .add-to {
+    flex-direction: column;
+    gap: 10px;
+    max-width: none;
+    margin: 0;
+  }
+
+  .search-bar input,
+  .add-to input {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .search-bar button,
+  .add-to button {
+    width: 100%;
+  }
+
+  .content-area {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 0;
+  }
+
+  .list-column h1 {
+    font-size: 18px;
+  }
+
+  .todo-items {
+    padding: 12px;
+    border: 1px solid #f0f0f0;
+    border-radius: 12px;
+    background: #fafafa;
+  }
 }
 </style>
