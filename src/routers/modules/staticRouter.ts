@@ -400,6 +400,22 @@ export const layoutRouter: RouteRecordRaw[] = [
               isAffix: "0",
             },
           },
+          // countdown
+          {
+            path: "/main/effect/countdown",
+            component: () => import("@/views/main/effect/countdown/index.vue"),
+            meta: {
+              title: "倒计时器",
+              enName: "countdown",
+              icon: "Time",
+              isHeader: "0",
+              isHide: "1",
+              isLink: "",
+              isKeepAlive: "0",
+              isFull: "1",
+              isAffix: "0",
+            },
+          },
         ],
       },
     ],

@@ -41,5 +41,6 @@ export const ROUTER_WHITE_LIST: string[] = [
   "/main/effect/newVideoPlay",
   "/main/effect/shooting",
   "/main/effect/christmas",
-  "/main/effect/videoPlay"
+  "/main/effect/videoPlay",
+  "/main/effect/countdown"
 ];

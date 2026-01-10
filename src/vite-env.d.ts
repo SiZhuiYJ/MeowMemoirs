@@ -54,3 +54,7 @@ declare module "webtorrent/dist/webtorrent.min.js" {
 // 视频播放组件类型声明
 declare module 'vue3-video-play';
 declare module 'vue3-video-play/dist/index.mjs';
+
+
+// 倒计时
+declare module 'chinese-calendar';
