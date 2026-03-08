@@ -10,7 +10,7 @@ export const useClassStore = defineStore("class", () => {
     // 所有课程列表
     const classes = ref<Class[]>([]);
     // 起始日期
-    const startDate = ref(new Date(2025, 8, 8)); //2025-9-8为开学时间
+    const startDate = ref(new Date(2026, 2, 9));// 2026-3-9为开学时间  //2025-9-8为开学时间
     // 双向绑定 --当前日期
     const weekNumber = ref(new Date());
     // 周次长度

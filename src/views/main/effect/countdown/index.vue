@@ -84,7 +84,7 @@ const currentDate = computed(() => currentTimePoint.value.date)
 // 将时间字符串转换为数字数组用于显示
 const timeDigits = computed(() => {
     const timeStr = currentTimePoint.value.time
-    return timeStr.split('').map((char, index) => char)
+    return timeStr.split('').map((char) => char)
 })
 
 // 切换时间点
@@ -163,6 +163,7 @@ const reset = () => {
 // 生成雪花样式
 const getSnowflakeStyle = (n: number) => {
     const size = Math.random() * 10 + 5
+    console.log(n)
     return {
         left: `${Math.random() * 100}%`,
         top: `${Math.random() * 100}%`,
