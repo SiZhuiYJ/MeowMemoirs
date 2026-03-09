@@ -3,7 +3,7 @@ import { getDateFormatYYYYMMDD, getWeekNumber } from "@/utils/calendar";
 
 export default function useWeek() {
     // 起始日期
-    const startDate = ref(new Date(2025, 8, 8)); //2025-9-8为开学时间
+    const startDate = ref(new Date(2026, 2, 9)); //2025-9-8为开学时间
     // 双向绑定 --当前日期
     const weekNumber = ref(new Date());
 

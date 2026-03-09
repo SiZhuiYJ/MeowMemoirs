@@ -114,7 +114,7 @@ onMounted(async () => {
                             </div>
                             <!-- 标记 -->
                             <div class="mark">
-                                <p v-if="data.day === '2025-09-08'">⭐</p>
+                                <p v-if="data.day === '2026-03-09'">⭐</p>
                                 <p v-if="data.day === getCurrentDate()">今</p>
                                 <p v-if="data.isSelected">✔️</p>
                             </div>
@@ -156,7 +156,7 @@ onMounted(async () => {
                         </div>
                         <!-- 标记 -->
                         <div class="mark">
-                            <p v-if="data.day === '2025-09-08'">⭐</p>
+                            <p v-if="data.day === '2026-03-09'">⭐</p>
                             <p v-if="data.day === getCurrentDate()">今</p>
                             <p v-if="data.isSelected">✔️</p>
                         </div>
